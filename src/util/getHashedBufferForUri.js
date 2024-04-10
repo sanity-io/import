@@ -1,7 +1,6 @@
 const crypto = require('crypto')
 const {URL} = require('url')
 const {getIt} = require('get-it')
-// eslint-disable-next-line import/extensions
 const {promise} = require('get-it/middleware')
 const getUri = require('get-uri')
 const miss = require('mississippi')

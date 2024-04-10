@@ -1,12 +1,11 @@
 #!/usr/bin/env node
+/* eslint-disable no-console, no-process-env */
 
-/* eslint-disable id-length, no-console, no-process-env */
 const fs = require('fs')
 const path = require('path')
 const {createClient} = require('@sanity/client')
 const sanityImport = require('./import')
 const {getIt} = require('get-it')
-// eslint-disable-next-line import/extensions
 const {promise} = require('get-it/middleware')
 const meow = require('meow')
 const ora = require('ora')
@@ -223,7 +222,7 @@ function getAssetsBase() {
     const fileStats = fs.statSync(source)
     const sourceIsFolder = fileStats.isDirectory()
     return sourceIsFolder ? source : path.dirname(source)
-  } catch {
+  } catch (err) {
     return undefined
   }
 }

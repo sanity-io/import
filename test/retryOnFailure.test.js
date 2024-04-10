@@ -1,10 +1,15 @@
-import {describe, expect, jest, test} from '@jest/globals'
+const {
+  describe,
+  expect,
+  jest: {fn: jestFn},
+  test,
+} = require('@jest/globals')
 
 const retryOnFailure = require('../src/util/retryOnFailure')
 
 describe('retry on failure utility', () => {
   test('does not retry on initial success', async () => {
-    const fn = jest.fn()
+    const fn = jestFn()
     fn.mockReturnValueOnce(Promise.resolve('hei'))
 
     expect(await retryOnFailure(fn)).toEqual('hei')
@@ -13,7 +18,7 @@ describe('retry on failure utility', () => {
 
   test('retries on failure up to maximum of 3 attempts', async () => {
     const error = new Error('nope')
-    const fn = jest.fn()
+    const fn = jestFn()
     fn.mockReturnValue(Promise.reject(error))
 
     await expect(retryOnFailure(fn)).rejects.toEqual(error)
@@ -25,7 +30,7 @@ describe('retry on failure utility', () => {
     const start = Date.now()
 
     const error = new Error('nope')
-    const fn = jest.fn()
+    const fn = jestFn()
     fn.mockReturnValue(Promise.reject(error))
 
     await expect(retryOnFailure(fn, {maxTries: 5})).rejects.toEqual(error)
@@ -35,7 +40,7 @@ describe('retry on failure utility', () => {
   })
 
   test('succeeds if second attempt succeeds', async () => {
-    const fn = jest.fn()
+    const fn = jestFn()
     fn.mockReturnValueOnce(Promise.reject(new Error('nope')))
     fn.mockReturnValueOnce(Promise.resolve('moop'))
 

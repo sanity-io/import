@@ -1,5 +1,4 @@
 const {createClient, requester: defaultRequester} = require('@sanity/client')
-// eslint-disable-next-line import/extensions
 const {injectResponse} = require('get-it/middleware')
 const noop = require('lodash/noop')
 
