@@ -6,19 +6,19 @@ connect ECONNREFUSED 127.0.0.1:49999]
 `;
 
 exports[`will reuse an existing asset if it exists: single asset mutation 1`] = `
-Object {
-  "mutations": Array [
-    Object {
-      "patch": Object {
+{
+  "mutations": [
+    {
+      "patch": {
         "id": "movie_1",
-        "set": Object {
-          "metadata.poster.asset": Object {
+        "set": {
+          "metadata.poster.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "metadata.poster": Object {
+        "setIfMissing": {
+          "metadata.poster": {
             "_type": "image",
           },
         },
@@ -29,19 +29,19 @@ Object {
 `;
 
 exports[`will upload an asset if asset doc exists but file does not: single create mutation 1`] = `
-Object {
-  "mutations": Array [
-    Object {
-      "patch": Object {
+{
+  "mutations": [
+    {
+      "patch": {
         "id": "movie_1",
-        "set": Object {
-          "metadata.poster.asset": Object {
+        "set": {
+          "metadata.poster.asset": {
             "_ref": "image-newAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "metadata.poster": Object {
+        "setIfMissing": {
+          "metadata.poster": {
             "_type": "image",
           },
         },
@@ -52,19 +52,19 @@ Object {
 `;
 
 exports[`will upload asset that do not already exist: single create mutation 1`] = `
-Object {
-  "mutations": Array [
-    Object {
-      "patch": Object {
+{
+  "mutations": [
+    {
+      "patch": {
         "id": "movie_1",
-        "set": Object {
-          "metadata.poster.asset": Object {
+        "set": {
+          "metadata.poster.asset": {
             "_ref": "image-newAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "metadata.poster": Object {
+        "setIfMissing": {
+          "metadata.poster": {
             "_type": "image",
           },
         },
@@ -75,803 +75,803 @@ Object {
 `;
 
 exports[`will upload once but batch patches: batch patching (batch #1) 1`] = `
-Object {
-  "mutations": Array [
-    Object {
-      "patch": Object {
+{
+  "mutations": [
+    {
+      "patch": {
         "id": "doc_1",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_2",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_3",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_4",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_5",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_6",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_7",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_8",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_9",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_10",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_11",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_12",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_13",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_14",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_15",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_16",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_17",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_18",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_19",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_20",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_21",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_22",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_23",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_24",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_25",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_26",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_27",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_28",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_29",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_30",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_31",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_32",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_33",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_34",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_35",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_36",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_37",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_38",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_39",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_40",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_41",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_42",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_43",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_44",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_45",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_46",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_47",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_48",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_49",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_50",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
@@ -882,163 +882,163 @@ Object {
 `;
 
 exports[`will upload once but batch patches: batch patching (batch #2) 1`] = `
-Object {
-  "mutations": Array [
-    Object {
-      "patch": Object {
+{
+  "mutations": [
+    {
+      "patch": {
         "id": "doc_51",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_52",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_53",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_54",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_55",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_56",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_57",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_58",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_59",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },
       },
     },
-    Object {
-      "patch": Object {
+    {
+      "patch": {
         "id": "doc_60",
-        "set": Object {
-          "some.path.asset": Object {
+        "set": {
+          "some.path.asset": {
             "_ref": "image-someAssetId",
             "_type": "reference",
           },
         },
-        "setIfMissing": Object {
-          "some.path": Object {
+        "setIfMissing": {
+          "some.path": {
             "_type": "image",
           },
         },

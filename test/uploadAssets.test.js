@@ -1,9 +1,8 @@
-import {expect, test} from '@jest/globals'
-
 const path = require('path')
 const fileUrl = require('file-url')
 const noop = require('lodash/noop')
 const nock = require('nock')
+const {expect, test} = require('@jest/globals')
 const uploadAssets = require('../src/uploadAssets')
 const mockAssets = require('./fixtures/mock-assets')
 const {getSanityClient} = require('./helpers')
