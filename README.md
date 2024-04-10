@@ -109,7 +109,7 @@ sanityImport(input, options)
 
 ## CLI-tool
 
-This functionality is built in to the `@sanity/cli` package as well as a standalone [@sanity/import-cli](https://www.npmjs.com/package/@sanity/import-cli) package.
+This functionality is built in to the `sanity` package as `sanity dataset import`, but is also usable through the `sanity-import` CLI tool, part of this package.
 
 ## Future improvements
 
