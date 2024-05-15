@@ -22,12 +22,12 @@
   "license": "MIT",
   "author": "Sanity.io <hello@sanity.io>",
   "main": "./src/import.js",
-  "files": [
-    "src"
-  ],
   "bin": {
     "sanity-import": "./src/cli.js"
   },
+  "files": [
+    "src"
+  ],
   "scripts": {
     "coverage": "jest --coverage",
     "lint": "eslint .",
@@ -36,7 +36,6 @@
   "dependencies": {
     "@sanity/asset-utils": "^1.2.5",
     "@sanity/generate-help-url": "^3.0.0",
-    "@sanity/import": "3.37.2",
     "@sanity/mutator": "3.37.2",
     "@sanity/uuid": "^3.0.1",
     "debug": "^4.3.4",
