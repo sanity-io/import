@@ -59,6 +59,7 @@
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@sanity/client": "^6.15.13",
+    "@sanity/semantic-release-preset": "^4.1.7",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-sanity": "^7.1.2",
@@ -70,5 +71,8 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
