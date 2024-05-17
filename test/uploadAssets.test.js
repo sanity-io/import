@@ -186,13 +186,71 @@ test('will upload once but batch patches', () => {
     return {statusCode: 400, body: {error: `"${uri}" should not be called`}}
   })
 
-  const upload = uploadAssets(mockAssets(imgFileUrl), {
+  const upload = uploadAssets(mockAssets([imgFileUrl]), {
     client,
     onProgress: noop,
     tag: 'my.import',
   })
   return expect(upload).resolves.toMatchObject({
     batches: 60,
+    failures: [],
+  })
+})
+
+test('groups patches per document', () => {
+  nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId1-200x200.gif').reply(200)
+  nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId2-200x200.png').reply(200)
+
+  let batch = 0
+  const client = getSanityClient((req) => {
+    const options = req.context.options
+    const uri = options.uri || options.url
+
+    if (uri.includes('/data/query') && uri.includes('22d5fceb6532643d0d84ffe09c40c481ecdf59e15a')) {
+      return {
+        body: {
+          result: {
+            _id: 'image-someAssetId1',
+            url: 'https://foo.bar.baz/images/foo/bar/someAssetId1-200x200.gif',
+          },
+        },
+      }
+    }
+
+    if (uri.includes('/data/query') && uri.includes('22a0173435d296aebd78641e24632ab8167db02cf0')) {
+      return {
+        body: {
+          result: {
+            _id: 'image-someAssetId2',
+            url: 'https://foo.bar.baz/images/foo/bar/someAssetId2-200x200.png',
+          },
+        },
+      }
+    }
+
+    if (uri.includes('/data/mutate')) {
+      const body = JSON.parse(options.body)
+      expect(body).toMatchSnapshot(`batch patching (batch #${++batch})`)
+      const results = body.mutations.map((mut) => ({
+        id: mut.patch.id,
+        operation: 'update',
+      }))
+      return {body: {results}}
+    }
+
+    return {statusCode: 400, body: {error: `"${uri}" should not be called`}}
+  })
+
+  const imgFileUrl1 = fileUrl(path.join(fixturesDir, 'img.gif'))
+  const imgFileUrl2 = fileUrl(path.join(fixturesDir, 'img1.png'))
+
+  const upload = uploadAssets(mockAssets([imgFileUrl1, imgFileUrl2]), {
+    client,
+    onProgress: noop,
+    tag: 'my.import',
+  })
+  return expect(upload).resolves.toMatchObject({
+    batches: 120,
     failures: [],
   })
 })
