@@ -1,3 +1,4 @@
+const {Readable} = require('stream')
 const fromArray = require('./importFromArray')
 const fromFolder = require('./importFromFolder')
 const fromStream = require('./importFromStream')
@@ -9,15 +10,23 @@ const importers = {
   fromArray,
 }
 
+/**
+ * Main import function that handles different types of input (stream, array, folder).
+ *
+ * @param {Readable|Array|string} input - The input data to import. Can be a readable stream, an array of documents, or a path to a directory.
+ * @param {Object} opts - Options for the import process.
+ * @returns {Promise<Object>} - The result of the import process.
+ * @throws {Error} - Throws an error if the input type is not supported.
+ */
 module.exports = async (input, opts) => {
   const options = await validateOptions(input, opts)
 
-  if (typeof input.pipe === 'function') {
+  if (input instanceof Readable) {
     return fromStream(input, options, importers)
   }
 
   if (Array.isArray(input)) {
-    return fromArray(input, options, importers)
+    return fromArray(input, options /*importers*/)
   }
 
   if (typeof input === 'string') {

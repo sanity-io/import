@@ -11,8 +11,14 @@ const peek = require('peek-stream')
 const tar = require('tar-fs')
 const getJsonStreamer = require('./util/getJsonStreamer')
 
-module.exports = (stream, options, importers) =>
-  new Promise((resolve, reject) => {
+/**
+ * @param {import('stream').Readable} stream
+ * @param {Object} options
+ * @param {Object} importers
+ * @returns {Promise<Object>} Result of the import process
+ */
+module.exports = function importFromStream(stream, options, importers) {
+  return new Promise((resolve, reject) => {
     const slugDate = new Date()
       .toISOString()
       .replace(/[^a-z0-9]/gi, '-')
@@ -77,6 +83,7 @@ module.exports = (stream, options, importers) =>
       resolve(importers.fromFolder(importBaseDir, {...options, deleteOnComplete: true}, importers))
     }
   })
+}
 
 function destroy(streams) {
   streams.forEach((stream) => {

@@ -1,3 +1,4 @@
+const {Readable} = require('stream')
 const fs = require('fs')
 const defaults = require('lodash/defaults')
 const noop = require('lodash/noop')
@@ -6,7 +7,25 @@ const clientMethods = ['fetch', 'transaction', 'config']
 const allowedOperations = ['create', 'createIfNotExists', 'createOrReplace']
 const defaultOperation = allowedOperations[0]
 
-function validateOptions(input, opts) {
+/**
+ * @param {Readable|Array|string} input
+ * @param {{
+ *   client: Object,
+ *   tag?: string,
+ *   operation?: 'create'|'createIfNotExists'|'createOrReplace',
+ *   onProgress?: Function,
+ *   allowAssetsInDifferentDataset?: boolean,
+ *   replaceAssets?: boolean,
+ *   skipCrossDatasetReferences?: boolean,
+ *   allowSystemDocuments?: boolean,
+ *   allowFailingReferences?: boolean,
+ *   assetConcurrency?: number,
+ *   [key: string]: any,
+ * }} opts
+ * @returns {Object} Validated and defaulted options
+ * @throws {Error} If input or options are invalid
+ */
+module.exports = function validateOptions(input, opts) {
   const options = defaults({}, opts, {
     tag: 'sanity.import',
     operation: defaultOperation,
@@ -15,6 +34,7 @@ function validateOptions(input, opts) {
     replaceAssets: false,
     skipCrossDatasetReferences: false,
     allowSystemDocuments: false,
+    allowFailingReferences: false,
   })
 
   if (!isValidInput(input)) {
@@ -65,12 +85,18 @@ function validateOptions(input, opts) {
   return options
 }
 
+/**
+ * Checks if the input is valid.
+ *
+ * @param {import('stream').Readable|Array|string} input - The input data to validate.
+ * @returns {boolean} - True if the input is valid, false otherwise.
+ */
 function isValidInput(input) {
   if (!input) {
     return false
   }
 
-  if (typeof input.pipe === 'function') {
+  if (input instanceof Readable) {
     return true
   }
 
@@ -85,6 +111,12 @@ function isValidInput(input) {
   return false
 }
 
+/**
+ * Checks if the given path is a directory.
+ *
+ * @param {string} path - The path to check.
+ * @returns {boolean} - True if the path is a directory, false otherwise.
+ */
 function isDirectory(path) {
   try {
     // eslint-disable-next-line no-sync
@@ -94,5 +126,3 @@ function isDirectory(path) {
     return false
   }
 }
-
-module.exports = validateOptions

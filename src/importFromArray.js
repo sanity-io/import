@@ -18,7 +18,17 @@ const ensureUniqueIds = require('./util/ensureUniqueIds')
 const validateAssetDocuments = require('./validateAssetDocuments')
 const validateCdrDatasets = require('./validateCdrDatasets')
 
-async function importDocuments(documents, options) {
+/**
+ * @param {Array<Object>} documents
+ * @param {{
+ *   onProgress: Function,
+ *   skipCrossDatasetReferences?: boolean,
+ *   allowSystemDocuments?: boolean,
+ *   assetsBase?: string
+ * }} options
+ * @returns {Promise<{numDocs: number, warnings: Array}>}
+ */
+module.exports = async function importFromArray(documents, options) {
   options.onProgress({step: 'Reading/validating data file'})
   documents.some(documentHasErrors.validate)
 
@@ -87,5 +97,3 @@ async function importDocuments(documents, options) {
   // Return number of documents imported
   return {numDocs: docsImported, warnings: assetWarnings}
 }
-
-module.exports = importDocuments

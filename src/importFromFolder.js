@@ -6,6 +6,13 @@ const globby = require('globby')
 const readJson = require('./util/readJson')
 const rimraf = require('./util/rimraf')
 
+/**
+ * @param {string} fromDir
+ * @param {{deleteOnComplete?: boolean}} options
+ * @param {Object} importers
+ * @returns {Promise<Object>} Result of the import process
+ * @throws {Error} If there are issues with the folder contents
+ */
 module.exports = async function importFromFolder(fromDir, options, importers) {
   debug('Importing from folder %s', fromDir)
   const dataFiles = await globby('*.ndjson', {cwd: fromDir, absolute: true})
@@ -25,9 +32,10 @@ module.exports = async function importFromFolder(fromDir, options, importers) {
   const stream = fs.createReadStream(dataFile)
   const images = await globby('images/*', {cwd: fromDir, absolute: true})
   const files = await globby('files/*', {cwd: fromDir, absolute: true})
-  const unreferencedAssets = []
-    .concat(images.map((imgPath) => `image#${getFileUrl(imgPath, {resolve: false})}`))
-    .concat(files.map((filePath) => `file#${getFileUrl(filePath, {resolve: false})}`))
+  const unreferencedAssets = [
+    ...images.map((imgPath) => `image#${getFileUrl(imgPath, {resolve: false})}`),
+    ...files.map((filePath) => `file#${getFileUrl(filePath, {resolve: false})}`),
+  ]
 
   debug('Queueing %d assets', unreferencedAssets.length)
 
