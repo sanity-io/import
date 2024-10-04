@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.37.6](https://github.com/sanity-io/import/compare/v3.37.5...v3.37.6) (2024-10-04)
+
+### Bug Fixes
+
+- **deps:** upgrade `@sanity/asset-utils`, `@sanity/mutator` ([#8](https://github.com/sanity-io/import/issues/8)) ([1ea9d45](https://github.com/sanity-io/import/commit/1ea9d45ecf085f71a14706063c07d42257d2d175))
+
 ## [3.37.5](https://github.com/sanity-io/import/compare/v3.37.4...v3.37.5) (2024-06-03)
 
 ### Bug Fixes
