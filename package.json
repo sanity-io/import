@@ -34,10 +34,10 @@
     "test": "jest"
   },
   "dependencies": {
-    "@sanity/asset-utils": "^1.2.5",
+    "@sanity/asset-utils": "^2.0.6",
     "@sanity/generate-help-url": "^3.0.0",
-    "@sanity/mutator": "3.37.2",
-    "@sanity/uuid": "^3.0.1",
+    "@sanity/mutator": "^3.59.1",
+    "@sanity/uuid": "^3.0.2",
     "debug": "^4.3.4",
     "file-url": "^2.0.2",
     "get-it": "^8.4.21",
