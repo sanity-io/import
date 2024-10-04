@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.37.7](https://github.com/sanity-io/import/compare/v3.37.6...v3.37.7) (2024-10-04)
+
+### Bug Fixes
+
+- **deps:** remove 21 dependencies by switching from globby to tinyglobby ([#6](https://github.com/sanity-io/import/issues/6)) ([8da04f2](https://github.com/sanity-io/import/commit/8da04f2c44a59ef11c413f25d69a1a1a990c9e6f))
+
 ## [3.37.6](https://github.com/sanity-io/import/compare/v3.37.5...v3.37.6) (2024-10-04)
 
 ### Bug Fixes
