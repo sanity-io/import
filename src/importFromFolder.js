@@ -2,13 +2,13 @@ const fs = require('fs')
 const path = require('path')
 const debug = require('debug')('sanity:import:folder')
 const getFileUrl = require('file-url')
-const globby = require('globby')
+const tinyglobby = require('tinyglobby')
 const readJson = require('./util/readJson')
 const rimraf = require('./util/rimraf')
 
 module.exports = async function importFromFolder(fromDir, options, importers) {
   debug('Importing from folder %s', fromDir)
-  const dataFiles = await globby('*.ndjson', {cwd: fromDir, absolute: true})
+  const dataFiles = await tinyglobby(['*.ndjson'], {cwd: fromDir, absolute: true})
   if (dataFiles.length === 0) {
     throw new Error(`No .ndjson file found in ${fromDir}`)
   }
