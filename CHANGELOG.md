@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.37.8](https://github.com/sanity-io/import/compare/v3.37.7...v3.37.8) (2024-10-09)
+
+### Bug Fixes
+
+- use named exports for tinyglobby ([#9](https://github.com/sanity-io/import/issues/9)) ([bd42389](https://github.com/sanity-io/import/commit/bd42389694176147700ae2d70bc0a3a2e0aba370))
+
 ## [3.37.7](https://github.com/sanity-io/import/compare/v3.37.6...v3.37.7) (2024-10-04)
 
 ### Bug Fixes
