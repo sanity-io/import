@@ -2,7 +2,7 @@ const fs = require('fs')
 const os = require('os')
 const path = require('path')
 const debug = require('debug')('sanity:import:stream')
-const tinyglobby = require('tinyglobby')
+const {glob} = require('tinyglobby')
 const gunzipMaybe = require('gunzip-maybe')
 const isTar = require('is-tar')
 const {noop} = require('lodash')
@@ -67,7 +67,7 @@ module.exports = (stream, options, importers) =>
     async function findAndImport() {
       debug('Tarball extracted, looking for ndjson')
 
-      const files = await tinyglobby.glob(['**/*.ndjson'], {cwd: outputPath, deep: 2, absolute: true})
+      const files = await glob(['**/*.ndjson'], {cwd: outputPath, deep: 2, absolute: true})
       if (!files.length) {
         reject(new Error('ndjson-file not found in tarball'))
         return
