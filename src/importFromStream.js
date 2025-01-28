@@ -6,10 +6,12 @@ const {glob} = require('tinyglobby')
 const gunzipMaybe = require('gunzip-maybe')
 const isTar = require('is-tar')
 const {noop} = require('lodash')
-const miss = require('mississippi')
+const concat = require('concat-stream')
+const {pipeline} = require('stream')
 const peek = require('peek-stream')
 const tar = require('tar-fs')
 const getJsonStreamer = require('./util/getJsonStreamer')
+const Pumpify = require('pumpify')
 
 module.exports = (stream, options, importers) =>
   new Promise((resolve, reject) => {
@@ -24,8 +26,8 @@ module.exports = (stream, options, importers) =>
     let isTarStream = false
     let jsonDocuments
 
-    const uncompressStream = miss.pipeline(gunzipMaybe(), untarMaybe())
-    miss.pipe(stream, uncompressStream, (err) => {
+    const uncompressStream = pipeline([gunzipMaybe(), untarMaybe()], () => undefined)
+    pipeline(stream, uncompressStream, (err) => {
       if (err) {
         reject(err)
         return
@@ -48,8 +50,9 @@ module.exports = (stream, options, importers) =>
 
         debug('Stream is an ndjson file, streaming JSON')
         const jsonStreamer = getJsonStreamer()
-        const concatter = miss.concat(resolveNdjsonStream)
-        const ndjsonStream = miss.pipeline(jsonStreamer, concatter)
+        const concatter = concat(resolveNdjsonStream)
+        const ndjsonStream = new Pumpify(jsonStreamer, concatter)
+
         ndjsonStream.on('error', (err) => {
           uncompressStream.emit('error', err)
           destroy([uncompressStream, jsonStreamer, concatter, ndjsonStream])
