@@ -20,7 +20,7 @@ const fetchFailClient = {
   fetch: () => Promise.reject(new Error('Some network err')),
 }
 
-test.skip('fails if asset download fails', () => {
+test('fails if asset download fails', () => {
   expect.assertions(1)
   const asset = Object.assign({}, fileAsset, {
     url: 'http://127.0.0.1:49999/img.gif',
@@ -39,7 +39,7 @@ test('fails if asset lookup fails', async () => {
   }
 })
 
-test.skip('will reuse an existing asset if it exists', () => {
+test('will reuse an existing asset if it exists', () => {
   nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId-200x200.png').reply(200)
 
   const client = getSanityClient((req) => {
@@ -78,7 +78,7 @@ test.skip('will reuse an existing asset if it exists', () => {
   })
 })
 
-test.skip('will upload an asset if asset doc exists but file does not', () => {
+test('will upload an asset if asset doc exists but file does not', () => {
   nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId-200x200.png').reply(404)
 
   const client = getSanityClient((req) => {
@@ -154,7 +154,7 @@ test('will upload asset that do not already exist', () => {
   })
 })
 
-test.skip('will upload once but batch patches', () => {
+test('will upload once but batch patches', () => {
   nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId-200x200.png').reply(200)
 
   let batch = 0
@@ -197,7 +197,7 @@ test.skip('will upload once but batch patches', () => {
   })
 })
 
-test.skip('groups patches per document', () => {
+test('groups patches per document', () => {
   nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId1-200x200.gif').reply(200)
   nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId2-200x200.png').reply(200)
 
