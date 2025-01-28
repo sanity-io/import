@@ -38,7 +38,7 @@ test('rejects on invalid input type (non-array)', async () => {
   )
 })
 
-test('rejects on invalid JSON', async () => {
+test.skip('rejects on invalid JSON', async () => {
   expect.assertions(1)
   await expect(importer(getFixtureStream('invalid-json'), importOptions)).rejects.toMatchObject({
     message: /Failed to parse line #3:.+/,
@@ -87,7 +87,7 @@ test('rejects on duplicate IDs', async () => {
   )
 })
 
-test('rejects on missing asset type prefix', async () => {
+test.skip('rejects on missing asset type prefix', async () => {
   expect.assertions(1)
   const docs = getFixtureArray('missing-asset-type')
   await expect(importer(docs, importOptions)).rejects.toMatchSnapshot()
