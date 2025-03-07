@@ -42,13 +42,7 @@ exports[`accepts an array as source: employee creation 1`] = `
 }
 `;
 
-exports[`rejects on missing asset type prefix 1`] = `
-[Error: Asset type is not specified.
-\`_sanityAsset\` values must be prefixed with a type, eg image@url or file@url.
-See document with ID "deadpool", path: image._sanityAsset]
-`;
-
-exports[`skips system documents if asked: employee creation 1`] = `
+exports[`allows system documents if asked: employee creation 1`] = `
 {
   "mutations": [
     {
@@ -102,7 +96,44 @@ exports[`skips system documents if asked: employee creation 1`] = `
 }
 `;
 
-exports[`skips system documents if asked: employee creation 2`] = `
+exports[`allows system documents if asked: employee creation 2`] = `
+{
+  "actions": [
+    {
+      "actionType": "sanity.action.release.import",
+      "attributes": {
+        "_id": "_.releases.summer",
+        "_type": "system.release",
+        "name": "summer",
+        "state": "active",
+      },
+      "ifExists": "fail",
+      "releaseId": "_.releases.summer",
+    },
+  ],
+}
+`;
+
+exports[`allows system documents if asked: employee creation 3`] = `
+{
+  "actions": [
+    {
+      "actionType": "sanity.action.release.import",
+      "attributes": {
+        "_id": "_.releases.winter",
+        "_type": "system.release",
+        "name": "winter",
+        "publishAt": "2055-12-01T00:00:00.000Z",
+        "state": "scheduled",
+      },
+      "ifExists": "fail",
+      "releaseId": "_.releases.winter",
+    },
+  ],
+}
+`;
+
+exports[`allows system documents if asked: employee creation 4`] = `
 {
   "mutations": [
     {
@@ -128,4 +159,47 @@ exports[`skips system documents if asked: employee creation 2`] = `
     },
   ],
 }
+`;
+
+exports[`allows system documents if asked: employee creation 5`] = `
+{
+  "actions": [
+    {
+      "actionType": "sanity.action.release.import",
+      "attributes": {
+        "_id": "_.releases.summer",
+        "_type": "system.release",
+        "name": "summer",
+        "state": "active",
+      },
+      "ifExists": "fail",
+      "releaseId": "_.releases.summer",
+    },
+  ],
+}
+`;
+
+exports[`allows system documents if asked: employee creation 6`] = `
+{
+  "actions": [
+    {
+      "actionType": "sanity.action.release.import",
+      "attributes": {
+        "_id": "_.releases.winter",
+        "_type": "system.release",
+        "name": "winter",
+        "publishAt": "2055-12-01T00:00:00.000Z",
+        "state": "scheduled",
+      },
+      "ifExists": "fail",
+      "releaseId": "_.releases.winter",
+    },
+  ],
+}
+`;
+
+exports[`rejects on missing asset type prefix 1`] = `
+[Error: Asset type is not specified.
+\`_sanityAsset\` values must be prefixed with a type, eg image@url or file@url.
+See document with ID "deadpool", path: image._sanityAsset]
 `;

@@ -18,16 +18,43 @@ async function importBatches(batches, options) {
 }
 
 function importBatch(options, progress, batch) {
-  const {client, operation, tag} = options
+  const {client, operation, releasesOperation, tag} = options
   const maxRetries = operation === 'create' ? 1 : 3
 
   return retryOnFailure(
-    () =>
-      batch
-        .reduce((trx, doc) => trx[operation](doc), client.transaction())
-        .commit({visibility: 'async', tag: suffixTag(tag, 'doc.create')})
-        .then(progress)
-        .then((res) => res.results.length),
+    () => {
+      const releaseDocs = batch.filter((doc) => doc._id.startsWith('_.releases.'))
+      const docs = batch.filter((doc) => !doc._id.startsWith('_.releases.'))
+
+      const docsTransaction =
+        docs.length > 0
+          ? docs
+              .reduce((trx, doc) => trx[operation](doc), client.transaction())
+              .commit({visibility: 'async', tag: suffixTag(tag, 'doc.create')})
+              .then(progress)
+              .then((res) => res.results.length)
+          : Promise.resolve(0)
+
+      const releasesAction = releaseDocs.map((doc) =>
+        client
+          .action({
+            actionType: 'sanity.action.release.import',
+            releaseId: doc._id,
+            attributes: doc,
+            ifExists: releasesOperation,
+          })
+          .then(() => 1)
+          .catch((err) => {
+            console.error(`Release import failed for ${doc._id}: `, err.message)
+            throw err
+          }),
+      )
+
+      return Promise.all([docsTransaction, ...releasesAction]).then((results) => {
+        const totalCount = results.reduce((sum, count) => sum + Number(count), 0)
+        return totalCount
+      })
+    },
     {maxRetries, isRetriable},
   )
 }
