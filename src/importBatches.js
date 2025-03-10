@@ -45,7 +45,8 @@ function importBatch(options, progress, batch) {
           })
           .then(() => 1)
           .catch((err) => {
-            console.error(`Release import failed for ${doc._id}: `, err.message)
+            err.message = `Release import failed for ${doc._id}: ${err.message}`
+
             throw err
           }),
       )
