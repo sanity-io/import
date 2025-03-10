@@ -2,6 +2,7 @@ const pMap = require('p-map')
 const progressStepper = require('./util/progressStepper')
 const retryOnFailure = require('./util/retryOnFailure')
 const suffixTag = require('./util/suffixTag')
+const {partition} = require('lodash')
 
 const DOCUMENT_IMPORT_CONCURRENCY = 6
 
@@ -23,8 +24,7 @@ function importBatch(options, progress, batch) {
 
   return retryOnFailure(
     () => {
-      const releaseDocs = batch.filter((doc) => doc._id.startsWith('_.releases.'))
-      const docs = batch.filter((doc) => !doc._id.startsWith('_.releases.'))
+      const [releaseDocs, docs] = partition(batch, (doc) => doc._id.startsWith('_.releases.'))
 
       const docsTransaction =
         docs.length > 0
