@@ -51,7 +51,7 @@ function importBatch(options, progress, batch) {
       )
 
       return Promise.all([docsTransaction, ...releasesAction]).then((results) => {
-        const totalCount = results.reduce((sum, count) => sum + Number(count), 0)
+        const totalCount = results.reduce((sum, count) => sum + count, 0)
         return totalCount
       })
     },
