@@ -155,6 +155,7 @@ let spinInterval
 
 const client = createClient({
   apiVersion: '2025-02-19',
+  apiHost: 'https://api.sanity.work',
   projectId,
   dataset,
   token,

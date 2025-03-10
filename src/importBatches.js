@@ -39,7 +39,7 @@ function importBatch(options, progress, batch) {
         client
           .action({
             actionType: 'sanity.action.release.import',
-            releaseId: doc._id,
+            releaseId: doc.name,
             attributes: doc,
             ifExists: releasesOperation,
           })

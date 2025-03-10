@@ -108,7 +108,7 @@ exports[`allows system documents if asked: employee creation 2`] = `
         "state": "active",
       },
       "ifExists": "fail",
-      "releaseId": "_.releases.summer",
+      "releaseId": "summer",
     },
   ],
 }
@@ -127,7 +127,7 @@ exports[`allows system documents if asked: employee creation 3`] = `
         "state": "scheduled",
       },
       "ifExists": "fail",
-      "releaseId": "_.releases.winter",
+      "releaseId": "winter",
     },
   ],
 }
@@ -173,7 +173,7 @@ exports[`allows system documents if asked: employee creation 5`] = `
         "state": "active",
       },
       "ifExists": "fail",
-      "releaseId": "_.releases.summer",
+      "releaseId": "summer",
     },
   ],
 }
@@ -192,7 +192,7 @@ exports[`allows system documents if asked: employee creation 6`] = `
         "state": "scheduled",
       },
       "ifExists": "fail",
-      "releaseId": "_.releases.winter",
+      "releaseId": "winter",
     },
   ],
 }
