@@ -34,6 +34,7 @@ const cli = meow(
 
   Rarely used options (should generally not be used)
     --allow-assets-in-different-dataset Allow asset documents to reference different project/dataset
+    --allow-system-documents Imports system documents
 
   Examples
     # Import "./my-dataset.ndjson" into dataset "staging"
