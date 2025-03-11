@@ -136,6 +136,8 @@ if (!source) {
 }
 
 let operation = 'create'
+let releasesOperation = 'fail'
+
 if (flags.replace || flags.missing) {
   if (flags.replace && flags.missing) {
     printError('Cannot use both `--replace` and `--missing`')
@@ -143,6 +145,7 @@ if (flags.replace || flags.missing) {
   }
 
   operation = flags.replace ? 'createOrReplace' : 'createIfNotExists'
+  releasesOperation = flags.replace ? 'replace' : 'ignore'
 }
 
 let currentStep
@@ -151,7 +154,7 @@ let stepStart
 let spinInterval
 
 const client = createClient({
-  apiVersion: '1',
+  apiVersion: '2025-02-19',
   projectId,
   dataset,
   token,
@@ -170,6 +173,7 @@ getStream()
       assetConcurrency,
       replaceAssets,
       assetsBase: getAssetsBase(),
+      releasesOperation,
     }),
   )
   .then(({numDocs, warnings}) => {

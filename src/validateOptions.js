@@ -4,7 +4,9 @@ const noop = require('lodash/noop')
 
 const clientMethods = ['fetch', 'transaction', 'config']
 const allowedOperations = ['create', 'createIfNotExists', 'createOrReplace']
+const allowedReleasesOperations = ['fail', 'ignore', 'replace']
 const defaultOperation = allowedOperations[0]
+const defaultReleasesOperation = allowedReleasesOperations[0]
 
 function validateOptions(input, opts) {
   const options = defaults({}, opts, {
@@ -15,6 +17,7 @@ function validateOptions(input, opts) {
     replaceAssets: false,
     skipCrossDatasetReferences: false,
     allowSystemDocuments: false,
+    releasesOperation: defaultReleasesOperation,
   })
 
   if (!isValidInput(input)) {
@@ -47,6 +50,10 @@ function validateOptions(input, opts) {
 
   if (!allowedOperations.includes(options.operation)) {
     throw new Error(`Operation "${options.operation}" is not supported`)
+  }
+
+  if (!allowedReleasesOperations.includes(options.releasesOperation)) {
+    throw new Error(`Releases operation "${options.releasesOperation}" is not supported`)
   }
 
   if (options.assetConcurrency && options.assetConcurrency > 12) {

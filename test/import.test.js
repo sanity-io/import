@@ -7,7 +7,7 @@ const importer = require('../src/import')
 const {getSanityClient} = require('./helpers')
 
 const defaultClient = createClient({
-  apiVersion: '1',
+  apiVersion: '2025-02-19',
   projectId: 'foo',
   dataset: 'bar',
   useCdn: false,
@@ -159,18 +159,19 @@ test('can drop cross-dataset references', async () => {
   expect(res).toMatchObject({numDocs: 6, warnings: []})
 })
 
-test('skips system documents if asked', async () => {
+test('allows system documents if asked', async () => {
   const client = getSanityClient(getMockMutationHandler())
   let res = await importer(getFixtureStream('system-documents'), {
     client,
     allowSystemDocuments: true,
   })
-  expect(res).toMatchObject({numDocs: 6, warnings: []})
+  // Release system documents are an exception to this flag
+  expect(res).toMatchObject({numDocs: 8, warnings: []})
 
   res = await importer(getFixtureStream('system-documents'), {
     client,
   })
-  expect(res).toMatchObject({numDocs: 3, warnings: []})
+  expect(res).toMatchObject({numDocs: 5, warnings: []})
 })
 
 function getMockMutationHandler(match = 'employee creation') {
@@ -193,6 +194,17 @@ function getMockMutationHandler(match = 'employee creation') {
 
     if (uri.includes('/datasets')) {
       return {body: [{name: 'foo'}, {name: 'authors'}]}
+    }
+
+    if (uri.includes('/actions')) {
+      const body = JSON.parse(options.body)
+      if (typeof match === 'function') {
+        match(body)
+      } else {
+        expect(body).toMatchSnapshot(match)
+      }
+
+      return {body: [{TransactionID: 'foo'}]}
     }
 
     return {statusCode: 400, body: {error: `"${uri}" should not be called`}}

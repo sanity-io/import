@@ -32,8 +32,11 @@ async function importDocuments(documents, options) {
 
   let filteredDocuments = documents
   // Always filter out system documents unless explicitly allowed.
+  // Release system documents are an exception to this flag.
   if (options.allowSystemDocuments !== true) {
-    filteredDocuments = documents.filter((doc) => !doc._id?.startsWith('_.'))
+    filteredDocuments = documents.filter(
+      (doc) => doc._id?.startsWith('_.releases.') || !doc._id?.startsWith('_.'),
+    )
   }
 
   // Replace relative asset paths if one is defined

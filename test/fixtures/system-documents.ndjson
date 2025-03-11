@@ -4,3 +4,5 @@
 {"_id": "radhe", "_type": "employee", "name": "Radhe"}
 {"_id": "robin", "_type": "employee", "name": "Robin"}
 {"_id": "matt", "_type": "employee", "name": "Matt"}
+{"_id": "_.releases.summer", "_type": "system.release", "state": "active", "name": "summer"}
+{"_id": "_.releases.winter", "_type": "system.release", "state": "scheduled", "publishAt": "2055-12-01T00:00:00.000Z", "name": "winter"}
