@@ -1,5 +1,4 @@
 const basename = require('path').basename
-const parseUrl = require('url').parse
 const {isSanityImageUrl} = require('@sanity/asset-utils')
 const debug = require('debug')('sanity:import')
 const pMap = require('p-map')
@@ -142,7 +141,7 @@ async function ensureAsset(asset, options, i) {
   const assetMeta = assetMap[`${type}-${sha1hash}`]
   const hasFilename = assetMeta && assetMeta.originalFilename
   const hasNonFilenameMeta = assetMeta && Object.keys(assetMap).length > 1
-  const {pathname} = parseUrl(url)
+  const {pathname} = URL.parse(url)
   const filename = hasFilename ? assetMeta.originalFilename : basename(pathname)
 
   // If it doesn't exist, we want to upload it

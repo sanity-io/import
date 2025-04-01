@@ -3,7 +3,6 @@ const {URL} = require('url')
 const {getIt} = require('get-it')
 const {promise} = require('get-it/middleware')
 const getUri = require('get-uri')
-const miss = require('mississippi')
 
 const retryOnFailure = require('./retryOnFailure')
 
@@ -22,7 +21,7 @@ async function getHashedBufferForUri(uri) {
       hash.update(chunk)
     })
 
-    miss.finished(stream, (err) => {
+    stream.on('end', (err) => {
       if (err) {
         reject(err)
         return
