@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.38.1](https://github.com/sanity-io/import/compare/v3.38.0...v3.38.1) (2025-04-01)
+
+### Bug Fixes
+
+- **deps:** bump tar-fs to v2.1.2 ([#15](https://github.com/sanity-io/import/issues/15)) ([e1142d9](https://github.com/sanity-io/import/commit/e1142d95fa6685fcb903e4ee590c09d3e1196714))
+
 ## [3.38.0](https://github.com/sanity-io/import/compare/v3.37.9...v3.38.0) (2025-03-11)
 
 ### Features
