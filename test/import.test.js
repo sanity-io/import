@@ -19,6 +19,7 @@ const importOptions = {client: defaultClient}
 const fixturesDir = path.join(__dirname, 'fixtures')
 const getFixturePath = (fix) => path.join(fixturesDir, fix)
 
+const getExportFixtureStream = (fix) => fs.createReadStream(getFixturePath(`${fix}.tar.gz`))
 const getNDJSONFixturePath = (fix) => getFixturePath(`${fix}.ndjson`)
 const getNDJSONFixtureStream = (fix) => fs.createReadStream(getNDJSONFixturePath(fix), 'utf8')
 const getNDJSONFixtureArray = (fix) =>
@@ -114,6 +115,13 @@ test('accepts a stream as source', async () => {
   expect.assertions(2)
   const client = getSanityClient(getMockMutationHandler())
   const res = await importer(getNDJSONFixtureStream('employees'), {client})
+  expect(res).toMatchObject({numDocs: 2, warnings: []})
+})
+
+test('accepts a tar.gz stream as source', async () => {
+  expect.assertions(2)
+  const client = getSanityClient(getMockMutationHandler())
+  const res = await importer(getExportFixtureStream('export'), {client})
   expect(res).toMatchObject({numDocs: 2, warnings: []})
 })
 
