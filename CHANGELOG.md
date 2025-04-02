@@ -5,6 +5,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.38.2](https://github.com/sanity-io/import/compare/v3.38.1...v3.38.2) (2025-04-02)
+
+### Bug Fixes
+
+- revert [#11](https://github.com/sanity-io/import/issues/11) ([ccd5d5a](https://github.com/sanity-io/import/commit/ccd5d5a20cd04601cdf05b2bfd25b27ba4f70ad1))
+- **test:** add test for accepting tar.gz archive as source ([a0bdfa9](https://github.com/sanity-io/import/commit/a0bdfa99bef53f07cf0c0de4cce3d2e7e27942de))
+
 ## [3.38.1](https://github.com/sanity-io/import/compare/v3.38.0...v3.38.1) (2025-04-01)
 
 ### Bug Fixes
