@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.38.3](https://github.com/sanity-io/import/compare/v3.38.2...v3.38.3) (2025-07-09)
+
+### Bug Fixes
+
+- **deps:** upgrade dependencies ([#18](https://github.com/sanity-io/import/issues/18)) ([ee107f7](https://github.com/sanity-io/import/commit/ee107f7e64aac2c37f584d259bd6fb14f47d42ce))
+
 ## [3.38.2](https://github.com/sanity-io/import/compare/v3.38.1...v3.38.2) (2025-04-02)
 
 ### Bug Fixes
