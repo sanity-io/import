@@ -1422,52 +1422,6 @@ exports[`will reuse an existing asset if it exists: single asset mutation 1`] = 
 }
 `;
 
-exports[`will upload an asset if asset doc exists but file does not: single create mutation 1`] = `
-{
-  "mutations": [
-    {
-      "patch": {
-        "id": "movie_1",
-        "set": {
-          "metadata.poster.asset": {
-            "_ref": "image-newAssetId",
-            "_type": "reference",
-          },
-        },
-        "setIfMissing": {
-          "metadata.poster": {
-            "_type": "image",
-          },
-        },
-      },
-    },
-  ],
-}
-`;
-
-exports[`will upload asset that do not already exist: single create mutation 1`] = `
-{
-  "mutations": [
-    {
-      "patch": {
-        "id": "movie_1",
-        "set": {
-          "metadata.poster.asset": {
-            "_ref": "image-newAssetId",
-            "_type": "reference",
-          },
-        },
-        "setIfMissing": {
-          "metadata.poster": {
-            "_type": "image",
-          },
-        },
-      },
-    },
-  ],
-}
-`;
-
 exports[`will upload once but batch patches: batch patching (batch #1) 1`] = `
 {
   "mutations": [
