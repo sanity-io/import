@@ -1,12 +1,12 @@
 import createDebug from 'debug'
-import getFileUrl from 'file-url'
 import fs from 'fs'
+import {rm} from 'fs/promises'
 import path from 'path'
 import {glob} from 'tinyglobby'
+import {pathToFileURL} from 'url'
 
 import type {AssetMap, ImportOptions, ImportResult} from './types.js'
-import readJson from './util/readJson.js'
-import rimraf from './util/rimraf.js'
+import {readJson} from './util/readJson.js'
 
 const debug = createDebug('sanity:import:folder')
 
@@ -24,7 +24,7 @@ interface ImportersContext {
   ) => Promise<ImportResult>
 }
 
-export default async function importFromFolder(
+export async function importFromFolder(
   fromDir: string,
   options: ImportOptions,
   importers: ImportersContext,
@@ -47,12 +47,8 @@ export default async function importFromFolder(
   const stream = fs.createReadStream(dataFile!)
   const images = await glob('images/*', {cwd: fromDir, absolute: true})
   const files = await glob('files/*', {cwd: fromDir, absolute: true})
-  const imageAssets = images.map(
-    (imgPath: string) => `image#${getFileUrl(imgPath, {resolve: false})}`,
-  )
-  const fileAssets = files.map(
-    (filePath: string) => `file#${getFileUrl(filePath, {resolve: false})}`,
-  )
+  const imageAssets = images.map((imgPath: string) => `image#${pathToFileURL(imgPath).href}`)
+  const fileAssets = files.map((filePath: string) => `file#${pathToFileURL(filePath).href}`)
   const unreferencedAssets: string[] = [...imageAssets, ...fileAssets]
 
   debug('Queueing %d assets', unreferencedAssets.length)
@@ -61,7 +57,7 @@ export default async function importFromFolder(
   const result = await importers.fromStream(stream, streamOptions, importers)
 
   if (options.deleteOnComplete) {
-    await rimraf(fromDir)
+    await rm(fromDir, {recursive: true, force: true})
   }
 
   return result

@@ -48,4 +48,4 @@ function batchDocuments(docs: SanityDocument[]): SanityDocument[][] {
   return batches
 }
 
-export default batchDocuments
+export {batchDocuments}

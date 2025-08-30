@@ -14,3 +14,5 @@
 # Dev-fixtures
 moviedb.ndjson
 dist
+
+.DS_Store

@@ -2,7 +2,7 @@ interface PathItem {
   path: (string | number)[]
 }
 
-export default function serializePath(item: PathItem): string {
+export function serializePath(item: PathItem): string {
   return item.path.reduce((target: string, part, i) => {
     const isIndex = typeof part === 'number'
     const isNumericStringKey = !isIndex && isFinite(Number(part))

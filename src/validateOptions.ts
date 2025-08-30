@@ -9,10 +9,7 @@ const allowedReleasesOperations = ['fail', 'ignore', 'replace'] as const
 const defaultOperation = allowedOperations[0]
 const defaultReleasesOperation = allowedReleasesOperations[0]
 
-export default function validateOptions(
-  input: ImportSource,
-  opts: Partial<ImportOptions>,
-): ImportOptions {
+export function validateOptions(input: ImportSource, opts: Partial<ImportOptions>): ImportOptions {
   const options = defaults({}, opts, {
     tag: 'sanity.import',
     operation: defaultOperation,

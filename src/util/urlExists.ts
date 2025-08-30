@@ -34,4 +34,4 @@ async function urlExists(url: string): Promise<boolean> {
   throw error!
 }
 
-export default urlExists
+export {urlExists}

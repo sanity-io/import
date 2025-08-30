@@ -1,1 +1,2 @@
-export default (tag: string, suffix: string): string => `${tag.replace(/\.+$/, '')}.${suffix}`
+export const suffixTag = (tag: string, suffix: string): string =>
+  `${tag.replace(/\.+$/, '')}.${suffix}`

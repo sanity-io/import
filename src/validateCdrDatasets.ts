@@ -3,7 +3,7 @@ import {get} from 'lodash-es'
 
 import type {ImportOptions, SanityDocument} from './types.js'
 
-export default async function validateCdrDatasets(
+export async function validateCdrDatasets(
   docs: SanityDocument[],
   options: ImportOptions,
 ): Promise<void> {

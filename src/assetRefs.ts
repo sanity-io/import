@@ -1,8 +1,8 @@
 import {extractWithPath} from '@sanity/mutator'
-import getFileUrl from 'file-url'
 import {get, set, unset} from 'lodash-es'
+import {pathToFileURL} from 'url'
 
-import serializePath from './serializePath.js'
+import {serializePath} from './serializePath.js'
 import type {SanityDocument} from './types.js'
 
 const assetKey = '_sanityAsset'
@@ -41,7 +41,7 @@ export function absolutifyPaths(doc: SanityDocument, absPath?: string): SanityDo
 
   const modifier = (value: string): string =>
     value
-      .replace(/file:\/\/\.\//i, `${getFileUrl(absPath, {resolve: false})}/`)
+      .replace(/file:\/\/\.\//i, `${pathToFileURL(absPath).href}/`)
       .replace(/(https?):\/\/\.\//, `$1://${absPath}/`)
 
   findAssetRefs(doc).forEach((path) => {

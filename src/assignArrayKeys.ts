@@ -36,4 +36,4 @@ function generateKey(length = 8): string {
   return alphaNum.slice(0, length)
 }
 
-export default assignArrayKeys
+export {assignArrayKeys}

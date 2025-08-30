@@ -3,7 +3,7 @@ import debug from 'debug'
 import pMap from 'p-map'
 
 import type {AssetDocument, ImportOptions, SanityDocument} from './types.js'
-import urlExists from './util/urlExists.js'
+import {urlExists} from './util/urlExists.js'
 
 const logger = debug('sanity:import:asset-validation')
 
@@ -20,7 +20,7 @@ const REQUIRED_PROPERTIES = {
   url: 'string',
 } as const
 
-export default async function validateAssetDocuments(
+export async function validateAssetDocuments(
   docs: SanityDocument[],
   options: ImportOptions,
 ): Promise<void> {

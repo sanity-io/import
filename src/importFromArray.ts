@@ -2,11 +2,11 @@ import createDebug from 'debug'
 import {flatten} from 'lodash-es'
 
 import {absolutifyPaths, getAssetRefs, unsetAssetRefs} from './assetRefs.js'
-import assignArrayKeys from './assignArrayKeys.js'
-import assignDocumentId from './assignDocumentId.js'
-import batchDocuments from './batchDocuments.js'
-import documentHasErrors from './documentHasErrors.js'
-import importBatches from './importBatches.js'
+import {assignArrayKeys} from './assignArrayKeys.js'
+import {assignDocumentId} from './assignDocumentId.js'
+import {batchDocuments} from './batchDocuments.js'
+import {documentHasErrors} from './documentHasErrors.js'
+import {importBatches} from './importBatches.js'
 import type {StrongRefsTask} from './references.js'
 import {
   cleanupReferences,
@@ -15,10 +15,10 @@ import {
   weakenStrongRefs,
 } from './references.js'
 import type {ImportOptions, ImportResult, SanityDocument} from './types.js'
-import uploadAssets, {type UploadAssetsResult} from './uploadAssets.js'
-import ensureUniqueIds from './util/ensureUniqueIds.js'
-import validateAssetDocuments from './validateAssetDocuments.js'
-import validateCdrDatasets from './validateCdrDatasets.js'
+import {uploadAssets, type UploadAssetsResult} from './uploadAssets.js'
+import {ensureUniqueIds} from './util/ensureUniqueIds.js'
+import {validateAssetDocuments} from './validateAssetDocuments.js'
+import {validateCdrDatasets} from './validateCdrDatasets.js'
 
 const debug = createDebug('sanity:import:array')
 
@@ -101,4 +101,4 @@ async function importDocuments(
   }
 }
 
-export default importDocuments
+export {importDocuments}

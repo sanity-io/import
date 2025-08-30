@@ -1,9 +1,9 @@
-import fileUrl from 'file-url'
 import nock from 'nock'
 import path from 'path'
+import {pathToFileURL} from 'url'
 import {afterEach, expect, test} from 'vitest'
 
-import uploadAssets from '../src/uploadAssets.js'
+import {uploadAssets} from '../src/uploadAssets.js'
 import mockAssets from './fixtures/mock-assets.js'
 import {getSanityClient} from './helpers/helpers.js'
 
@@ -14,7 +14,7 @@ afterEach(() => {
 const noop = () => {}
 
 const fixturesDir = path.join(__dirname, 'fixtures')
-const imgFileUrl = fileUrl(path.join(fixturesDir, 'img.gif'))
+const imgFileUrl = pathToFileURL(path.join(fixturesDir, 'img.gif')).href
 const fileAsset = {
   documentId: 'movie_1',
   path: 'metadata.poster',
@@ -247,8 +247,8 @@ test('groups patches per document', () => {
     return {statusCode: 400, body: {error: `"${uri}" should not be called`}}
   })
 
-  const imgFileUrl1 = fileUrl(path.join(fixturesDir, 'img.gif'))
-  const imgFileUrl2 = fileUrl(path.join(fixturesDir, 'img1.png'))
+  const imgFileUrl1 = pathToFileURL(path.join(fixturesDir, 'img.gif')).href
+  const imgFileUrl2 = pathToFileURL(path.join(fixturesDir, 'img1.png')).href
 
   const upload = uploadAssets(mockAssets([imgFileUrl1, imgFileUrl2]), {
     client,

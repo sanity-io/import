@@ -6,11 +6,11 @@ import {basename} from 'path'
 import {parse as parseUrl} from 'url'
 
 import type {ImportOptions} from './types.js'
-import getHashedBufferForUri from './util/getHashedBufferForUri.js'
-import progressStepper from './util/progressStepper.js'
-import retryOnFailure from './util/retryOnFailure.js'
-import suffixTag from './util/suffixTag.js'
-import urlExists from './util/urlExists.js'
+import {getHashedBufferForUri} from './util/getHashedBufferForUri.js'
+import {progressStepper} from './util/progressStepper.js'
+import {retryOnFailure} from './util/retryOnFailure.js'
+import {suffixTag} from './util/suffixTag.js'
+import {urlExists} from './util/urlExists.js'
 
 const logger = debug('sanity:import')
 
@@ -57,7 +57,7 @@ interface DocumentTasks {
   tasks: Array<{path: string; assetId: string}>
 }
 
-export default async function uploadAssets(
+export async function uploadAssets(
   assets: AssetRef[],
   options: ImportOptions,
 ): Promise<UploadAssetsResult> {

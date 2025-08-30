@@ -27,4 +27,4 @@ function progressStepper<T>(
   return step
 }
 
-export default progressStepper
+export {progressStepper}

@@ -19,7 +19,7 @@ function reduceDuplicateIds(ids: IdAccumulator, doc: SanityDocument): IdAccumula
   return ids
 }
 
-export default function ensureUniqueIds(documents: SanityDocument[]): void {
+export function ensureUniqueIds(documents: SanityDocument[]): void {
   const {duplicates} = documents.reduce(reduceDuplicateIds, {
     seen: [],
     duplicates: [],

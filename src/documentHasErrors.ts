@@ -1,6 +1,6 @@
 import type {SanityDocument} from './types.js'
 
-function documentHasErrors(doc: unknown): string | null {
+function documentHasErrorsFunction(doc: unknown): string | null {
   const document = doc as Partial<SanityDocument>
 
   if (typeof document._id !== 'undefined' && typeof document._id !== 'string') {
@@ -19,12 +19,10 @@ function documentHasErrors(doc: unknown): string | null {
 }
 
 function validate(doc: unknown, index: number): void {
-  const err = documentHasErrors(doc)
+  const err = documentHasErrorsFunction(doc)
   if (err) {
     throw new Error(`Failed to parse document at index #${index}: ${err}`)
   }
 }
 
-const documentHasErrorsExport = Object.assign(documentHasErrors, {validate})
-
-export default documentHasErrorsExport
+export const documentHasErrors = Object.assign(documentHasErrorsFunction, {validate})

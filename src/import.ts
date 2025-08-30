@@ -1,10 +1,10 @@
-import fromArray from './importFromArray.js'
-import fromFolder from './importFromFolder.js'
-import fromStream from './importFromStream.js'
+import {importDocuments as fromArray} from './importFromArray.js'
+import {importFromFolder as fromFolder} from './importFromFolder.js'
+import {importFromStream as fromStream} from './importFromStream.js'
 import type {ImportOptions, ImportResult, ImportSource} from './types.js'
-import validateOptions from './validateOptions.js'
+import {validateOptions} from './validateOptions.js'
 
-export default async function sanityImport(
+export function sanityImport(
   input: ImportSource,
   opts: Partial<ImportOptions>,
 ): Promise<ImportResult> {
@@ -42,3 +42,6 @@ export default async function sanityImport(
 
   throw new Error('Stream does not seem to be a readable stream, an array or a path to a directory')
 }
+
+// Maintain backward compatibility with default export
+export default sanityImport

@@ -1,21 +1,17 @@
 import createDebug from 'debug'
-import fs from 'fs'
 // @ts-expect-error - no type definitions available
 import gunzipMaybe from 'gunzip-maybe'
-// @ts-expect-error - no type definitions available
-import isTar from 'is-tar'
-import {noop} from 'lodash-es'
-import miss from 'mississippi'
 import os from 'os'
 import path from 'path'
-// @ts-expect-error - no type definitions available
-import peek from 'peek-stream'
+import {Transform} from 'stream'
+import {pipeline} from 'stream/promises'
 // @ts-expect-error - no type definitions available
 import tar from 'tar-fs'
 import {glob} from 'tinyglobby'
 
 import type {ImportOptions, ImportResult, SanityDocument} from './types.js'
-import getJsonStreamer from './util/getJsonStreamer.js'
+import {getJsonStreamer} from './util/getJsonStreamer.js'
+import {isTar} from './util/isTar.js'
 
 const debug = createDebug('sanity:import:stream')
 
@@ -33,103 +29,118 @@ interface ImportersContext {
   ) => Promise<ImportResult>
 }
 
-export default function importFromStream(
+// StreamRouter handles the peek functionality and routes to appropriate handler
+class StreamRouter extends Transform {
+  private firstChunk: Buffer | null = null
+  private outputPath: string
+  private targetStream: NodeJS.ReadWriteStream | null = null
+  private jsonDocuments: SanityDocument[] = []
+  private isTarFile = false
+
+  constructor(outputPath: string) {
+    super()
+    this.outputPath = outputPath
+  }
+
+  get isTar(): boolean {
+    return this.isTarFile
+  }
+
+  get documents(): SanityDocument[] {
+    return this.jsonDocuments
+  }
+
+  _transform(chunk: Buffer, _encoding: BufferEncoding, callback: (error?: Error | null) => void) {
+    if (!this.firstChunk) {
+      this.firstChunk = chunk
+
+      // Determine file type from first chunk
+      if (isTar(chunk)) {
+        debug('Stream is a tarball, extracting to %s', this.outputPath)
+        this.isTarFile = true
+        this.targetStream = tar.extract(this.outputPath) as NodeJS.ReadWriteStream
+      } else {
+        debug('Stream is an ndjson file, streaming JSON')
+        this.isTarFile = false
+        const jsonStreamer = getJsonStreamer()
+        this.targetStream = jsonStreamer
+
+        // Collect documents as they're parsed
+        jsonStreamer.on('data', (doc: SanityDocument) => {
+          this.jsonDocuments.push(doc)
+        })
+      }
+
+      // Set up error handling
+      if (this.targetStream) {
+        this.targetStream.on('error', (err: Error) => {
+          this.emit('error', err)
+        })
+      }
+    }
+
+    if (this.targetStream) {
+      const written = this.targetStream.write(chunk)
+      if (written) {
+        callback()
+      } else {
+        this.targetStream.once('drain', callback)
+      }
+    } else {
+      callback(new Error('Target stream not initialized'))
+    }
+  }
+
+  _flush(callback: (error?: Error | null) => void) {
+    if (this.targetStream) {
+      this.targetStream.end()
+      this.targetStream.on('finish', callback)
+      this.targetStream.on('error', callback)
+    } else {
+      callback()
+    }
+  }
+}
+
+export async function importFromStream(
   stream: NodeJS.ReadableStream,
   options: ImportOptions,
   importers: ImportersContext,
 ): Promise<ImportResult> {
-  return new Promise((resolve, reject) => {
-    const slugDate = new Date()
-      .toISOString()
-      .replace(/[^a-z0-9]/gi, '-')
-      .toLowerCase()
+  const slugDate = new Date()
+    .toISOString()
+    .replace(/[^a-z0-9]/gi, '-')
+    .toLowerCase()
 
-    const outputPath = path.join(os.tmpdir(), `sanity-import-${slugDate}`)
-    debug('Importing from stream')
+  const outputPath = path.join(os.tmpdir(), `sanity-import-${slugDate}`)
+  debug('Importing from stream')
 
-    let isTarStream = false
-    let jsonDocuments: SanityDocument[]
+  const router = new StreamRouter(outputPath)
 
-    const uncompressStream = (miss as any).pipeline(gunzipMaybe(), untarMaybe())
-    ;(miss as any).pipe(stream, uncompressStream, (err: any) => {
-      if (err) {
-        reject(err instanceof Error ? err : new Error(String(err)))
-        return
-      }
+  try {
+    await pipeline(stream, gunzipMaybe(), router)
 
-      if (isTarStream) {
-        findAndImport().catch(reject)
-      } else {
-        resolve(importers.fromArray(jsonDocuments, options))
-      }
-    })
-
-    function untarMaybe() {
-      return peek({newline: false, maxBuffer: 300}, (data: any, swap: any) => {
-        if (isTar(data)) {
-          debug('Stream is a tarball, extracting to %s', outputPath)
-          isTarStream = true
-          return swap(null, tar.extract(outputPath))
-        }
-
-        debug('Stream is an ndjson file, streaming JSON')
-        const jsonStreamer = getJsonStreamer()
-        const concatter = (miss as any).concat(resolveNdjsonStream)
-        const ndjsonStream = (miss as any).pipeline(jsonStreamer, concatter)
-        ndjsonStream.on('error', (err: any) => {
-          uncompressStream.emit('error', err)
-          destroy([uncompressStream, jsonStreamer, concatter, ndjsonStream])
-          reject(err instanceof Error ? err : new Error(String(err)))
-        })
-        return swap(null, ndjsonStream)
-      })
+    if (router.isTar) {
+      return await findAndImportFromTar(outputPath, options, importers)
     }
-
-    function resolveNdjsonStream(documents: SanityDocument[]) {
-      debug('Finished reading ndjson stream')
-      jsonDocuments = documents
-    }
-
-    async function findAndImport() {
-      debug('Tarball extracted, looking for ndjson')
-
-      const files = await glob(['**/*.ndjson'], {cwd: outputPath, deep: 2, absolute: true})
-      if (!files.length) {
-        reject(new Error('ndjson-file not found in tarball'))
-        return
-      }
-
-      const importBaseDir = path.dirname(files[0]!)
-      resolve(importers.fromFolder(importBaseDir, {...options, deleteOnComplete: true}, importers))
-    }
-  })
+    return await importers.fromArray(router.documents, options)
+  } catch (err) {
+    throw err instanceof Error ? err : new Error(String(err))
+  }
 }
 
-function destroy(streams: any[]) {
-  streams.forEach((stream) => {
-    if (isFS(stream)) {
-      // use close for fs streams to avoid fd leaks
-      stream.close(noop)
-    } else if (isRequest(stream)) {
-      // request.destroy just do .end - .abort is what we want
-      stream.abort()
-    } else if (isFn(stream.destroy)) {
-      stream.destroy()
-    }
-  })
-}
+async function findAndImportFromTar(
+  outputPath: string,
+  options: ImportOptions,
+  importers: ImportersContext,
+): Promise<ImportResult> {
+  debug('Tarball extracted, looking for ndjson')
 
-function isFn(fn: any): fn is (...args: any[]) => any {
-  return typeof fn === 'function'
-}
+  const files = await glob(['**/*.ndjson'], {cwd: outputPath, deep: 2, absolute: true})
+  if (!files.length) {
+    throw new Error('ndjson-file not found in tarball')
+  }
 
-function isFS(stream: any): stream is fs.ReadStream | fs.WriteStream {
-  return (
-    (stream instanceof (fs.ReadStream || noop) || stream instanceof (fs.WriteStream || noop)) &&
-    isFn(stream.close)
-  )
-}
-
-function isRequest(stream: any): stream is {setHeader: any; abort: () => void} {
-  return stream.setHeader && isFn(stream.abort)
+  const importBaseDir = path.dirname(files[0]!)
+  return importers.fromFolder(importBaseDir, {...options, deleteOnComplete: true}, importers)
 }

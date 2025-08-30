@@ -2,9 +2,9 @@ import crypto from 'crypto'
 import {getIt} from 'get-it'
 import {promise} from 'get-it/middleware'
 import {getUri} from 'get-uri'
-import miss from 'mississippi'
+import {finished} from 'stream/promises'
 
-import retryOnFailure from './retryOnFailure.js'
+import {retryOnFailure} from './retryOnFailure.js'
 
 const request = getIt([promise()])
 
@@ -13,31 +13,24 @@ interface HashedBuffer {
   sha1hash: string
 }
 
-export default (uri: string): Promise<HashedBuffer> =>
-  retryOnFailure(() => getHashedBufferForUri(uri))
+export const getHashedBufferForUri = (uri: string): Promise<HashedBuffer> =>
+  retryOnFailure(() => getHashedBufferForUriInternal(uri))
 
-async function getHashedBufferForUri(uri: string): Promise<HashedBuffer> {
+async function getHashedBufferForUriInternal(uri: string): Promise<HashedBuffer> {
   const stream = await getStream(uri)
-  return new Promise((resolve, reject) => {
-    const hash = crypto.createHash('sha1')
-    const chunks: Buffer[] = []
+  const hash = crypto.createHash('sha1')
+  const chunks: Buffer[] = []
 
-    stream.on('data', (chunk: Buffer) => {
-      chunks.push(chunk)
-      hash.update(chunk)
-    })
-    ;(miss as any).finished(stream, (err: Error | null) => {
-      if (err) {
-        reject(err)
-        return
-      }
-
-      resolve({
-        buffer: Buffer.concat(chunks),
-        sha1hash: hash.digest('hex'),
-      })
-    })
+  stream.on('data', (chunk: Buffer) => {
+    chunks.push(chunk)
+    hash.update(chunk)
   })
+
+  await finished(stream)
+  return {
+    buffer: Buffer.concat(chunks),
+    sha1hash: hash.digest('hex'),
+  }
 }
 
 async function getStream(uri: string): Promise<NodeJS.ReadableStream> {

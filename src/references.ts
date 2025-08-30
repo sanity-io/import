@@ -4,11 +4,11 @@ import debug from 'debug'
 import {get} from 'lodash-es'
 import pMap from 'p-map'
 
-import serializePath from './serializePath.js'
+import {serializePath} from './serializePath.js'
 import type {ImportOptions, Reference, SanityDocument, StreamReference} from './types.js'
-import progressStepper from './util/progressStepper.js'
-import retryOnFailure from './util/retryOnFailure.js'
-import suffixTag from './util/suffixTag.js'
+import {progressStepper} from './util/progressStepper.js'
+import {retryOnFailure} from './util/retryOnFailure.js'
+import {suffixTag} from './util/suffixTag.js'
 
 const logger = debug('sanity:import')
 

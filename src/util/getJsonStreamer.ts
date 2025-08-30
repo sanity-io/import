@@ -1,9 +1,9 @@
 import split from 'split2'
 
-import documentHasErrors from '../documentHasErrors.js'
+import {documentHasErrors} from '../documentHasErrors.js'
 import type {SanityDocument} from '../types.js'
 
-export default function getJsonStreamer(): NodeJS.ReadWriteStream {
+export function getJsonStreamer(): NodeJS.ReadWriteStream {
   let lineNumber = 0
 
   const getErrorMessage = (err: Error): string => {

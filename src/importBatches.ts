@@ -3,13 +3,13 @@ import {partition} from 'lodash-es'
 import pMap from 'p-map'
 
 import type {ImportOptions, SanityDocument} from './types.js'
-import progressStepper from './util/progressStepper.js'
-import retryOnFailure from './util/retryOnFailure.js'
-import suffixTag from './util/suffixTag.js'
+import {progressStepper} from './util/progressStepper.js'
+import {retryOnFailure} from './util/retryOnFailure.js'
+import {suffixTag} from './util/suffixTag.js'
 
 const DOCUMENT_IMPORT_CONCURRENCY = 6
 
-export default async function importBatches(
+export async function importBatches(
   batches: SanityDocument[][],
   options: ImportOptions,
 ): Promise<number> {

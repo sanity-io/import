@@ -1,6 +1,6 @@
 import {describe, expect, test, vi} from 'vitest'
 
-import retryOnFailure from '../src/util/retryOnFailure.js'
+import {retryOnFailure} from '../src/util/retryOnFailure.js'
 
 describe('retry on failure utility', () => {
   test('does not retry on initial success', async () => {

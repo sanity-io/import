@@ -10,10 +10,7 @@ interface RetryOptions {
   isRetriable?: (error: Error) => boolean
 }
 
-export default async function retryOnFailure<T>(
-  op: () => Promise<T>,
-  opts: RetryOptions = {},
-): Promise<T> {
+export async function retryOnFailure<T>(op: () => Promise<T>, opts: RetryOptions = {}): Promise<T> {
   const options = defaults({}, opts, {delay: 150, maxTries: 3, isRetriable: () => true})
 
   for (let attempt = 1; attempt <= options.maxTries; attempt++) {
