@@ -21,17 +21,32 @@
   },
   "license": "MIT",
   "author": "Sanity.io <hello@sanity.io>",
-  "main": "./src/import.js",
+  "type": "module",
+  "main": "./dist/import.js",
+  "types": "./dist/import.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/import.d.ts",
+      "import": "./dist/import.js"
+    },
+    "./package.json": "./package.json"
+  },
   "bin": {
-    "sanity-import": "./src/cli.js"
+    "sanity-import": "./dist/cli.js"
   },
   "files": [
+    "dist",
     "src"
   ],
   "scripts": {
-    "coverage": "jest --coverage",
-    "lint": "eslint .",
-    "test": "jest"
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "@sanity/asset-utils": "^2.2.1",
@@ -41,10 +56,10 @@
     "debug": "^4.4.1",
     "file-url": "^2.0.2",
     "get-it": "^8.6.10",
-    "get-uri": "^2.0.2",
+    "get-uri": "^6.0.5",
     "gunzip-maybe": "^1.4.1",
     "is-tar": "^1.0.0",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "meow": "^9.0.0",
     "mississippi": "^4.0.0",
     "ora": "^5.4.1",
@@ -57,20 +72,27 @@
     "tinyglobby": "^0.2.9"
   },
   "devDependencies": {
-    "@jest/globals": "^29.7.0",
     "@sanity/client": "^6.15.13",
     "@sanity/semantic-release-preset": "^5.0.0",
+    "@types/debug": "^4.1.12",
+    "@types/lodash-es": "^4.17.12",
+    "@types/node": "^24.3.0",
+    "@types/split2": "^4.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-sanity": "^7.1.4",
     "eslint-plugin-prettier": "^5.5.1",
-    "jest": "^29.7.0",
     "nock": "^13.2.9",
     "prettier": "^3.6.2",
-    "prettier-plugin-packagejson": "^2.5.18"
+    "prettier-plugin-packagejson": "^2.5.18",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20.0.0"
   },
   "publishConfig": {
     "access": "public"
