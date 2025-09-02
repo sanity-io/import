@@ -4,7 +4,9 @@ import {importFromStream as fromStream} from './importFromStream.js'
 import type {ImportersContext, ImportOptions, ImportResult, ImportSource} from './types.js'
 import {validateOptions} from './validateOptions.js'
 
-export async function sanityImport(
+export {DatasetImportCommand} from './commands/dataset/import.js'
+
+export function sanityImport(
   input: ImportSource,
   opts: Partial<ImportOptions>,
 ): Promise<ImportResult> {

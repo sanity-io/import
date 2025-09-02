@@ -42,10 +42,8 @@
     "src"
   ],
   "scripts": {
-    "build": "swc src -d dist --strip-leading-paths && tsc --emitDeclarationOnly",
+    "build": "swc src -d dist --strip-leading-paths && tsc -p tsconfig.build.json --emitDeclarationOnly",
     "postbuild": "oclif manifest",
-    "build:swc": "swc src -d dist --strip-leading-paths",
-    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "coverage": "vitest run --coverage",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",

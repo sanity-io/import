@@ -1,23 +1,51 @@
-/* eslint-disable no-console, no-process-env */
-
 import {Args, Command, Flags} from '@oclif/core'
 import type {SanityClient} from '@sanity/client'
 import {createClient} from '@sanity/client'
 import fs from 'fs'
 import {getIt} from 'get-it'
 import {promise} from 'get-it/middleware'
-import ora from 'ora'
+import ora, {type Ora} from 'ora'
 import path from 'path'
 import prettyMs from 'pretty-ms'
 
 import sanityImport from '../../import.js'
 import type {ImportOptions, ProgressEvent} from '../../types.js'
 
-const red = (str: string): string => `\u001b[31m${str}\u001b[39m`
-const yellow = (str: string): string => `\u001b[33m${str}\u001b[39m`
-const printError = (str: string): void => console.error(red(`ERROR: ${str}`))
+function getAssetsBase(source: string): string | undefined {
+  if (/^https:\/\//i.test(source) || source === '-') {
+    return undefined
+  }
 
-export default class DatasetImportCommand extends Command {
+  try {
+    const fileStats = fs.statSync(source)
+    const sourceIsFolder = fileStats.isDirectory()
+    return sourceIsFolder ? source : path.dirname(source)
+  } catch {
+    return undefined
+  }
+}
+
+async function getUriStream(uri: string): Promise<NodeJS.ReadableStream> {
+  const request = getIt([promise()])
+
+  try {
+    const response = (await request({url: uri, stream: true})) as {body: NodeJS.ReadableStream}
+    return response.body
+  } catch (err) {
+    throw new Error(`Error fetching source:\n${(err as Error).message}`)
+  }
+}
+
+function getPercentage(opts: ProgressEvent): string {
+  if (!opts.total) {
+    return ''
+  }
+
+  const percent = Math.floor(((opts.current || 0) / opts.total) * 100)
+  return `[${percent}%] `
+}
+
+export class DatasetImportCommand extends Command {
   static description = 'Import documents to a Sanity dataset'
 
   static examples = [
@@ -92,7 +120,7 @@ export default class DatasetImportCommand extends Command {
   }
 
   private currentStep?: string
-  private currentProgress?: any
+  private currentProgress?: Ora
   private stepStart?: number
   private spinInterval?: NodeJS.Timeout | null
 
@@ -115,11 +143,10 @@ export default class DatasetImportCommand extends Command {
 
     const {source} = args
 
-    const tokenString = Array.isArray(token) ? token[0] : token
+    const tokenString: string | undefined = Array.isArray(token) ? (token[0] as string) : token
 
     if (!tokenString) {
-      printError('Flag `--token` is required (or set SANITY_IMPORT_TOKEN)')
-      this.exit(1)
+      this.error('Flag `--token` is required (or set SANITY_IMPORT_TOKEN)', {exit: 1})
     }
 
     let operation: 'create' | 'createIfNotExists' | 'createOrReplace' = 'create'
@@ -140,8 +167,8 @@ export default class DatasetImportCommand extends Command {
     })
 
     try {
-      const stream = await this.getStream(source)
-      const assetsBase = this.getAssetsBase(source)
+      const stream = await DatasetImportCommand.getStream(source)
+      const assetsBase = getAssetsBase(source)
 
       const importOptions: ImportOptions = {
         client,
@@ -176,15 +203,14 @@ export default class DatasetImportCommand extends Command {
         }
       }
 
-      console.log('Done! Imported %d documents to dataset "%s"\n', numDocs, dataset)
+      this.log('Done! Imported %d documents to dataset "%s"\n', numDocs, dataset)
       this.printWarnings(warnings)
     } catch (err) {
       if (this.currentProgress) {
         this.currentProgress.fail()
       }
 
-      printError((err as Error).stack || (err as Error).message)
-      this.exit(1)
+      this.error((err as Error).stack || (err as Error).message, {exit: 1})
     }
   }
 
@@ -195,53 +221,26 @@ export default class DatasetImportCommand extends Command {
       return
     }
 
-    console.warn(
-      yellow('⚠ Failed to import the following %s:'),
-      assetFails.length > 1 ? 'assets' : 'asset',
-    )
+    this.warn('⚠ Failed to import the following %s:')
+    this.warn(assetFails.length > 1 ? 'assets' : 'asset')
 
     warnings.forEach((warning) => {
-      console.warn(`  ${warning.url}`)
+      this.warn(`  ${warning.url}`)
     })
   }
 
-  private async getStream(source: string): Promise<ReadableStream | NodeJS.ReadableStream> {
+  private static async getStream(source: string): Promise<ReadableStream | NodeJS.ReadableStream> {
     if (/^https:\/\//i.test(source)) {
-      return this.getUriStream(source)
+      return getUriStream(source)
     }
 
     return source === '-' ? process.stdin : fs.createReadStream(source)
   }
 
-  private getAssetsBase(source: string): string | undefined {
-    if (/^https:\/\//i.test(source) || source === '-') {
-      return undefined
-    }
-
-    try {
-      const fileStats = fs.statSync(source)
-      const sourceIsFolder = fileStats.isDirectory()
-      return sourceIsFolder ? source : path.dirname(source)
-    } catch {
-      return undefined
-    }
-  }
-
-  private async getUriStream(uri: string): Promise<NodeJS.ReadableStream> {
-    const request = getIt([promise()])
-
-    try {
-      const response = await request({url: uri, stream: true})
-      return response.body
-    } catch (err) {
-      throw new Error(`Error fetching source:\n${(err as Error).message}`)
-    }
-  }
-
   private onProgress(opts: ProgressEvent): void {
     const lengthComputable = opts.total
     const sameStep = opts.step === this.currentStep
-    const percent = this.getPercentage(opts)
+    const percent = getPercentage(opts)
 
     if (lengthComputable && opts.total === opts.current) {
       if (this.spinInterval) {
@@ -297,14 +296,5 @@ export default class DatasetImportCommand extends Command {
         }
       }, 60)
     }
-  }
-
-  private getPercentage(opts: ProgressEvent): string {
-    if (!opts.total) {
-      return ''
-    }
-
-    const percent = Math.floor(((opts.current || 0) / opts.total) * 100)
-    return `[${percent}%] `
   }
 }
