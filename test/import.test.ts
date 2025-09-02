@@ -5,7 +5,16 @@ import path from 'path'
 import {expect, test} from 'vitest'
 
 import importer from '../src/import.js'
+import type {SanityDocument} from '../src/types.js'
 import {getSanityClient} from './helpers/helpers.js'
+import type {
+  InjectFunction,
+  MockMutationsBody,
+  MockRequestEvent,
+  ParsedDocuments,
+  TestMutation,
+  TestRequestOptions,
+} from './helpers/types.js'
 
 const defaultClient = createClient({
   apiVersion: '2025-02-19',
@@ -24,11 +33,16 @@ const getExportFixtureStream = (fix: string) => fs.createReadStream(getFixturePa
 const getNDJSONFixturePath = (fix: string) => getFixturePath(`${fix}.ndjson`)
 const getNDJSONFixtureStream = (fix: string) =>
   fs.createReadStream(getNDJSONFixturePath(fix), 'utf8')
-const getNDJSONFixtureArray = (fix: string) =>
-  fs.readFileSync(getNDJSONFixturePath(fix), 'utf8').trim().split('\n').map(JSON.parse)
+const getNDJSONFixtureArray = (fix: string): ParsedDocuments =>
+  fs
+    .readFileSync(getNDJSONFixturePath(fix), 'utf8')
+    .trim()
+    .split('\n')
+    .map((line) => JSON.parse(line) as SanityDocument)
 
 test('rejects on invalid input type (null/undefined)', async () => {
   expect.assertions(1)
+  // @ts-expect-error - test invalid input type
   await expect(importer(null, importOptions)).rejects.toHaveProperty(
     'message',
     'Stream does not seem to be a readable stream, an array or a path to a directory',
@@ -37,6 +51,7 @@ test('rejects on invalid input type (null/undefined)', async () => {
 
 test('rejects on invalid input type (non-array)', async () => {
   expect.assertions(1)
+  // @ts-expect-error - test invalid input type
   await expect(importer({}, importOptions)).rejects.toHaveProperty(
     'message',
     'Stream does not seem to be a readable stream, an array or a path to a directory',
@@ -193,13 +208,15 @@ test('allows system documents if asked', async () => {
   expect(res).toMatchObject({numDocs: 5, warnings: []})
 })
 
-function getMockMutationHandler(match: string | ((body: any) => void) = 'employee creation') {
-  return (req: any) => {
-    const options = req.context.options
+function getMockMutationHandler(
+  match: string | ((body: MockMutationsBody) => void) = 'employee creation',
+): InjectFunction {
+  return (event: MockRequestEvent) => {
+    const options = event.context.options as TestRequestOptions
     const uri = options.uri || options.url
 
-    if (uri.includes('/data/mutate')) {
-      const body = JSON.parse(options.body)
+    if (uri?.includes('/data/mutate')) {
+      const body = JSON.parse(options.body as string) as MockMutationsBody
 
       if (typeof match === 'function') {
         match(body)
@@ -207,16 +224,16 @@ function getMockMutationHandler(match: string | ((body: any) => void) = 'employe
         expect(body).toMatchSnapshot(match)
       }
 
-      const results = body.mutations.map((mut: any) => extractDetailsFromMutation(mut))
+      const results = body.mutations.map((mut) => extractDetailsFromMutation(mut))
       return {body: {results}}
     }
 
-    if (uri.includes('/datasets')) {
+    if (uri?.includes('/datasets')) {
       return {body: [{name: 'foo'}, {name: 'authors'}]}
     }
 
-    if (uri.includes('/actions')) {
-      const body = JSON.parse(options.body)
+    if (uri?.includes('/actions')) {
+      const body = JSON.parse(options.body as string) as MockMutationsBody
       if (typeof match === 'function') {
         match(body)
       } else {
@@ -230,13 +247,7 @@ function getMockMutationHandler(match: string | ((body: any) => void) = 'employe
   }
 }
 
-function extractDetailsFromMutation(mut: {
-  patch?: {id: string}
-  create?: {_id: string}
-  createIfNotExists?: {_id: string}
-  createOrReplace?: {_id: string}
-  delete?: {id: string}
-}) {
+function extractDetailsFromMutation(mut: TestMutation) {
   if (mut.patch) {
     return {operation: 'update', id: mut.patch.id}
   }

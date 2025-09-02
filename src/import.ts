@@ -8,33 +8,39 @@ export function sanityImport(
   input: ImportSource,
   opts: Partial<ImportOptions>,
 ): Promise<ImportResult> {
-  const options = validateOptions(input, opts)
+  try {
+    const options = validateOptions(input, opts)
 
-  // Create the importers context to allow circular references
-  const importers: ImportersContext = {
-    fromStream: (stream, importOptions, ctx) => fromStream(stream, importOptions, ctx),
-    fromArray: (documents, importOptions) => fromArray(documents, importOptions),
-    fromFolder: (fromDir, importOptions, ctx) => fromFolder(fromDir, importOptions, ctx),
+    // Create the importers context to allow circular references
+    const importers: ImportersContext = {
+      fromStream: (stream, importOptions, ctx) => fromStream(stream, importOptions, ctx),
+      fromArray: (documents, importOptions) => fromArray(documents, importOptions),
+      fromFolder: (fromDir, importOptions, ctx) => fromFolder(fromDir, importOptions, ctx),
+    }
+
+    if (
+      typeof input === 'object' &&
+      input !== null &&
+      'pipe' in input &&
+      typeof input.pipe === 'function'
+    ) {
+      return fromStream(input, options, importers)
+    }
+
+    if (Array.isArray(input)) {
+      return fromArray(input, options)
+    }
+
+    if (typeof input === 'string') {
+      return fromFolder(input, options, importers)
+    }
+
+    throw new Error(
+      'Stream does not seem to be a readable stream, an array or a path to a directory',
+    )
+  } catch (error) {
+    return Promise.reject(error instanceof Error ? error : new Error(String(error)))
   }
-
-  if (
-    typeof input === 'object' &&
-    input !== null &&
-    'pipe' in input &&
-    typeof input.pipe === 'function'
-  ) {
-    return fromStream(input, options, importers)
-  }
-
-  if (Array.isArray(input)) {
-    return fromArray(input, options)
-  }
-
-  if (typeof input === 'string') {
-    return fromFolder(input, options, importers)
-  }
-
-  throw new Error('Stream does not seem to be a readable stream, an array or a path to a directory')
 }
 
 // Maintain backward compatibility with default export

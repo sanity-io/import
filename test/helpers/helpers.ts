@@ -1,8 +1,7 @@
 import {createClient, requester as defaultRequester} from '@sanity/client'
 import {injectResponse} from 'get-it/middleware'
 
-// eslint-disable-next-line no-empty-function
-const noop = () => {}
+import type {InjectFunction} from './types.js'
 
 process.on('unhandledRejection', (reason) => {
   // eslint-disable-next-line no-console
@@ -17,10 +16,17 @@ const defaultClientOptions = {
   useCdn: false,
 }
 
-export const getSanityClient = (inject = noop, opts = {}) => {
+export const getSanityClient = (
+  inject: InjectFunction = () => {
+    /* Default no-op inject function for testing */
+  },
+  opts: Record<string, unknown> = {},
+) => {
   const requester = defaultRequester.clone()
-  requester.use(injectResponse({inject}))
-  const req = {requester: requester}
-  const client = createClient(Object.assign(defaultClientOptions, req, opts))
+  const middleware = injectResponse({inject})
+  requester.use(middleware)
+  const req = {requester}
+  const clientOptions = {...defaultClientOptions, ...req, ...opts}
+  const client = createClient(clientOptions)
   return client
 }
