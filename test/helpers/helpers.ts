@@ -1,6 +1,7 @@
 import {createClient, requester as defaultRequester} from '@sanity/client'
 import {injectResponse} from 'get-it/middleware'
 
+// eslint-disable-next-line no-empty-function
 const noop = () => {}
 
 process.on('unhandledRejection', (reason) => {

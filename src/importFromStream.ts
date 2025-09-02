@@ -58,6 +58,8 @@ class StreamRouter extends Transform {
       if (isTar(chunk)) {
         debug('Stream is a tarball, extracting to %s', this.outputPath)
         this.isTarFile = true
+        // tar.extract returns an untyped stream from the untyped tar-fs library
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         this.targetStream = tar.extract(this.outputPath) as NodeJS.ReadWriteStream
       } else {
         debug('Stream is an ndjson file, streaming JSON')
@@ -118,6 +120,8 @@ export async function importFromStream(
   const router = new StreamRouter(outputPath)
 
   try {
+    // gunzipMaybe is an untyped library
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await pipeline(stream, gunzipMaybe(), router)
 
     if (router.isTar) {

@@ -5,7 +5,13 @@ import {get} from 'lodash-es'
 import pMap from 'p-map'
 
 import {serializePath} from './serializePath.js'
-import type {ImportOptions, Reference, SanityDocument, StreamReference} from './types.js'
+import type {
+  ImportOptions,
+  Reference,
+  SanityApiError,
+  SanityDocument,
+  StreamReference,
+} from './types.js'
 import {progressStepper} from './util/progressStepper.js'
 import {retryOnFailure} from './util/retryOnFailure.js'
 import {suffixTag} from './util/suffixTag.js'
@@ -53,12 +59,15 @@ export function cleanupReferences(doc: SanityDocument, options: ImportOptions): 
   const {targetProjectId, skipCrossDatasetReferences} = options
   extractWithPath('..[_ref]', doc)
     .map((match) => match.path.slice(0, -1))
-    .map((path) => ({path, ref: get(doc, path)}))
+    .map((path) => ({path, ref: get(doc, path) as StreamReference}))
     .forEach((item: RefPathItem) => {
       // We may want to skip cross-dataset references, eg when importing to other projects
       if (skipCrossDatasetReferences && '_dataset' in item.ref) {
         const leaf = item.path[item.path.length - 1]
-        const parent = item.path.length > 1 ? get(doc, item.path.slice(0, -1)) : doc
+        const parent =
+          item.path.length > 1
+            ? (get(doc, item.path.slice(0, -1)) as Record<string | number, unknown>)
+            : doc
         if (typeof leaf === 'string' || typeof leaf === 'number') {
           delete parent[leaf]
         }
@@ -71,8 +80,9 @@ export function cleanupReferences(doc: SanityDocument, options: ImportOptions): 
       }
 
       // Ensure cross-dataset references point to the same project ID as being imported to
-      if (typeof (item.ref as any)._projectId !== 'undefined') {
-        ;(item.ref as any)._projectId = targetProjectId
+      const refWithProjectId = item.ref as StreamReference & {_projectId?: string}
+      if (typeof refWithProjectId._projectId !== 'undefined') {
+        refWithProjectId._projectId = targetProjectId!
       }
     })
 
@@ -82,7 +92,7 @@ export function cleanupReferences(doc: SanityDocument, options: ImportOptions): 
 function findStrongRefs(doc: SanityDocument): RefPathItem[] {
   return extractWithPath('..[_ref]', doc)
     .map((match) => match.path.slice(0, -1))
-    .map((path) => ({path, ref: get(doc, path)}))
+    .map((path) => ({path, ref: get(doc, path) as StreamReference}))
     .filter((item) => item.ref._weak !== true)
 }
 
@@ -126,11 +136,12 @@ function unsetWeakBatch(
           progress()
           return res.results.length
         })
-        .catch((err) => {
-          err.step = 'strengthen-references'
-          throw err
+        .catch((err: Error) => {
+          const apiError = err as SanityApiError & {step?: string}
+          apiError.step = 'strengthen-references'
+          throw apiError
         }),
-    {isRetriable: (err: any) => !err.statusCode || err.statusCode !== 409},
+    {isRetriable: (err: SanityApiError) => !err.statusCode || err.statusCode !== 409},
   )
 }
 

@@ -4,6 +4,7 @@ import {promise} from 'get-it/middleware'
 import {getUri} from 'get-uri'
 import {finished} from 'stream/promises'
 
+import type {GetItResponse} from '../types.js'
 import {retryOnFailure} from './retryOnFailure.js'
 
 const request = getIt([promise()])
@@ -37,9 +38,8 @@ async function getStream(uri: string): Promise<NodeJS.ReadableStream> {
   const isHttp = /^https?:\/\//i.test(uri)
   const parsed = new URL(uri)
   if (isHttp) {
-    return request({url: parsed.href, stream: true}).then(
-      (res: {body: NodeJS.ReadableStream}) => res.body,
-    )
+    const res = (await request({url: parsed.href, stream: true})) as GetItResponse
+    return res.body
   }
 
   // For file, ftp, data urls

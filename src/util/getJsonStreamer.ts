@@ -15,7 +15,7 @@ export function getJsonStreamer(): NodeJS.ReadWriteStream {
 
   return split(parseRow)
 
-  function parseRow(this: any, row: string) {
+  function parseRow(this: NodeJS.ReadWriteStream, row: string) {
     lineNumber++
 
     if (!row) {
@@ -23,7 +23,7 @@ export function getJsonStreamer(): NodeJS.ReadWriteStream {
     }
 
     try {
-      const doc: SanityDocument = JSON.parse(row)
+      const doc = JSON.parse(row) as SanityDocument
       const error = documentHasErrors(doc)
       if (error) {
         throw new Error(error)

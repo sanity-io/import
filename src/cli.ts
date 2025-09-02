@@ -6,13 +6,13 @@ import {createClient} from '@sanity/client'
 import fs from 'fs'
 import {getIt} from 'get-it'
 import {promise} from 'get-it/middleware'
-import ora from 'ora'
+import ora, {type Ora} from 'ora'
 import path from 'path'
 import prettyMs from 'pretty-ms'
 import {parseArgs} from 'util'
 
 import sanityImport from './import.js'
-import type {ImportOptions, ProgressEvent} from './types.js'
+import type {GetItResponse, ImportOptions, ProgressEvent} from './types.js'
 
 interface CLIFlags {
   project?: string
@@ -177,7 +177,7 @@ if (flags.replace || flags.missing) {
 }
 
 let currentStep: string | undefined
-let currentProgress: any
+let currentProgress: Ora | null = null
 let stepStart: number
 let spinInterval: NodeJS.Timeout | null
 
@@ -223,8 +223,10 @@ getStream()
   })
   .then(({numDocs, warnings}) => {
     const timeSpent = prettyMs(Date.now() - stepStart, {secondsDecimalDigits: 2})
-    currentProgress.text = `[100%] ${currentStep} (${timeSpent})`
-    currentProgress.succeed()
+    if (currentProgress) {
+      currentProgress.text = `[100%] ${currentStep} (${timeSpent})`
+      currentProgress.succeed()
+    }
 
     console.log('Done! Imported %d documents to dataset "%s"\n', numDocs, dataset)
     printWarnings(warnings)
@@ -284,7 +286,7 @@ const request = getIt([promise()])
 
 async function getUriStream(uri: string): Promise<NodeJS.ReadableStream> {
   try {
-    const response = await request({url: uri, stream: true})
+    const response = (await request({url: uri, stream: true})) as GetItResponse
     return response.body
   } catch (err) {
     throw new Error(`Error fetching source:\n${(err as Error).message}`)
@@ -309,8 +311,10 @@ function onProgress(opts: ProgressEvent): void {
 
   if (sameStep) {
     const timeSpent = prettyMs(Date.now() - stepStart, {secondsDecimalDigits: 2})
-    currentProgress.text = `${percent}${opts.step} (${timeSpent})`
-    currentProgress.render()
+    if (currentProgress) {
+      currentProgress.text = `${percent}${opts.step} (${timeSpent})`
+      currentProgress.render()
+    }
     return
   }
 
@@ -325,7 +329,7 @@ function onProgress(opts: ProgressEvent): void {
     spinInterval = null
   }
 
-  if (currentProgress && currentProgress.succeed) {
+  if (currentProgress) {
     const timeSpent = prettyMs(Date.now() - prevStepStart, {
       secondsDecimalDigits: 2,
     })
@@ -340,8 +344,10 @@ function onProgress(opts: ProgressEvent): void {
       const timeSpent = prettyMs(Date.now() - stepStart, {
         secondsDecimalDigits: 2,
       })
-      currentProgress.text = `${percent}${opts.step} (${timeSpent})`
-      currentProgress.render()
+      if (currentProgress) {
+        currentProgress.text = `${percent}${opts.step} (${timeSpent})`
+        currentProgress.render()
+      }
     }, 60)
   }
 }

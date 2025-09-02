@@ -5,7 +5,7 @@ import pMap from 'p-map'
 import {basename} from 'path'
 import {parse as parseUrl} from 'url'
 
-import type {ImportOptions} from './types.js'
+import type {AssetFailure, AssetUploadError, ImportOptions, SanityFetchResponse} from './types.js'
 import {getHashedBufferForUri} from './util/getHashedBufferForUri.js'
 import {progressStepper} from './util/progressStepper.js'
 import {retryOnFailure} from './util/retryOnFailure.js'
@@ -29,15 +29,6 @@ export interface AssetRef {
 export interface AssetRefMapItem {
   documentId: string
   path: string
-}
-
-export interface AssetFailure {
-  type: 'asset'
-  url: string
-  documents: Array<{
-    documentId: string
-    path: string
-  }>
 }
 
 export interface UploadAssetsResult {
@@ -95,7 +86,7 @@ export async function uploadAssets(
   // to not set the asset references for the broken assets
   const ensureAssetExists = ensureAssetWithRetries.bind(null, options, progress)
   const ensureMethod = options.allowFailingAssets
-    ? (assetKey: string, i: number) => ensureAssetExists(assetKey, i).catch((err: any) => err)
+    ? (assetKey: string, i: number) => ensureAssetExists(assetKey, i).catch((err: Error) => err)
     : ensureAssetExists
 
   // Loop over all unique URLs and ensure they exist, and if not, upload them
@@ -136,16 +127,19 @@ async function ensureAssetWithRetries(
 ): Promise<string> {
   const [type, url] = assetKey.split('#', 2)
 
-  const {buffer, sha1hash} = await retryOnFailure(() => downloadAsset(url!, i)).catch((err) => {
-    progress()
-    err.type = type
-    err.url = url
-    err.message = err.message.includes(url)
-      ? err.message
-      : `Failed to download ${type} @ ${url}:\n${err.message}`
+  const {buffer, sha1hash} = await retryOnFailure(() => downloadAsset(url!, i)).catch(
+    (err: Error) => {
+      progress()
+      const assetError = err as AssetUploadError
+      assetError.type = type!
+      assetError.url = url!
+      assetError.message = assetError.message.includes(url!)
+        ? assetError.message
+        : `Failed to download ${type} @ ${url}:\n${assetError.message}`
 
-    throw err
-  })
+      throw assetError
+    },
+  )
 
   const asset = {buffer, sha1hash, type: type!, url: url!}
   return retryOnFailure(() => ensureAsset(asset, options, i))
@@ -153,15 +147,16 @@ async function ensureAssetWithRetries(
       progress()
       return result
     })
-    .catch((err) => {
+    .catch((err: Error) => {
       progress()
-      err.type = type
-      err.url = url
-      err.message = err.message.includes(url)
-        ? err.message
-        : `Failed to upload ${type} @ ${url}:\n${err.message}`
+      const assetError = err as AssetUploadError
+      assetError.type = type!
+      assetError.url = url!
+      assetError.message = assetError.message.includes(url!)
+        ? assetError.message
+        : `Failed to upload ${type} @ ${url}:\n${assetError.message}`
 
-      throw err
+      throw assetError
     })
 }
 
@@ -201,7 +196,7 @@ async function ensureAsset(asset: AssetData, options: ImportOptions, i: number):
 
   // If it doesn't exist, we want to upload it
   logger('[Asset #%d] Uploading %s with URL %s', i, type, url)
-  const uploadOptions: any = {
+  const uploadOptions: {tag: string; filename?: string} = {
     tag: suffixTag(tag, 'asset.upload'),
   }
   if (filename) {
@@ -228,11 +223,16 @@ async function getAssetDocumentIdForHash(
   attemptNum: number,
   tag: string,
 ): Promise<string | null> {
+  // eslint-disable-next-line no-warning-comments
   // @todo remove retry logic when client has reintroduced it
   try {
     const dataType = type === 'file' ? 'sanity.fileAsset' : 'sanity.imageAsset'
     const query = '*[_type == $dataType && sha1hash == $sha1hash][0]{_id, url}'
-    const assetDoc = await client.fetch(query, {dataType, sha1hash}, {tag})
+    const assetDoc: SanityFetchResponse | null = await client.fetch(
+      query,
+      {dataType, sha1hash},
+      {tag},
+    )
     if (!assetDoc || !assetDoc.url) {
       return null
     }
@@ -251,8 +251,9 @@ async function getAssetDocumentIdForHash(
       return getAssetDocumentIdForHash(client, type, sha1hash, attemptNum + 1, tag)
     }
 
-    ;(err as any).attempts = attemptNum
-    throw new Error(`Error while attempt to query Sanity API:\n${(err as any).message}`)
+    const errorWithAttempts = err as AssetUploadError
+    errorWithAttempts.attempts = attemptNum
+    throw new Error(`Error while attempt to query Sanity API:\n${errorWithAttempts.message}`)
   }
 }
 
@@ -268,9 +269,10 @@ function getUploadFailures(
       return failures
     }
 
+    const errorWithUrl = assetId as AssetUploadError
     return failures.concat({
       type: 'asset',
-      url: (assetId as any).url,
+      url: errorWithUrl.url,
       documents: documents
         ? documents.map(({documentId, path}) => ({
             documentId,

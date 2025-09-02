@@ -19,7 +19,7 @@ export interface AssetRef {
 export function unsetAssetRefs(doc: SanityDocument): SanityDocument {
   findAssetRefs(doc).forEach((path) => {
     const parentPath = path.slice(0, -1)
-    const parent = get(doc, parentPath)
+    const parent = get(doc, parentPath) as Record<string, unknown>
 
     // If the only key in the object is `_sanityAsset`, unset the whole thing,
     // as we will be using a `setIfMissing({[path]: {}})` patch to enforce it.
@@ -45,7 +45,8 @@ export function absolutifyPaths(doc: SanityDocument, absPath?: string): SanityDo
       .replace(/(https?):\/\/\.\//, `$1://${absPath}/`)
 
   findAssetRefs(doc).forEach((path) => {
-    set(doc, path, modifier(get(doc, path)))
+    const value = get(doc, path) as string
+    set(doc, path, modifier(value))
   })
 
   return doc
@@ -54,12 +55,15 @@ export function absolutifyPaths(doc: SanityDocument, absPath?: string): SanityDo
 export function getAssetRefs(doc: SanityDocument): AssetRef[] {
   return findAssetRefs(doc)
     .map((path) => validateAssetImportKey(path, doc))
-    .map((path) => ({
-      documentId: doc._id,
-      path: serializePath({path: path.filter(isNotAssetKey)}),
-      url: get(doc, path).replace(assetMatcher, '$2'),
-      type: get(doc, path).replace(assetMatcher, '$1'),
-    }))
+    .map((path) => {
+      const value = get(doc, path) as string
+      return {
+        documentId: doc._id,
+        path: serializePath({path: path.filter(isNotAssetKey)}),
+        url: value.replace(assetMatcher, '$2'),
+        type: value.replace(assetMatcher, '$1'),
+      }
+    })
 }
 
 function isNotAssetKey(segment: string | number): boolean {
@@ -74,7 +78,7 @@ export function validateAssetImportKey(
   path: (string | number)[],
   doc: SanityDocument,
 ): (string | number)[] {
-  if (!assetMatcher.test(get(doc, path))) {
+  if (!assetMatcher.test(get(doc, path) as string)) {
     throw new Error(
       [
         'Asset type is not specified.',

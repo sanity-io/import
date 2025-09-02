@@ -2,7 +2,7 @@ import {generateHelpUrl} from '@sanity/generate-help-url'
 import debug from 'debug'
 import pMap from 'p-map'
 
-import type {AssetDocument, ImportOptions, SanityDocument} from './types.js'
+import type {AssetDocument, AssetMetadata, ImportOptions, SanityDocument} from './types.js'
 import {urlExists} from './util/urlExists.js'
 
 const logger = debug('sanity:import:asset-validation')
@@ -90,9 +90,9 @@ async function ensureAssetUrlExists(assetDoc: AssetDocument): Promise<boolean> {
 function validateAssetDocumentProperties(assetDoc: AssetDocument): void {
   Object.keys(REQUIRED_PROPERTIES).forEach((prop) => {
     const expectedType = REQUIRED_PROPERTIES[prop as keyof typeof REQUIRED_PROPERTIES]
-    if (typeof (assetDoc as any)[prop] !== expectedType) {
-      const errorType =
-        typeof (assetDoc as any)[prop] === 'undefined' ? 'is missing' : 'has invalid type for'
+    const propValue = (assetDoc as Record<string, unknown>)[prop]
+    if (typeof propValue !== expectedType) {
+      const errorType = typeof propValue === 'undefined' ? 'is missing' : 'has invalid type for'
 
       throw new Error(`Asset document ${assetDoc._id} ${errorType} required property "${prop}"`)
     }
@@ -115,8 +115,9 @@ function validateImageMetadata(assetDoc: AssetDocument): void {
   }
 
   const dimensionProps = ['width', 'height', 'aspectRatio']
+  const metadata = assetDoc.metadata as AssetMetadata
   dimensionProps.forEach((prop) => {
-    if (typeof (assetDoc.metadata as any)?.dimensions?.[prop] !== 'number') {
+    if (typeof metadata.dimensions?.[prop as keyof typeof metadata.dimensions] !== 'number') {
       throw new Error(
         `Asset document ${assetDoc._id} is missing required property "metadata.dimensions.${prop}"`,
       )

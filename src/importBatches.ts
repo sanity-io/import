@@ -2,7 +2,13 @@ import type {MultipleMutationResult, Transaction} from '@sanity/client'
 import {partition} from 'lodash-es'
 import pMap from 'p-map'
 
-import type {ImportOptions, SanityDocument} from './types.js'
+import type {
+  ExtendedSanityClient,
+  ImportOptions,
+  ReleaseActionParams,
+  SanityApiError,
+  SanityDocument,
+} from './types.js'
 import {progressStepper} from './util/progressStepper.js'
 import {retryOnFailure} from './util/retryOnFailure.js'
 import {suffixTag} from './util/suffixTag.js'
@@ -39,7 +45,12 @@ function importBatch(
       const docsTransaction =
         docs.length > 0
           ? docs
-              .reduce((trx: Transaction, doc) => (trx as any)[operation](doc), client.transaction())
+              .reduce((trx: Transaction, doc) => {
+                if (operation === 'create') return trx.create(doc)
+                if (operation === 'createIfNotExists') return trx.createIfNotExists(doc)
+                if (operation === 'createOrReplace') return trx.createOrReplace(doc)
+                throw new Error(`Unknown operation: ${operation as string}`)
+              }, client.transaction())
               .commit({visibility: 'async', tag: suffixTag(tag, 'doc.create')})
               .then((res: MultipleMutationResult) => {
                 progress()
@@ -47,21 +58,21 @@ function importBatch(
               })
           : Promise.resolve(0)
 
-      const releasesAction = releaseDocs.map((doc: any) =>
-        (client as any)
-          .action({
-            actionType: 'sanity.action.release.import',
-            releaseId: doc.name,
-            attributes: doc,
-            ifExists: releasesOperation,
-          })
+      const releasesAction = releaseDocs.map((doc: SanityDocument) => {
+        const actionParams: ReleaseActionParams = {
+          actionType: 'sanity.action.release.import',
+          releaseId: doc.name as string,
+          attributes: doc,
+          ifExists: releasesOperation,
+        }
+        return (client as ExtendedSanityClient)
+          .action(actionParams)
           .then(() => 1)
-          .catch((err: any) => {
+          .catch((err: Error) => {
             err.message = `Release import failed for ${doc._id}: ${err.message}`
-
             throw err
-          }),
-      )
+          })
+      })
 
       return Promise.all([docsTransaction, ...releasesAction]).then((results) => {
         const totalCount = results.reduce((sum: number, count: number) => sum + count, 0)
@@ -72,6 +83,6 @@ function importBatch(
   )
 }
 
-function isRetriable(err: any): boolean {
+function isRetriable(err: SanityApiError): boolean {
   return !err.response || err.response.statusCode !== 409
 }

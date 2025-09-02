@@ -5,24 +5,10 @@ import path from 'path'
 import {glob} from 'tinyglobby'
 import {pathToFileURL} from 'url'
 
-import type {AssetMap, ImportOptions, ImportResult} from './types.js'
+import type {AssetMap, ImportersContext, ImportOptions, ImportResult} from './types.js'
 import {readJson} from './util/readJson.js'
 
 const debug = createDebug('sanity:import:folder')
-
-interface ImportersContext {
-  fromStream: (
-    stream: NodeJS.ReadableStream,
-    options: ImportOptions,
-    importers: ImportersContext,
-  ) => Promise<ImportResult>
-  fromArray: (documents: any[], options: ImportOptions) => Promise<ImportResult>
-  fromFolder: (
-    fromDir: string,
-    options: ImportOptions,
-    importers: ImportersContext,
-  ) => Promise<ImportResult>
-}
 
 export async function importFromFolder(
   fromDir: string,
@@ -39,7 +25,9 @@ export async function importFromFolder(
     throw new Error(`More than one .ndjson file found in ${fromDir} - only one is supported`)
   }
 
-  const assetMap = await readJson(path.join(fromDir, 'assets.json')).catch(() => ({}) as AssetMap)
+  const assetMap = await readJson<AssetMap>(path.join(fromDir, 'assets.json')).catch(
+    () => ({}) as AssetMap,
+  )
 
   const dataFile = dataFiles[0]
   debug('Importing from file %s', dataFile)

@@ -1,7 +1,7 @@
 import {importDocuments as fromArray} from './importFromArray.js'
 import {importFromFolder as fromFolder} from './importFromFolder.js'
 import {importFromStream as fromStream} from './importFromStream.js'
-import type {ImportOptions, ImportResult, ImportSource} from './types.js'
+import type {ImportersContext, ImportOptions, ImportResult, ImportSource} from './types.js'
 import {validateOptions} from './validateOptions.js'
 
 export function sanityImport(
@@ -11,16 +11,10 @@ export function sanityImport(
   const options = validateOptions(input, opts)
 
   // Create the importers context to allow circular references
-  const importers = {
-    fromStream: (stream: NodeJS.ReadableStream, importOptions: ImportOptions, ctx: any) =>
-      fromStream(stream, importOptions, ctx),
-    fromArray: (documents: any[], importOptions: ImportOptions) =>
-      fromArray(documents, importOptions),
-    fromFolder: (
-      fromDir: string,
-      importOptions: ImportOptions & {deleteOnComplete?: boolean},
-      ctx: any,
-    ) => fromFolder(fromDir, importOptions, ctx),
+  const importers: ImportersContext = {
+    fromStream: (stream, importOptions, ctx) => fromStream(stream, importOptions, ctx),
+    fromArray: (documents, importOptions) => fromArray(documents, importOptions),
+    fromFolder: (fromDir, importOptions, ctx) => fromFolder(fromDir, importOptions, ctx),
   }
 
   if (
