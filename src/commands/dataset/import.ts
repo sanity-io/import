@@ -136,6 +136,7 @@ export default class DatasetImportCommand extends Command {
       dataset,
       token: tokenString,
       useCdn: false,
+      requestTagPrefix: 'sanity.cli',
     })
 
     try {
@@ -152,7 +153,7 @@ export default class DatasetImportCommand extends Command {
         allowSystemDocuments: allowSystemDocuments || false,
         replaceAssets: replaceAssets || false,
         releasesOperation,
-        tag: '',
+        tag: 'sanity.import',
         targetProjectId: projectId,
         targetDataset: dataset,
       }

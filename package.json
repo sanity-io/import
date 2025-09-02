@@ -35,17 +35,6 @@
   "bin": {
     "sanity-import": "./bin/run.js"
   },
-  "oclif": {
-    "bin": "sanity-import",
-    "dirname": "sanity-import",
-    "commands": {
-      "strategy": "single",
-      "target": "./dist/commands/import.js"
-    },
-    "plugins": [
-      "@oclif/plugin-help"
-    ]
-  },
   "files": [
     "bin",
     "dist",
@@ -53,15 +42,28 @@
     "src"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "swc src -d dist --strip-leading-paths && tsc --emitDeclarationOnly",
+    "postbuild": "oclif manifest",
+    "build:swc": "swc src -d dist --strip-leading-paths",
+    "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly",
     "coverage": "vitest run --coverage",
-    "dev": "tsc --watch",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "postbuild": "oclif manifest",
     "prepublishOnly": "pnpm run build",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "watch": "swc src -d dist --strip-leading-paths --watch"
+  },
+  "oclif": {
+    "bin": "sanity-import",
+    "commands": {
+      "strategy": "single",
+      "target": "./dist/commands/dataset/import.js"
+    },
+    "dirname": "sanity-import",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
   },
   "dependencies": {
     "@oclif/core": "^4.5.2",
@@ -84,6 +86,8 @@
   "devDependencies": {
     "@sanity/client": "^6.15.13",
     "@sanity/semantic-release-preset": "^5.0.0",
+    "@swc/cli": "^0.7.8",
+    "@swc/core": "^1.13.5",
     "@types/debug": "^4.1.12",
     "@types/gunzip-maybe": "1.4.2",
     "@types/lodash-es": "^4.17.12",
@@ -93,6 +97,7 @@
     "@typescript-eslint/eslint-plugin": "^8.41.0",
     "@typescript-eslint/parser": "^8.41.0",
     "@vitest/coverage-v8": "3.2.4",
+    "chokidar": "^4.0.3",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-sanity": "^7.1.4",
