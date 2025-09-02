@@ -69,6 +69,9 @@ importers:
       '@types/debug':
         specifier: ^4.1.12
         version: 4.1.12
+      '@types/gunzip-maybe':
+        specifier: 1.4.2
+        version: 1.4.2
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
@@ -78,6 +81,9 @@ importers:
       '@types/split2':
         specifier: ^4.2.3
         version: 4.2.3
+      '@types/tar-fs':
+        specifier: 2.0.4
+        version: 2.0.4
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.41.0
         version: 8.41.0(@typescript-eslint/parser@8.41.0(eslint@8.57.1)(typescript@5.9.2))(eslint@8.57.1)(typescript@5.9.2)
@@ -623,6 +629,9 @@ packages:
   '@types/follow-redirects@1.14.4':
     resolution: {integrity: sha512-GWXfsD0Jc1RWiFmMuMFCpXMzi9L7oPDVwxUnZdg89kDNnqsRfUKXEtUYtA98A6lig1WXH/CYY/fvPW9HuN5fTA==}
 
+  '@types/gunzip-maybe@1.4.2':
+    resolution: {integrity: sha512-2uqXZg1jTCKE1Pjbab8qb74+f2+i9h/jz8rQ+jRR+zaNJF75zWwrpbX8/TjF4m56m3KFOg9umHdCJ074KwiVxg==}
+
   '@types/lodash-es@4.17.12':
     resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
 
@@ -643,6 +652,12 @@ packages:
 
   '@types/split2@4.2.3':
     resolution: {integrity: sha512-59OXIlfUsi2k++H6CHgUQKEb2HKRokUA39HY1i1dS8/AIcqVjtAAFdf8u+HxTWK/4FUHMJQlKSZ4I6irCBJ1Zw==}
+
+  '@types/tar-fs@2.0.4':
+    resolution: {integrity: sha512-ipPec0CjTmVDWE+QKr9cTmIIoTl7dFG/yARCM5MqK8i6CNLIG1P8x4kwDsOQY1ChZOZjH0wO9nvfgBvWl4R3kA==}
+
+  '@types/tar-stream@3.1.4':
+    resolution: {integrity: sha512-921gW0+g29mCJX0fRvqeHzBlE/XclDaAG0Ousy1LCghsOhvaKacDeRGEVzQP9IPfKn8Vysy7FEXAIxycpc/CMg==}
 
   '@types/uuid@8.3.4':
     resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
@@ -3034,6 +3049,10 @@ snapshots:
     dependencies:
       '@types/node': 24.3.0
 
+  '@types/gunzip-maybe@1.4.2':
+    dependencies:
+      '@types/node': 24.3.0
+
   '@types/lodash-es@4.17.12':
     dependencies:
       '@types/lodash': 4.17.20
@@ -3053,6 +3072,15 @@ snapshots:
       csstype: 3.1.3
 
   '@types/split2@4.2.3':
+    dependencies:
+      '@types/node': 24.3.0
+
+  '@types/tar-fs@2.0.4':
+    dependencies:
+      '@types/node': 24.3.0
+      '@types/tar-stream': 3.1.4
+
+  '@types/tar-stream@3.1.4':
     dependencies:
       '@types/node': 24.3.0
 

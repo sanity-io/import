@@ -13,6 +13,7 @@ import {parseArgs} from 'util'
 
 import sanityImport from './import.js'
 import type {GetItResponse, ImportOptions, ProgressEvent} from './types.js'
+import {isReadableStream} from './util/streamTypeGuards.js'
 
 interface CLIFlags {
   project?: string
@@ -219,7 +220,10 @@ getStream()
       importOptions.assetConcurrency = assetConcurrency
     }
 
-    return sanityImport(stream as NodeJS.ReadableStream, importOptions)
+    if (!isReadableStream(stream)) {
+      throw new Error('Invalid stream type - expected readable stream')
+    }
+    return sanityImport(stream, importOptions)
   })
   .then(({numDocs, warnings}) => {
     const timeSpent = prettyMs(Date.now() - stepStart, {secondsDecimalDigits: 2})

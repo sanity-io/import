@@ -6,6 +6,7 @@ import {finished} from 'stream/promises'
 
 import type {GetItResponse} from '../types.js'
 import {retryOnFailure} from './retryOnFailure.js'
+import {isReadableStream} from './streamTypeGuards.js'
 
 const request = getIt([promise()])
 
@@ -45,7 +46,10 @@ async function getStream(uri: string): Promise<NodeJS.ReadableStream> {
   // For file, ftp, data urls
   try {
     const stream = await getUri(uri)
-    return stream as NodeJS.ReadableStream
+    if (!isReadableStream(stream)) {
+      throw new Error(`Invalid stream type returned for URI: ${uri}`)
+    }
+    return stream
   } catch (err) {
     throw new Error(readError(uri, err as Error))
   }

@@ -5,6 +5,19 @@ import {afterEach, expect, test} from 'vitest'
 
 import type {ImportOptions} from '../src/types.js'
 import {uploadAssets} from '../src/uploadAssets.js'
+
+// Test helper to create minimal ImportOptions for uploadAssets tests
+function createTestImportOptions(overrides: Partial<ImportOptions>): ImportOptions {
+  return {
+    operation: 'createOrReplace',
+    allowAssetsInDifferentDataset: false,
+    replaceAssets: false,
+    skipCrossDatasetReferences: false,
+    allowSystemDocuments: false,
+    releasesOperation: 'ignore',
+    ...overrides,
+  } as ImportOptions
+}
 import mockAssets from './fixtures/mock-assets.js'
 import {getSanityClient} from './helpers/helpers.js'
 import type {MockMutationsBody, MockRequestEvent, TestRequestOptions} from './helpers/types.js'
@@ -83,11 +96,14 @@ test('will reuse an existing asset if it exists', () => {
   })
 
   return expect(
-    uploadAssets([fileAsset], {
-      client,
-      onProgress: noop,
-      tag: 'my.import',
-    } as unknown as ImportOptions),
+    uploadAssets(
+      [fileAsset],
+      createTestImportOptions({
+        client,
+        onProgress: noop,
+        tag: 'my.import',
+      }),
+    ),
   ).resolves.toMatchObject({
     batches: 1,
     failures: [],
@@ -130,11 +146,14 @@ test('will upload an asset if asset doc exists but file does not', () => {
   })
 
   return expect(
-    uploadAssets([fileAsset], {
-      client,
-      onProgress: noop,
-      tag: 'my.import',
-    } as unknown as ImportOptions),
+    uploadAssets(
+      [fileAsset],
+      createTestImportOptions({
+        client,
+        onProgress: noop,
+        tag: 'my.import',
+      }),
+    ),
   ).resolves.toMatchObject({
     batches: 1,
     failures: [],
@@ -167,11 +186,14 @@ test('will upload asset that do not already exist', () => {
   })
 
   return expect(
-    uploadAssets([fileAsset], {
-      client,
-      onProgress: noop,
-      tag: 'my.import',
-    } as unknown as ImportOptions),
+    uploadAssets(
+      [fileAsset],
+      createTestImportOptions({
+        client,
+        onProgress: noop,
+        tag: 'my.import',
+      }),
+    ),
   ).resolves.toMatchObject({
     batches: 1,
     failures: [],
@@ -213,11 +235,11 @@ test('will upload once but batch patches', () => {
   const upload = uploadAssets(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
     mockAssets([imgFileUrl]) as any,
-    {
+    createTestImportOptions({
       client,
       onProgress: noop,
       tag: 'my.import',
-    } as unknown as ImportOptions,
+    }),
   )
   return expect(upload).resolves.toMatchObject({
     batches: 60,
@@ -281,11 +303,11 @@ test('groups patches per document', () => {
   const upload = uploadAssets(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
     mockAssets([imgFileUrl1, imgFileUrl2]) as any,
-    {
+    createTestImportOptions({
       client,
       onProgress: noop,
       tag: 'my.import',
-    } as unknown as ImportOptions,
+    }),
   )
   return expect(upload).resolves.toMatchObject({
     batches: 120,

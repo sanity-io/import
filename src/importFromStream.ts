@@ -1,11 +1,9 @@
 import createDebug from 'debug'
-// @ts-expect-error - no type definitions available
 import gunzipMaybe from 'gunzip-maybe'
 import os from 'os'
 import path from 'path'
 import {Transform} from 'stream'
 import {pipeline} from 'stream/promises'
-// @ts-expect-error - no type definitions available
 import tar from 'tar-fs'
 import {glob} from 'tinyglobby'
 
@@ -33,7 +31,7 @@ interface ImportersContext {
 class StreamRouter extends Transform {
   private firstChunk: Buffer | null = null
   private outputPath: string
-  private targetStream: NodeJS.ReadWriteStream | null = null
+  private targetStream: NodeJS.WritableStream | null = null
   private jsonDocuments: SanityDocument[] = []
   private isTarFile = false
 
@@ -58,9 +56,8 @@ class StreamRouter extends Transform {
       if (isTar(chunk)) {
         debug('Stream is a tarball, extracting to %s', this.outputPath)
         this.isTarFile = true
-        // tar.extract returns an untyped stream from the untyped tar-fs library
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        this.targetStream = tar.extract(this.outputPath) as NodeJS.ReadWriteStream
+        // tar.extract returns a writable stream for extracting files
+        this.targetStream = tar.extract(this.outputPath)
       } else {
         debug('Stream is an ndjson file, streaming JSON')
         this.isTarFile = false
