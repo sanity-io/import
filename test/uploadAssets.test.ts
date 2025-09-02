@@ -3,6 +3,7 @@ import path from 'path'
 import {pathToFileURL} from 'url'
 import {afterEach, expect, test} from 'vitest'
 
+import type {ImportOptions} from '../src/types.js'
 import {uploadAssets} from '../src/uploadAssets.js'
 import mockAssets from './fixtures/mock-assets.js'
 import {getSanityClient} from './helpers/helpers.js'
@@ -82,7 +83,11 @@ test('will reuse an existing asset if it exists', () => {
   })
 
   return expect(
-    uploadAssets([fileAsset], {client, onProgress: noop, tag: 'my.import'}),
+    uploadAssets([fileAsset], {
+      client,
+      onProgress: noop,
+      tag: 'my.import',
+    } as unknown as ImportOptions),
   ).resolves.toMatchObject({
     batches: 1,
     failures: [],
@@ -125,7 +130,11 @@ test('will upload an asset if asset doc exists but file does not', () => {
   })
 
   return expect(
-    uploadAssets([fileAsset], {client, onProgress: noop, tag: 'my.import'}),
+    uploadAssets([fileAsset], {
+      client,
+      onProgress: noop,
+      tag: 'my.import',
+    } as unknown as ImportOptions),
   ).resolves.toMatchObject({
     batches: 1,
     failures: [],
@@ -158,7 +167,11 @@ test('will upload asset that do not already exist', () => {
   })
 
   return expect(
-    uploadAssets([fileAsset], {client, onProgress: noop, tag: 'my.import'}),
+    uploadAssets([fileAsset], {
+      client,
+      onProgress: noop,
+      tag: 'my.import',
+    } as unknown as ImportOptions),
   ).resolves.toMatchObject({
     batches: 1,
     failures: [],
@@ -197,11 +210,15 @@ test('will upload once but batch patches', () => {
     return {statusCode: 400, body: {error: `"${uri}" should not be called`}}
   })
 
-  const upload = uploadAssets(mockAssets([imgFileUrl]), {
-    client,
-    onProgress: noop,
-    tag: 'my.import',
-  })
+  const upload = uploadAssets(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+    mockAssets([imgFileUrl]) as any,
+    {
+      client,
+      onProgress: noop,
+      tag: 'my.import',
+    } as unknown as ImportOptions,
+  )
   return expect(upload).resolves.toMatchObject({
     batches: 60,
     failures: [],
@@ -261,11 +278,15 @@ test('groups patches per document', () => {
   const imgFileUrl1 = pathToFileURL(path.join(fixturesDir, 'img.gif')).href
   const imgFileUrl2 = pathToFileURL(path.join(fixturesDir, 'img1.png')).href
 
-  const upload = uploadAssets(mockAssets([imgFileUrl1, imgFileUrl2]), {
-    client,
-    onProgress: noop,
-    tag: 'my.import',
-  })
+  const upload = uploadAssets(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+    mockAssets([imgFileUrl1, imgFileUrl2]) as any,
+    {
+      client,
+      onProgress: noop,
+      tag: 'my.import',
+    } as unknown as ImportOptions,
+  )
   return expect(upload).resolves.toMatchObject({
     batches: 120,
     failures: [],

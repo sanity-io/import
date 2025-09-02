@@ -11,7 +11,6 @@ import type {
   InjectFunction,
   MockMutationsBody,
   MockRequestEvent,
-  ParsedDocuments,
   TestMutation,
   TestRequestOptions,
 } from './helpers/types.js'
@@ -33,7 +32,7 @@ const getExportFixtureStream = (fix: string) => fs.createReadStream(getFixturePa
 const getNDJSONFixturePath = (fix: string) => getFixturePath(`${fix}.ndjson`)
 const getNDJSONFixtureStream = (fix: string) =>
   fs.createReadStream(getNDJSONFixturePath(fix), 'utf8')
-const getNDJSONFixtureArray = (fix: string): ParsedDocuments =>
+const getNDJSONFixtureArray = (fix: string): SanityDocument[] =>
   fs
     .readFileSync(getNDJSONFixturePath(fix), 'utf8')
     .trim()
@@ -144,10 +143,10 @@ test('accepts a tar.gz stream as source', async () => {
 
 test('generates uuids for documents without id', async () => {
   expect.assertions(4)
-  const match = (body: {mutations: Array<{create: {_id: string}}>}) => {
-    expect(body.mutations[0].create._id).toMatch(uuidMatcher)
-    expect(body.mutations[1].create._id).toBe('pk')
-    expect(body.mutations[2].create._id).toMatch(uuidMatcher)
+  const match = (body: MockMutationsBody) => {
+    expect(body.mutations[0]?.create?._id).toMatch(uuidMatcher)
+    expect(body.mutations[1]?.create?._id).toBe('pk')
+    expect(body.mutations[2]?.create?._id).toMatch(uuidMatcher)
   }
 
   const client = getSanityClient(getMockMutationHandler(match))
@@ -156,15 +155,15 @@ test('generates uuids for documents without id', async () => {
 })
 
 test('references get _type, syncs _projectId by default', async () => {
-  const match = (body: {mutations: Array<{create: {_id: string}}>}) => {
+  const match = (body: MockMutationsBody) => {
     if (body.mutations.length !== 6) {
       return
     }
 
     const missingType = body.mutations.find((mut) => mut.create?._id === 'missing-type-ref')
     const cpr = body.mutations.find((mut) => mut.create?._id === 'cpr')
-    expect(missingType.create.author).toHaveProperty('_type', 'reference')
-    expect(cpr.create.author).toHaveProperty('_projectId', 'foo')
+    expect(missingType?.create?.author).toHaveProperty('_type', 'reference')
+    expect(cpr?.create?.author).toHaveProperty('_projectId', 'foo')
   }
   const client = getSanityClient(getMockMutationHandler(match))
   const res = await importer(getNDJSONFixtureStream('references'), {client})
@@ -172,7 +171,7 @@ test('references get _type, syncs _projectId by default', async () => {
 })
 
 test('can drop cross-dataset references', async () => {
-  const match = (body: {mutations: Array<{create: {_id: string}}>}) => {
+  const match = (body: MockMutationsBody) => {
     if (body.mutations.length !== 6) {
       return
     }
@@ -181,9 +180,9 @@ test('can drop cross-dataset references', async () => {
     const missingType = body.mutations.find((mut) => mut.create?._id === 'missing-type-ref')
     const cpr = body.mutations.find((mut) => mut.create?._id === 'cpr')
     const cdr = body.mutations.find((mut) => mut.create?._id === 'cdr')
-    expect(missingType.create.author).toHaveProperty('_type', 'reference')
-    expect(cpr.create).not.toHaveProperty('author')
-    expect(cdr.create).not.toHaveProperty('deep.author')
+    expect(missingType?.create?.author).toHaveProperty('_type', 'reference')
+    expect(cpr?.create).not.toHaveProperty('author')
+    expect(cdr?.create).not.toHaveProperty('deep.author')
   }
   const client = getSanityClient(getMockMutationHandler(match))
   const res = await importer(getNDJSONFixtureStream('references'), {

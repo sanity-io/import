@@ -1,7 +1,5 @@
 import type {HttpContext, MiddlewareResponse} from 'get-it'
 
-import type {SanityDocument} from '../../src/types.js'
-
 /**
  * Type for the inject function parameter structure used in get-it middleware
  */
@@ -23,18 +21,13 @@ export type InjectFunction = (
 ) => MockResponse
 
 /**
- * Type for parsed NDJSON documents array
- */
-export type ParsedDocuments = SanityDocument[]
-
-/**
  * Type for mutation structure used in Sanity API tests
  */
 export interface TestMutation {
   patch?: {id: string}
-  create?: {_id: string}
-  createIfNotExists?: {_id: string}
-  createOrReplace?: {_id: string}
+  create?: {_id: string; [key: string]: unknown}
+  createIfNotExists?: {_id: string; [key: string]: unknown}
+  createOrReplace?: {_id: string; [key: string]: unknown}
   delete?: {id: string}
 }
 
@@ -53,4 +46,11 @@ export interface TestRequestOptions {
  */
 export interface MockMutationsBody {
   mutations: TestMutation[]
+}
+
+/**
+ * Type for mutation with required create property (used in test match functions)
+ */
+export interface TestMutationWithCreate {
+  create: {_id: string; [key: string]: unknown}
 }

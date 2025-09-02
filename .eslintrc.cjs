@@ -8,7 +8,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 2023,
     sourceType: 'module',
-    project: './tsconfig.eslint.json',
+    project: './tsconfig.json',
   },
   extends: [
     'sanity',
