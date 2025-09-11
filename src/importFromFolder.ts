@@ -1,9 +1,10 @@
+import fs from 'node:fs'
+import {rm} from 'node:fs/promises'
+import path from 'node:path'
+import {pathToFileURL} from 'node:url'
+
 import createDebug from 'debug'
-import fs from 'fs'
-import {rm} from 'fs/promises'
-import path from 'path'
 import {glob} from 'tinyglobby'
-import {pathToFileURL} from 'url'
 
 import type {AssetMap, ImportersContext, ImportOptions, ImportResult} from './types.js'
 import {readJson} from './util/readJson.js'

@@ -1,8 +1,9 @@
-import crypto from 'crypto'
+import {createHash} from 'node:crypto'
+import {finished} from 'node:stream/promises'
+
 import {getIt} from 'get-it'
 import {promise} from 'get-it/middleware'
 import {getUri} from 'get-uri'
-import {finished} from 'stream/promises'
 
 import type {GetItResponse} from '../types.js'
 import {retryOnFailure} from './retryOnFailure.js'
@@ -20,7 +21,7 @@ export const getHashedBufferForUri = (uri: string): Promise<HashedBuffer> =>
 
 async function getHashedBufferForUriInternal(uri: string): Promise<HashedBuffer> {
   const stream = await getStream(uri)
-  const hash = crypto.createHash('sha1')
+  const hash = createHash('sha1')
   const chunks: Buffer[] = []
 
   stream.on('data', (chunk: Buffer) => {

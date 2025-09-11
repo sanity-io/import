@@ -15,11 +15,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       '@sanity/mutator':
-        specifier: ^3.98.0
-        version: 3.99.0(@types/react@19.1.12)
-      '@sanity/uuid':
-        specifier: ^3.0.2
-        version: 3.0.2
+        specifier: ^4.8.1
+        version: 4.8.1(@types/react@19.1.12)
       debug:
         specifier: ^4.4.1
         version: 4.4.1
@@ -35,9 +32,6 @@ importers:
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
-      meow:
-        specifier: ^13.2.0
-        version: 13.2.0
       ora:
         specifier: ^8.2.0
         version: 8.2.0
@@ -555,8 +549,8 @@ packages:
     resolution: {integrity: sha512-BQRCMeDlBxwnMbFtB61HUxFf9aSb4HNVrpfrC7IFVqFf4cwcc3o5H8/nlrL9U3cDFedbe4W0AXt1mQzwbY/ljw==}
     engines: {node: '>=14.18'}
 
-  '@sanity/client@7.10.0':
-    resolution: {integrity: sha512-3UV6pJupue7UAZh4g5n0lYjuRsIb4c6IoqMywVLMHYoSOeHJfgSzbexOPGMNqvF+KUywUA0GyFi9cAVeMKofvw==}
+  '@sanity/client@7.11.1':
+    resolution: {integrity: sha512-nvuyItcknj2qFH3FPqqZhjN94rHv7eRzuHveN2ZIhHTGhGYLp1zE7UfESMcNn+flL/Oik+Ctkp3jKB3z02NdHQ==}
     engines: {node: '>=20'}
 
   '@sanity/diff-match-patch@3.2.0':
@@ -572,8 +566,8 @@ packages:
   '@sanity/media-library-types@1.0.0':
     resolution: {integrity: sha512-RwBou7SybMbHkSeCn+3L/hbaFP77at3BesP67o8D8RrFiOgHX/h4ibw4yEauC1s09U9BE1MPq9K7ji+0XU57GA==}
 
-  '@sanity/mutator@3.99.0':
-    resolution: {integrity: sha512-CrX2B2OXYtjFpLQeUC971XiMeyOXyDaMK5qH150qYkg6sVuIdsPjN0kXyMhWR6LuTp96blUOUNPQhkTsfAo44w==}
+  '@sanity/mutator@4.8.1':
+    resolution: {integrity: sha512-0p/vdk1T1ap8ILW7z/VBnhtZPftQKKKSrUfviT5obxI3KAVOUJC5y58Ie8WUGkwKN5EQbKb+H80cMO0vvm/CTA==}
 
   '@sanity/semantic-release-preset@5.0.0':
     resolution: {integrity: sha512-2lCuU57OZW6WY7O8d4vjbpghQIc9lnxS9+dLnzrBYh8e6pA467DxlCNum4NgDeDyHxNh9HGXNalXEWJz8tec+A==}
@@ -581,8 +575,8 @@ packages:
     peerDependencies:
       semantic-release: ^24
 
-  '@sanity/types@3.99.0':
-    resolution: {integrity: sha512-a766U9VSoyOSWq+RZz9wsEo/Nnn+inDkEcdGu+rHFuygdepullB/RZpF2MxNsfUMCSPnajgG1Tm9lhwbSmlySA==}
+  '@sanity/types@4.8.1':
+    resolution: {integrity: sha512-L+BQS0Hngn3R+uuW3dRfIInBZvwCrgKD7ifDE6kZeG9j1+Mm5mjfIKV084j0htVAmmew1BURZGLS8/p2YwE41Q==}
     peerDependencies:
       '@types/react': 18 || 19
 
@@ -3029,7 +3023,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@sanity/client@7.10.0(debug@4.4.1)':
+  '@sanity/client@7.11.1(debug@4.4.1)':
     dependencies:
       '@sanity/eventsource': 5.0.2
       get-it: 8.6.10(debug@4.4.1)
@@ -3051,10 +3045,10 @@ snapshots:
 
   '@sanity/media-library-types@1.0.0': {}
 
-  '@sanity/mutator@3.99.0(@types/react@19.1.12)':
+  '@sanity/mutator@4.8.1(@types/react@19.1.12)':
     dependencies:
       '@sanity/diff-match-patch': 3.2.0
-      '@sanity/types': 3.99.0(@types/react@19.1.12)(debug@4.4.1)
+      '@sanity/types': 4.8.1(@types/react@19.1.12)(debug@4.4.1)
       '@sanity/uuid': 3.0.2
       debug: 4.4.1
       lodash: 4.17.21
@@ -3073,9 +3067,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@sanity/types@3.99.0(@types/react@19.1.12)(debug@4.4.1)':
+  '@sanity/types@4.8.1(@types/react@19.1.12)(debug@4.4.1)':
     dependencies:
-      '@sanity/client': 7.10.0(debug@4.4.1)
+      '@sanity/client': 7.11.1(debug@4.4.1)
       '@sanity/media-library-types': 1.0.0
       '@types/react': 19.1.12
     transitivePeerDependencies:

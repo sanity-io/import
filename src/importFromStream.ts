@@ -1,9 +1,10 @@
+import os from 'node:os'
+import path from 'node:path'
+import {Transform} from 'node:stream'
+import {pipeline} from 'node:stream/promises'
+
 import createDebug from 'debug'
 import gunzipMaybe from 'gunzip-maybe'
-import os from 'os'
-import path from 'path'
-import {Transform} from 'stream'
-import {pipeline} from 'stream/promises'
 import tar from 'tar-fs'
 import {glob} from 'tinyglobby'
 

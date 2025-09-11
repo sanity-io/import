@@ -1,4 +1,4 @@
-import {Readable, Writable} from 'stream'
+import {Readable, Writable} from 'node:stream'
 
 /**
  * Type guard to check if an unknown value is a readable stream

@@ -1,10 +1,11 @@
 /* eslint-disable no-sync */
+import fs from 'node:fs'
+import path from 'node:path'
+
 import {createClient} from '@sanity/client'
-import fs from 'fs'
-import path from 'path'
 import {expect, test} from 'vitest'
 
-import importer from '../src/import.js'
+import {sanityImport} from '../src/import.js'
 import type {SanityDocument} from '../src/types.js'
 import {getSanityClient} from './helpers/helpers.js'
 import type {
@@ -42,7 +43,7 @@ const getNDJSONFixtureArray = (fix: string): SanityDocument[] =>
 test('rejects on invalid input type (null/undefined)', async () => {
   expect.assertions(1)
   // @ts-expect-error - test invalid input type
-  await expect(importer(null, importOptions)).rejects.toHaveProperty(
+  await expect(sanityImport(null, importOptions)).rejects.toHaveProperty(
     'message',
     'Stream does not seem to be a readable stream, an array or a path to a directory',
   )
@@ -51,7 +52,7 @@ test('rejects on invalid input type (null/undefined)', async () => {
 test('rejects on invalid input type (non-array)', async () => {
   expect.assertions(1)
   // @ts-expect-error - test invalid input type
-  await expect(importer({}, importOptions)).rejects.toHaveProperty(
+  await expect(sanityImport({}, importOptions)).rejects.toHaveProperty(
     'message',
     'Stream does not seem to be a readable stream, an array or a path to a directory',
   )
@@ -60,7 +61,7 @@ test('rejects on invalid input type (non-array)', async () => {
 test('rejects on invalid JSON', async () => {
   expect.assertions(1)
   await expect(
-    importer(getNDJSONFixtureStream('invalid-json'), importOptions),
+    sanityImport(getNDJSONFixtureStream('invalid-json'), importOptions),
   ).rejects.toMatchObject({
     message: /Failed to parse line #3:.+/,
   })
@@ -69,7 +70,7 @@ test('rejects on invalid JSON', async () => {
 test('rejects on invalid `_id` property', async () => {
   expect.assertions(1)
   await expect(
-    importer(getNDJSONFixtureStream('invalid-id'), importOptions),
+    sanityImport(getNDJSONFixtureStream('invalid-id'), importOptions),
   ).rejects.toHaveProperty(
     'message',
     'Failed to parse line #2: Document contained an invalid "_id" property - must be a string',
@@ -79,7 +80,7 @@ test('rejects on invalid `_id` property', async () => {
 test('rejects on invalid `_id` property format', async () => {
   expect.assertions(1)
   await expect(
-    importer(getNDJSONFixtureStream('invalid-id-format'), importOptions),
+    sanityImport(getNDJSONFixtureStream('invalid-id-format'), importOptions),
   ).rejects.toHaveProperty(
     'message',
     'Failed to parse line #2: Document ID "pk#123" is not valid: Please use alphanumeric document IDs. Dashes (-) and underscores (_) are also allowed.',
@@ -89,7 +90,7 @@ test('rejects on invalid `_id` property format', async () => {
 test('rejects on missing `_type` property', async () => {
   expect.assertions(1)
   await expect(
-    importer(getNDJSONFixtureStream('missing-type'), importOptions),
+    sanityImport(getNDJSONFixtureStream('missing-type'), importOptions),
   ).rejects.toHaveProperty(
     'message',
     'Failed to parse line #3: Document did not contain required "_type" property of type string',
@@ -99,7 +100,7 @@ test('rejects on missing `_type` property', async () => {
 test('rejects on missing `_type` property (from array)', async () => {
   expect.assertions(1)
   await expect(
-    importer(getNDJSONFixtureArray('missing-type'), importOptions),
+    sanityImport(getNDJSONFixtureArray('missing-type'), importOptions),
   ).rejects.toHaveProperty(
     'message',
     'Failed to parse document at index #2: Document did not contain required "_type" property of type string',
@@ -109,35 +110,35 @@ test('rejects on missing `_type` property (from array)', async () => {
 test('rejects on duplicate IDs', async () => {
   expect.assertions(1)
   await expect(
-    importer(getNDJSONFixtureStream('duplicate-ids'), importOptions),
+    sanityImport(getNDJSONFixtureStream('duplicate-ids'), importOptions),
   ).rejects.toHaveProperty('message', 'Found 2 duplicate IDs in the source file:\n- pk\n- espen')
 })
 
 test('rejects on missing asset type prefix', async () => {
   expect.assertions(1)
   const docs = getNDJSONFixtureArray('missing-asset-type')
-  await expect(importer(docs, importOptions)).rejects.toMatchSnapshot()
+  await expect(sanityImport(docs, importOptions)).rejects.toMatchSnapshot()
 })
 
 test('accepts an array as source', async () => {
   expect.assertions(2)
   const docs = getNDJSONFixtureArray('employees')
   const client = getSanityClient(getMockMutationHandler())
-  const res = await importer(docs, {client})
+  const res = await sanityImport(docs, {client})
   expect(res).toMatchObject({numDocs: 2, warnings: []})
 })
 
 test('accepts a stream as source', async () => {
   expect.assertions(2)
   const client = getSanityClient(getMockMutationHandler())
-  const res = await importer(getNDJSONFixtureStream('employees'), {client})
+  const res = await sanityImport(getNDJSONFixtureStream('employees'), {client})
   expect(res).toMatchObject({numDocs: 2, warnings: []})
 })
 
 test('accepts a tar.gz stream as source', async () => {
   expect.assertions(2)
   const client = getSanityClient(getMockMutationHandler())
-  const res = await importer(getExportFixtureStream('export'), {client})
+  const res = await sanityImport(getExportFixtureStream('export'), {client})
   expect(res).toMatchObject({numDocs: 2, warnings: []})
 })
 
@@ -150,7 +151,7 @@ test('generates uuids for documents without id', async () => {
   }
 
   const client = getSanityClient(getMockMutationHandler(match))
-  const res = await importer(getNDJSONFixtureStream('valid-but-missing-ids'), {client})
+  const res = await sanityImport(getNDJSONFixtureStream('valid-but-missing-ids'), {client})
   expect(res).toMatchObject({numDocs: 3, warnings: []})
 })
 
@@ -166,7 +167,7 @@ test('references get _type, syncs _projectId by default', async () => {
     expect(cpr?.create?.author).toHaveProperty('_projectId', 'foo')
   }
   const client = getSanityClient(getMockMutationHandler(match))
-  const res = await importer(getNDJSONFixtureStream('references'), {client})
+  const res = await sanityImport(getNDJSONFixtureStream('references'), {client})
   expect(res).toMatchObject({numDocs: 6, warnings: []})
 })
 
@@ -185,7 +186,7 @@ test('can drop cross-dataset references', async () => {
     expect(cdr?.create).not.toHaveProperty('deep.author')
   }
   const client = getSanityClient(getMockMutationHandler(match))
-  const res = await importer(getNDJSONFixtureStream('references'), {
+  const res = await sanityImport(getNDJSONFixtureStream('references'), {
     client,
     skipCrossDatasetReferences: true,
   })
@@ -194,14 +195,14 @@ test('can drop cross-dataset references', async () => {
 
 test('allows system documents if asked', async () => {
   const client = getSanityClient(getMockMutationHandler())
-  let res = await importer(getNDJSONFixtureStream('system-documents'), {
+  let res = await sanityImport(getNDJSONFixtureStream('system-documents'), {
     client,
     allowSystemDocuments: true,
   })
   // Release system documents are an exception to this flag
   expect(res).toMatchObject({numDocs: 8, warnings: []})
 
-  res = await importer(getNDJSONFixtureStream('system-documents'), {
+  res = await sanityImport(getNDJSONFixtureStream('system-documents'), {
     client,
   })
   expect(res).toMatchObject({numDocs: 5, warnings: []})

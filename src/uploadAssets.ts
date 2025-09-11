@@ -1,9 +1,10 @@
+import {basename} from 'node:path'
+import {parse as parseUrl} from 'node:url'
+
 import {isSanityImageUrl} from '@sanity/asset-utils'
 import type {SanityClient, Transaction} from '@sanity/client'
 import debug from 'debug'
 import pMap from 'p-map'
-import {basename} from 'path'
-import {parse as parseUrl} from 'url'
 
 import type {AssetFailure, AssetUploadError, ImportOptions, SanityFetchResponse} from './types.js'
 import {getHashedBufferForUri} from './util/getHashedBufferForUri.js'

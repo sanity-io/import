@@ -1,6 +1,7 @@
+import {pathToFileURL} from 'node:url'
+
 import {extractWithPath} from '@sanity/mutator'
 import {get, set, unset} from 'lodash-es'
-import {pathToFileURL} from 'url'
 
 import {serializePath} from './serializePath.js'
 import type {SanityDocument} from './types.js'

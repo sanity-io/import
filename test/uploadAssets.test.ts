@@ -1,6 +1,7 @@
+import path from 'node:path'
+import {pathToFileURL} from 'node:url'
+
 import nock from 'nock'
-import path from 'path'
-import {pathToFileURL} from 'url'
 import {afterEach, expect, test} from 'vitest'
 
 import type {ImportOptions} from '../src/types.js'

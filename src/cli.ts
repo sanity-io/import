@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 /* eslint-disable no-console, no-process-env */
 
+import fs from 'node:fs'
+import path from 'node:path'
+import {parseArgs} from 'node:util'
+
 import type {SanityClient} from '@sanity/client'
 import {createClient} from '@sanity/client'
-import fs from 'fs'
 import {getIt} from 'get-it'
 import {promise} from 'get-it/middleware'
 import ora, {type Ora} from 'ora'
-import path from 'path'
 import prettyMs from 'pretty-ms'
-import {parseArgs} from 'util'
 
-import sanityImport from './import.js'
+import {sanityImport} from './import.js'
 import type {GetItResponse, ImportOptions, ProgressEvent} from './types.js'
 import {isReadableStream} from './util/streamTypeGuards.js'
 
@@ -65,9 +66,9 @@ const helpText = `
     --token = SANITY_IMPORT_TOKEN
 `
 
-const showHelp = (): void => {
+const showHelp = (exitCode = 0): void => {
   console.log(helpText)
-  process.exit(0)
+  process.exit(exitCode)
 }
 
 const {values: flags, positionals: input} = parseArgs({
@@ -146,22 +147,22 @@ const source = input[0]
 
 if (!projectId) {
   printError('Flag `--project` is required')
-  showHelp()
+  showHelp(1)
 }
 
 if (!dataset) {
   printError('Flag `--dataset` is required')
-  showHelp()
+  showHelp(1)
 }
 
 if (!token) {
   printError('Flag `--token` is required (or set SANITY_IMPORT_TOKEN)')
-  showHelp()
+  showHelp(1)
 }
 
 if (!source) {
   printError('Source file is required, use `-` to read from stdin')
-  showHelp()
+  showHelp(1)
 }
 
 let operation: 'create' | 'createIfNotExists' | 'createOrReplace' = 'create'
@@ -170,7 +171,7 @@ let releasesOperation: 'fail' | 'ignore' | 'replace' = 'fail'
 if (flags.replace || flags.missing) {
   if (flags.replace && flags.missing) {
     printError('Cannot use both `--replace` and `--missing`')
-    showHelp()
+    showHelp(1)
   }
 
   operation = flags.replace ? 'createOrReplace' : 'createIfNotExists'

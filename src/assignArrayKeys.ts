@@ -1,4 +1,5 @@
-import crypto from 'crypto'
+import {getRandomValues} from 'node:crypto'
+
 import {isPlainObject} from 'lodash-es'
 
 type PlainObject = Record<string, unknown>
@@ -30,10 +31,10 @@ function assignArrayKeys<T>(obj: T): T {
 }
 
 function generateKey(length = 8): string {
-  const bytes = crypto.randomBytes(length * 2)
-  const base64 = bytes.toString('base64')
-  const alphaNum = base64.replace(/[^a-z0-9]/gi, '')
-  return alphaNum.slice(0, length)
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
+  const bytes = new Uint8Array(length)
+  getRandomValues(bytes)
+  return Array.from(bytes, (b) => chars[b % chars.length]).join('')
 }
 
 export {assignArrayKeys}

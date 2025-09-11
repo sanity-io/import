@@ -1,4 +1,4 @@
-import {uuid} from '@sanity/uuid'
+import {randomUUID} from 'node:crypto'
 
 import type {SanityDocument} from './types.js'
 
@@ -7,5 +7,5 @@ export function assignDocumentId(doc: Partial<SanityDocument>): SanityDocument {
     return doc as SanityDocument
   }
 
-  return Object.assign({_id: uuid()}, doc) as SanityDocument
+  return {_id: randomUUID(), ...doc} as SanityDocument
 }

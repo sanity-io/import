@@ -5,7 +5,7 @@ import {absolutifyPaths, getAssetRefs, unsetAssetRefs} from './assetRefs.js'
 import {assignArrayKeys} from './assignArrayKeys.js'
 import {assignDocumentId} from './assignDocumentId.js'
 import {batchDocuments} from './batchDocuments.js'
-import {documentHasErrors} from './documentHasErrors.js'
+import {documentHasError} from './documentHasErrors.js'
 import {importBatches} from './importBatches.js'
 import type {StrongRefsTask} from './references.js'
 import {
@@ -15,7 +15,7 @@ import {
   weakenStrongRefs,
 } from './references.js'
 import type {ImportOptions, ImportResult, SanityDocument} from './types.js'
-import {uploadAssets, type UploadAssetsResult} from './uploadAssets.js'
+import {uploadAssets} from './uploadAssets.js'
 import {ensureUniqueIds} from './util/ensureUniqueIds.js'
 import {validateAssetDocuments} from './validateAssetDocuments.js'
 import {validateCdrDatasets} from './validateCdrDatasets.js'
@@ -27,7 +27,7 @@ async function importDocuments(
   options: ImportOptions,
 ): Promise<ImportResult> {
   options.onProgress({step: 'Reading/validating data file'})
-  documents.some(documentHasErrors.validate)
+  documents.forEach(documentHasError)
 
   // Validate that there are no duplicate IDs in the documents
   ensureUniqueIds(documents)
@@ -88,7 +88,7 @@ async function importDocuments(
 
   // Documents are imported, now proceed with post-import operations
   debug('Uploading assets')
-  const {failures: assetWarnings}: UploadAssetsResult = await uploadAssets(assetRefs, options)
+  const {failures: assetWarnings} = await uploadAssets(assetRefs, options)
 
   // Strengthen references
   debug('Strengthening references')

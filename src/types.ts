@@ -120,6 +120,7 @@ export interface ReleaseActionParams {
   ifExists: 'fail' | 'ignore' | 'replace'
 }
 
+// TODO: Replace with new version of @sanity/client when ready
 export type ExtendedSanityClient = SanityClient & {
   action(params: ReleaseActionParams): Promise<{success: boolean}>
 }

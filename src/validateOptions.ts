@@ -1,4 +1,5 @@
-import fs from 'fs'
+import fs from 'node:fs'
+
 import {defaults, noop} from 'lodash-es'
 
 import type {ImportOptions, ImportSource} from './types.js'

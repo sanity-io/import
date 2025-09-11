@@ -1,6 +1,6 @@
 import split from 'split2'
 
-import {documentHasErrors} from '../documentHasErrors.js'
+import {validateDocument} from '../documentHasErrors.js'
 import type {SanityDocument} from '../types.js'
 
 export function getJsonStreamer(): NodeJS.ReadWriteStream {
@@ -24,7 +24,7 @@ export function getJsonStreamer(): NodeJS.ReadWriteStream {
 
     try {
       const doc = JSON.parse(row) as SanityDocument
-      const error = documentHasErrors(doc)
+      const error = validateDocument(doc)
       if (error) {
         throw new Error(error)
       }

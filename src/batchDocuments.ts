@@ -5,7 +5,7 @@ const MAX_PAYLOAD_SIZE = 1024 * 256 // 256KB
 function batchDocuments(docs: SanityDocument[]): SanityDocument[][] {
   let currentBatch: SanityDocument[] = []
   let currentBatchSize = 0
-  const batches: SanityDocument[][] = [currentBatch]
+  const batches: Array<SanityDocument[]> = [currentBatch]
 
   docs.forEach((doc) => {
     const docSize = JSON.stringify(doc).length
