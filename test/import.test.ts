@@ -40,21 +40,19 @@ const getNDJSONFixtureArray = (fix: string): SanityDocument[] =>
     .split('\n')
     .map((line) => JSON.parse(line) as SanityDocument)
 
-test('rejects on invalid input type (null/undefined)', async () => {
+test('rejects on invalid input type (null/undefined)', () => {
   expect.assertions(1)
   // @ts-expect-error - test invalid input type
-  await expect(sanityImport(null, importOptions)).rejects.toHaveProperty(
-    'message',
-    'Stream does not seem to be a readable stream, an array or a path to a directory',
+  expect(() => sanityImport(null, importOptions)).toThrow(
+    'Input does not seem to be a readable stream, an array or a path to a directory',
   )
 })
 
-test('rejects on invalid input type (non-array)', async () => {
+test('rejects on invalid input type (non-array)', () => {
   expect.assertions(1)
   // @ts-expect-error - test invalid input type
-  await expect(sanityImport({}, importOptions)).rejects.toHaveProperty(
-    'message',
-    'Stream does not seem to be a readable stream, an array or a path to a directory',
+  expect(() => sanityImport({}, importOptions)).toThrow(
+    'Input does not seem to be a readable stream, an array or a path to a directory',
   )
 })
 

@@ -8,7 +8,7 @@ import ora, {type Ora} from 'ora'
 import path from 'path'
 import prettyMs from 'pretty-ms'
 
-import sanityImport from '../../import.js'
+import {sanityImport} from '../../import.js'
 import type {ImportOptions, ProgressEvent} from '../../types.js'
 
 function getAssetsBase(source: string): string | undefined {

@@ -24,7 +24,7 @@ export function validateOptions(input: ImportSource, opts: Partial<ImportOptions
 
   if (!isValidInput(input)) {
     throw new Error(
-      'Stream does not seem to be a readable stream, an array or a path to a directory',
+      'Input does not seem to be a readable stream, an array or a path to a directory',
     )
   }
 
