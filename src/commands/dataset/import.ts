@@ -1,10 +1,8 @@
-import {Args, Command, Flags} from '@oclif/core'
-import type {SanityClient} from '@sanity/client'
-import {createClient} from '@sanity/client'
+import {Args, Flags} from '@oclif/core'
+import {SanityCommand, spinner} from '@sanity/cli-core'
 import fs from 'fs'
 import {getIt} from 'get-it'
 import {promise} from 'get-it/middleware'
-import ora, {type Ora} from 'ora'
 import path from 'path'
 import prettyMs from 'pretty-ms'
 
@@ -45,10 +43,11 @@ function getPercentage(opts: ProgressEvent): string {
   return `[${percent}%] `
 }
 
-export class DatasetImportCommand extends Command {
-  static description = 'Import documents to a Sanity dataset'
+// eslint-disable-next-line no-use-before-define
+export class DatasetImportCommand extends SanityCommand<typeof DatasetImportCommand> {
+  static override description = 'Import documents to a Sanity dataset'
 
-  static examples = [
+  static override examples = [
     {
       description: 'Import "./my-dataset.ndjson" into dataset "staging"',
       command:
@@ -60,7 +59,7 @@ export class DatasetImportCommand extends Command {
     },
   ]
 
-  static flags = {
+  static override flags = {
     project: Flags.string({
       char: 'p',
       description: 'Project ID to import to',
@@ -112,7 +111,7 @@ export class DatasetImportCommand extends Command {
     }),
   }
 
-  static args = {
+  static override args = {
     source: Args.string({
       description: 'Source file (use "-" for stdin)',
       required: true,
@@ -120,11 +119,11 @@ export class DatasetImportCommand extends Command {
   }
 
   private currentStep?: string
-  private currentProgress?: Ora
+  private currentProgress?: ReturnType<typeof spinner>
   private stepStart?: number
   private spinInterval?: NodeJS.Timeout | null
 
-  async run(): Promise<void> {
+  public async run(): Promise<void> {
     const {args, flags} = await this.parse(DatasetImportCommand)
 
     const {
@@ -157,13 +156,12 @@ export class DatasetImportCommand extends Command {
       releasesOperation = replace ? 'replace' : 'ignore'
     }
 
-    const client: SanityClient = createClient({
+    const client = await this.getProjectApiClient({
       apiVersion: '2025-02-19',
       projectId,
       dataset,
-      token: tokenString,
-      useCdn: false,
-      requestTagPrefix: 'sanity.cli',
+      // TODO: Allow passing token via flag
+      // token: tokenString
     })
 
     try {
@@ -221,7 +219,7 @@ export class DatasetImportCommand extends Command {
       return
     }
 
-    this.warn('⚠ Failed to import the following %s:')
+    this.warn('Failed to import the following %s:')
     this.warn(assetFails.length > 1 ? 'assets' : 'asset')
 
     warnings.forEach((warning) => {
@@ -283,7 +281,7 @@ export class DatasetImportCommand extends Command {
       this.currentProgress.succeed()
     }
 
-    this.currentProgress = ora(`[0%] ${opts.step} (0.00s)`).start()
+    this.currentProgress = spinner(`[0%] ${opts.step} (0.00s)`).start()
 
     if (!lengthComputable) {
       this.spinInterval = setInterval(() => {
