@@ -21,56 +21,77 @@
   },
   "license": "MIT",
   "author": "Sanity.io <hello@sanity.io>",
-  "main": "./src/import.js",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/import.d.ts",
+      "import": "./dist/import.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/import.js",
+  "types": "./dist/import.d.ts",
   "bin": {
-    "sanity-import": "./src/cli.js"
+    "sanity-import": "./dist/cli.js"
   },
   "files": [
+    "dist",
     "src"
   ],
   "scripts": {
-    "coverage": "jest --coverage",
-    "lint": "eslint .",
-    "test": "jest"
+    "build": "tsc -p tsconfig.build.json",
+    "coverage": "vitest run --coverage",
+    "dev": "tsc --watch",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "prepublishOnly": "pnpm run build",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@sanity/asset-utils": "^2.2.1",
+    "@sanity/asset-utils": "^2.3.0",
     "@sanity/generate-help-url": "^3.0.0",
-    "@sanity/mutator": "^3.98.0",
-    "@sanity/uuid": "^3.0.2",
+    "@sanity/mutator": "^4.8.1",
     "debug": "^4.4.1",
-    "file-url": "^2.0.2",
     "get-it": "^8.6.10",
-    "get-uri": "^2.0.2",
-    "gunzip-maybe": "^1.4.1",
-    "is-tar": "^1.0.0",
-    "lodash": "^4.17.21",
-    "meow": "^9.0.0",
-    "mississippi": "^4.0.0",
-    "ora": "^5.4.1",
-    "p-map": "^1.2.0",
-    "peek-stream": "^1.1.2",
-    "pretty-ms": "^7.0.1",
-    "rimraf": "^6.0.1",
+    "get-uri": "^6.0.5",
+    "gunzip-maybe": "^1.4.2",
+    "lodash-es": "^4.17.21",
+    "ora": "^8.2.0",
+    "p-map": "^7.0.3",
+    "peek-stream": "^1.1.3",
+    "pretty-ms": "^9.2.0",
     "split2": "^4.2.0",
     "tar-fs": "^2.1.3",
-    "tinyglobby": "^0.2.9"
+    "tinyglobby": "^0.2.14"
   },
   "devDependencies": {
-    "@jest/globals": "^29.7.0",
     "@sanity/client": "^6.15.13",
     "@sanity/semantic-release-preset": "^5.0.0",
+    "@types/debug": "^4.1.12",
+    "@types/gunzip-maybe": "1.4.2",
+    "@types/lodash-es": "^4.17.12",
+    "@types/node": "^24.3.0",
+    "@types/split2": "^4.2.3",
+    "@types/tar-fs": "2.0.4",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "@vitest/coverage-v8": "3.2.4",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-sanity": "^7.1.4",
-    "eslint-plugin-prettier": "^5.5.1",
-    "jest": "^29.7.0",
+    "eslint-plugin-prettier": "^5.5.4",
     "nock": "^13.2.9",
     "prettier": "^3.6.2",
-    "prettier-plugin-packagejson": "^2.5.18"
+    "prettier-plugin-packagejson": "^2.5.19",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   },
+  "packageManager": "pnpm@10.15.0",
   "engines": {
-    "node": ">=18"
+    "node": ">=20.19.1 <22 || >=22.12"
   },
   "publishConfig": {
     "access": "public"
