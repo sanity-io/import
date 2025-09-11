@@ -1,0 +1,226 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`accepts a stream as source > employee creation 1`] = `
+{
+  "mutations": [
+    {
+      "create": {
+        "_id": "espen",
+        "_type": "employee",
+        "name": "Espen",
+      },
+    },
+    {
+      "create": {
+        "_id": "pk",
+        "_type": "employee",
+        "name": "Per-Kristian",
+      },
+    },
+  ],
+}
+`;
+
+exports[`accepts a tar.gz stream as source > employee creation 1`] = `
+{
+  "mutations": [
+    {
+      "create": {
+        "_id": "espen",
+        "_type": "employee",
+        "name": "Espen",
+      },
+    },
+    {
+      "create": {
+        "_id": "pk",
+        "_type": "employee",
+        "name": "Per-Kristian",
+      },
+    },
+  ],
+}
+`;
+
+exports[`accepts an array as source > employee creation 1`] = `
+{
+  "mutations": [
+    {
+      "create": {
+        "_id": "espen",
+        "_type": "employee",
+        "name": "Espen",
+      },
+    },
+    {
+      "create": {
+        "_id": "pk",
+        "_type": "employee",
+        "name": "Per-Kristian",
+      },
+    },
+  ],
+}
+`;
+
+exports[`allows system documents if asked > employee creation 1`] = `
+{
+  "mutations": [
+    {
+      "create": {
+        "_id": "_.retention.maximum",
+        "_type": "system.retention",
+        "days": 90,
+        "maximum": true,
+        "preferShorter": true,
+      },
+    },
+    {
+      "create": {
+        "_id": "_.retention.normal",
+        "_type": "system.retention",
+        "days": 3,
+      },
+    },
+    {
+      "create": {
+        "_id": "_.groups.user",
+        "_type": "system.group",
+        "grants": [],
+        "members": [
+          "user",
+        ],
+      },
+    },
+    {
+      "create": {
+        "_id": "radhe",
+        "_type": "employee",
+        "name": "Radhe",
+      },
+    },
+    {
+      "create": {
+        "_id": "robin",
+        "_type": "employee",
+        "name": "Robin",
+      },
+    },
+    {
+      "create": {
+        "_id": "matt",
+        "_type": "employee",
+        "name": "Matt",
+      },
+    },
+  ],
+}
+`;
+
+exports[`allows system documents if asked > employee creation 2`] = `
+{
+  "actions": [
+    {
+      "actionType": "sanity.action.release.import",
+      "attributes": {
+        "_id": "_.releases.summer",
+        "_type": "system.release",
+        "name": "summer",
+        "state": "active",
+      },
+      "ifExists": "fail",
+      "releaseId": "summer",
+    },
+  ],
+}
+`;
+
+exports[`allows system documents if asked > employee creation 3`] = `
+{
+  "actions": [
+    {
+      "actionType": "sanity.action.release.import",
+      "attributes": {
+        "_id": "_.releases.winter",
+        "_type": "system.release",
+        "name": "winter",
+        "publishAt": "2055-12-01T00:00:00.000Z",
+        "state": "scheduled",
+      },
+      "ifExists": "fail",
+      "releaseId": "winter",
+    },
+  ],
+}
+`;
+
+exports[`allows system documents if asked > employee creation 4`] = `
+{
+  "mutations": [
+    {
+      "create": {
+        "_id": "radhe",
+        "_type": "employee",
+        "name": "Radhe",
+      },
+    },
+    {
+      "create": {
+        "_id": "robin",
+        "_type": "employee",
+        "name": "Robin",
+      },
+    },
+    {
+      "create": {
+        "_id": "matt",
+        "_type": "employee",
+        "name": "Matt",
+      },
+    },
+  ],
+}
+`;
+
+exports[`allows system documents if asked > employee creation 5`] = `
+{
+  "actions": [
+    {
+      "actionType": "sanity.action.release.import",
+      "attributes": {
+        "_id": "_.releases.summer",
+        "_type": "system.release",
+        "name": "summer",
+        "state": "active",
+      },
+      "ifExists": "fail",
+      "releaseId": "summer",
+    },
+  ],
+}
+`;
+
+exports[`allows system documents if asked > employee creation 6`] = `
+{
+  "actions": [
+    {
+      "actionType": "sanity.action.release.import",
+      "attributes": {
+        "_id": "_.releases.winter",
+        "_type": "system.release",
+        "name": "winter",
+        "publishAt": "2055-12-01T00:00:00.000Z",
+        "state": "scheduled",
+      },
+      "ifExists": "fail",
+      "releaseId": "winter",
+    },
+  ],
+}
+`;
+
+exports[`rejects on missing asset type prefix 1`] = `
+[Error: Asset type is not specified.
+\`_sanityAsset\` values must be prefixed with a type, eg image@url or file@url.
+See document with ID "deadpool", path: image._sanityAsset]
+`;
