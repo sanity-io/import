@@ -160,8 +160,7 @@ export class DatasetImportCommand extends SanityCommand<typeof DatasetImportComm
       apiVersion: '2025-02-19',
       projectId,
       dataset,
-      // TODO: Allow passing token via flag
-      // token: tokenString
+      token: tokenString,
     })
 
     try {

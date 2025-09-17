@@ -18,8 +18,8 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0
       '@sanity/cli-core':
-        specifier: 0.0.2-alpha.0
-        version: 0.0.2-alpha.0(@types/node@24.3.0)
+        specifier: 0.0.2-alpha.1
+        version: 0.0.2-alpha.1(@types/node@24.3.0)
       '@sanity/generate-help-url':
         specifier: ^3.0.0
         version: 3.0.0
@@ -1114,8 +1114,8 @@ packages:
     resolution: {integrity: sha512-dlEmALjQ5iyQG0O8ZVmkkE3wUYCKfRmiyMvuuGN5SF9buAHxmseBOKJ/Iy2DU/8ef70mtUXlzeCRSlTN/nmZsg==}
     engines: {node: '>=18'}
 
-  '@sanity/cli-core@0.0.2-alpha.0':
-    resolution: {integrity: sha512-XC5VZuxGIGJZ6dsiokbFXk845wgephlpbwa+BngR5gklNi8Xy9OWqvlMo+0/WInyKL9ZDLbj6DGhUoyjrtT2Wg==}
+  '@sanity/cli-core@0.0.2-alpha.1':
+    resolution: {integrity: sha512-k4ZdW1prRFHRUyTOX+q8tUohIS8nfE0aSAqrc014gYWXUODWMzt9X1QKlRpOS5OWk8uPpzs7SEkSkI9YP+SuwA==}
     engines: {node: '>=20.19.1 <22 || >=22.12'}
 
   '@sanity/client@7.11.2':
@@ -5810,7 +5810,7 @@ snapshots:
 
   '@sanity/asset-utils@2.3.0': {}
 
-  '@sanity/cli-core@0.0.2-alpha.0(@types/node@24.3.0)':
+  '@sanity/cli-core@0.0.2-alpha.1(@types/node@24.3.0)':
     dependencies:
       '@oclif/core': 4.5.3
       '@sanity/client': 7.11.2(debug@4.4.1)
