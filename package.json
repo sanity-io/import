@@ -82,7 +82,7 @@
     "tinyglobby": "^0.2.14"
   },
   "devDependencies": {
-    "@sanity/client": "^7.11.1",
+    "@sanity/client": "^7.11.2",
     "@sanity/semantic-release-preset": "^5.0.0",
     "@swc/cli": "^0.7.8",
     "@swc/core": "^1.13.5",

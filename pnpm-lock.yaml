@@ -58,8 +58,8 @@ importers:
         version: 0.2.14
     devDependencies:
       '@sanity/client':
-        specifier: ^7.11.1
-        version: 7.11.1(debug@4.4.1)
+        specifier: ^7.11.2
+        version: 7.11.2(debug@4.4.1)
       '@sanity/semantic-release-preset':
         specifier: ^5.0.0
         version: 5.0.0(semantic-release@24.2.7(typescript@5.9.2))
@@ -1118,8 +1118,8 @@ packages:
     resolution: {integrity: sha512-XC5VZuxGIGJZ6dsiokbFXk845wgephlpbwa+BngR5gklNi8Xy9OWqvlMo+0/WInyKL9ZDLbj6DGhUoyjrtT2Wg==}
     engines: {node: '>=20.19.1 <22 || >=22.12'}
 
-  '@sanity/client@7.11.1':
-    resolution: {integrity: sha512-nvuyItcknj2qFH3FPqqZhjN94rHv7eRzuHveN2ZIhHTGhGYLp1zE7UfESMcNn+flL/Oik+Ctkp3jKB3z02NdHQ==}
+  '@sanity/client@7.11.2':
+    resolution: {integrity: sha512-q7rm2KgbWV60z+umlIZa3l7Nc9xyDRjmicm9tOP7PovOYNM0UK1PP/Auj6wssr+OqEsgcoe2n2pQFDtn/n8N9Q==}
     engines: {node: '>=20'}
 
   '@sanity/diff-match-patch@3.2.0':
@@ -5813,7 +5813,7 @@ snapshots:
   '@sanity/cli-core@0.0.2-alpha.0(@types/node@24.3.0)':
     dependencies:
       '@oclif/core': 4.5.3
-      '@sanity/client': 7.11.1(debug@4.4.1)
+      '@sanity/client': 7.11.2(debug@4.4.1)
       chalk: 5.6.0
       configstore: 7.0.0
       debug: 4.4.1(supports-color@8.1.1)
@@ -5843,7 +5843,7 @@ snapshots:
       - utf-8-validate
       - yaml
 
-  '@sanity/client@7.11.1(debug@4.4.1)':
+  '@sanity/client@7.11.2(debug@4.4.1)':
     dependencies:
       '@sanity/eventsource': 5.0.2
       get-it: 8.6.10(debug@4.4.1)
@@ -5889,7 +5889,7 @@ snapshots:
 
   '@sanity/types@4.8.1(@types/react@19.1.12)(debug@4.4.1)':
     dependencies:
-      '@sanity/client': 7.11.1(debug@4.4.1)
+      '@sanity/client': 7.11.2(debug@4.4.1)
       '@sanity/media-library-types': 1.0.0
       '@types/react': 19.1.12
     transitivePeerDependencies:

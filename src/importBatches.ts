@@ -1,14 +1,8 @@
-import type {MultipleMutationResult, Transaction} from '@sanity/client'
+import type {ImportReleaseAction, MultipleMutationResult, Transaction} from '@sanity/client'
 import {partition} from 'lodash-es'
 import pMap from 'p-map'
 
-import type {
-  ExtendedSanityClient,
-  ImportOptions,
-  ReleaseActionParams,
-  SanityApiError,
-  SanityDocument,
-} from './types.js'
+import type {ImportOptions, SanityApiError, SanityDocument} from './types.js'
 import {progressStepper} from './util/progressStepper.js'
 import {retryOnFailure} from './util/retryOnFailure.js'
 import {suffixTag} from './util/suffixTag.js'
@@ -59,13 +53,13 @@ function importBatch(
           : Promise.resolve(0)
 
       const releasesAction = releaseDocs.map((doc: SanityDocument) => {
-        const actionParams: ReleaseActionParams = {
+        const actionParams: ImportReleaseAction = {
           actionType: 'sanity.action.release.import',
           releaseId: doc.name as string,
           attributes: doc,
           ifExists: releasesOperation,
         }
-        return (client as ExtendedSanityClient)
+        return client
           .action(actionParams)
           .then(() => 1)
           .catch((err: Error) => {
