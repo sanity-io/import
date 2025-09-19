@@ -4,7 +4,7 @@ import {injectResponse} from 'get-it/middleware'
 import type {InjectFunction} from './types.js'
 
 process.on('unhandledRejection', (reason) => {
-  // eslint-disable-next-line no-console
+   
   console.error('UNHANDLED REJECTION', reason)
 })
 

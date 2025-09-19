@@ -16,22 +16,20 @@ function getStatusCodeForUrl(url: string): Promise<number> {
 }
 
 async function urlExists(url: string): Promise<boolean> {
-  let error: Error
+  let error: Error = new Error('Max retries exceeded')
   for (let i = 0; i < MAX_RETRIES; i++) {
     try {
-      // eslint-disable-next-line no-await-in-loop
       const statusCode = await getStatusCodeForUrl(url)
       return statusCode === 200
     } catch (err) {
       error = err as Error
 
       // Wait one second before retrying the request
-      // eslint-disable-next-line no-await-in-loop
       await new Promise<void>((resolve) => setTimeout(resolve, 1000))
     }
   }
 
-  throw error!
+  throw error
 }
 
 export {urlExists}
