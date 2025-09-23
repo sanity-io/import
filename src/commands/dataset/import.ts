@@ -142,8 +142,7 @@ export class DatasetImportCommand extends SanityCommand<typeof DatasetImportComm
 
     const {source} = args
 
-    const tokenString: string | undefined = Array.isArray(token) ? (token[0] as string) : token
-
+    const tokenString: string | undefined = token
     if (!tokenString) {
       this.error('Flag `--token` is required (or set SANITY_IMPORT_TOKEN)', {exit: 1})
     }
@@ -218,8 +217,7 @@ export class DatasetImportCommand extends SanityCommand<typeof DatasetImportComm
       return
     }
 
-    this.warn('Failed to import the following %s:')
-    this.warn(assetFails.length > 1 ? 'assets' : 'asset')
+    this.warn(`Failed to import the following ${assetFails.length > 1 ? 'assets' : 'asset'}:`)
 
     warnings.forEach((warning) => {
       this.warn(`  ${warning.url}`)
