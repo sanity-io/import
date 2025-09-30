@@ -112,19 +112,6 @@ export interface TarExtractError extends Error {
   extract?: unknown
 }
 
-// Extended Sanity Client interface for custom methods
-export interface ReleaseActionParams {
-  actionType: 'sanity.action.release.import'
-  releaseId: string
-  attributes: SanityDocument
-  ifExists: 'fail' | 'ignore' | 'replace'
-}
-
-// TODO: Replace with new version of @sanity/client when ready
-export type ExtendedSanityClient = SanityClient & {
-  action(params: ReleaseActionParams): Promise<{success: boolean}>
-}
-
 // Fetch response types
 export interface SanityFetchResponse {
   _id: string
