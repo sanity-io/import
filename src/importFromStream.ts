@@ -119,7 +119,7 @@ export async function importFromStream(
 
   try {
     // gunzipMaybe is an untyped library
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+     
     await pipeline(stream, gunzipMaybe(), router)
 
     if (router.isTar) {

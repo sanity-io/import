@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 import {execute} from '@oclif/core'
 
-var err = '\u001B[31m\u001B[1mERROR:\u001B[22m\u001B[39m '
-var nodeVersionParts = process.version.replace(/^v/i, '').split('.').map(Number)
+const err = '\u001B[31m\u001B[1mERROR:\u001B[22m\u001B[39m '
+const nodeVersionParts = process.version.replace(/^v/i, '').split('.').map(Number)
 
-var majorVersion = nodeVersionParts[0]
-var minorVersion = nodeVersionParts[1]
-var patchVersion = nodeVersionParts[2]
+const majorVersion = nodeVersionParts[0]
+const minorVersion = nodeVersionParts[1]
+const patchVersion = nodeVersionParts[2]
 
 function isSupportedNodeVersion(major, minor, patch) {
   if (major === 20) {

@@ -1,4 +1,4 @@
-/* eslint-disable no-await-in-loop, max-depth, consistent-return */
+ 
 import debug from 'debug'
 import {defaults} from 'lodash-es'
 
