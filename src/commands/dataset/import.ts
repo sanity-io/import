@@ -43,7 +43,6 @@ function getPercentage(opts: ProgressEvent): string {
   return `[${percent}%] `
 }
 
-// eslint-disable-next-line no-use-before-define
 export class DatasetImportCommand extends SanityCommand<typeof DatasetImportCommand> {
   static override description = 'Import documents to a Sanity dataset'
 

@@ -11,6 +11,7 @@
     "isolatedModules": true,
     "declaration": true,
     "declarationMap": true,
+    "allowJs": true,
     "sourceMap": true,
     "noEmit": true,
     "strict": true,
@@ -23,6 +24,6 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "test/**/*", "*.ts"],
+  "include": ["src/**/*", "test/**/*", "bin/**/*", "*.ts", "*.mjs"],
   "exclude": ["node_modules", "dist"]
 }

@@ -1,29 +1,23 @@
+import {FlatCompat} from '@eslint/eslintrc'
 import eslint from '@eslint/js'
 import {defineConfig} from 'eslint/config'
-import tseslint from 'typescript-eslint'
-import {FlatCompat} from '@eslint/eslintrc'
-import {fileURLToPath} from 'node:url'
-import path from 'node:path'
-import globals from 'globals'
 import eslintConfigPrettier from 'eslint-config-prettier'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+import globals from 'globals'
+import tseslint from 'typescript-eslint'
 
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
+  baseDirectory: import.meta.dirname,
   recommendedConfig: eslint.configs.recommended,
 })
 
 export default defineConfig(
   {
-    ignores: ['dist/', 'node_modules/', 'coverage/', '*.js', '*.cjs', '*.mjs'],
+    ignores: ['dist/', 'node_modules/', 'coverage/'],
   },
   eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
+  tseslint.configs.recommendedTypeChecked,
   ...compat.extends('sanity'),
   {
-    files: ['**/*.ts'],
     languageOptions: {
       globals: {
         ...globals.node,
@@ -32,7 +26,7 @@ export default defineConfig(
       },
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: __dirname,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
     rules: {
@@ -47,6 +41,7 @@ export default defineConfig(
   },
   {
     files: ['*.js', '*.cjs'],
+    // @ts-expect-error - disableTypeChecked config is compatible with ESLint flat config
     ...tseslint.configs.disableTypeChecked,
     languageOptions: {
       globals: {
@@ -54,5 +49,6 @@ export default defineConfig(
       },
     },
   },
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   eslintConfigPrettier,
 )
