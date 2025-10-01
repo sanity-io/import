@@ -15,7 +15,7 @@ npm install --save @sanity/import
 ## Usage
 
 ```js
-import fs from 'fs'
+import fs from 'node:fs'
 import {createClient} from '@sanity/client'
 import {sanityImport} from '@sanity/import'
 
