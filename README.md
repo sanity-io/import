@@ -2,6 +2,10 @@
 
 Imports documents from an [ndjson](https://github.com/ndjson/ndjson-spec)-stream to a Sanity dataset
 
+## Requirements
+
+- Node.js >= 20.19.1 (or >= 22.12 for Node 22)
+
 ## Installing
 
 ```
@@ -11,11 +15,11 @@ npm install --save @sanity/import
 ## Usage
 
 ```js
-const fs = require('fs')
-const sanityClient = require('@sanity/client')
-const sanityImport = require('@sanity/import')
+import fs from 'fs'
+import {createClient} from '@sanity/client'
+import {sanityImport} from '@sanity/import'
 
-const client = sanityClient({
+const client = createClient({
   projectId: '<your project id>',
   dataset: '<your target dataset>',
   token: '<token-with-write-perms>',
@@ -87,8 +91,8 @@ const options = {
   skipCrossDatasetReferences: false,
 
   /**
-   * Whether or not to import system documents (like permissions and custom retention). This
-   * is usually not necessary, and may cause conflicts if the target dataset
+   * Whether or not to import system documents (like permissions, custom retention, and content releases).
+   * This is usually not necessary, and may cause conflicts if the target dataset
    * already contains these documents. On a new dataset, it is recommended that roles are re-created
    * manually, and that any custom retention policies are re-created manually.
    *
@@ -114,32 +118,48 @@ This functionality is built in to the `sanity` package as `sanity dataset import
 ```
 $ sanity-import --help
 
-  CLI tool that imports documents from an ndjson file or URL
+Import documents to a Sanity dataset
 
-  Usage
-    $ sanity-import -p <projectId> -d <dataset> -t <token> sourceFile.ndjson
+USAGE
+  $ sanity-import  SOURCE -p <value> -d <value> [-t <value>]
+    [--replace | --missing] [--allow-failing-assets]
+    [--allow-assets-in-different-dataset] [--replace-assets]
+    [--skip-cross-dataset-references] [--allow-system-documents]
+    [--asset-concurrency <value>]
 
-  Options
-    -p, --project <projectId> Project ID to import to
-    -d, --dataset <dataset> Dataset to import to
-    -t, --token <token> Token to authenticate with
-    --asset-concurrency <concurrency> Number of parallel asset imports
-    --replace Replace documents with the same IDs
-    --missing Skip documents that already exist
-    --allow-failing-assets Skip assets that cannot be fetched/uploaded
-    --replace-assets Skip reuse of existing assets
-    --skip-cross-dataset-references Skips references to other datasets
-    --help Show this help
+ARGUMENTS
+  SOURCE  Source file (use "-" for stdin)
 
-  Examples
-    # Import "./my-dataset.ndjson" into dataset "staging"
-    $ sanity-import -p myPrOj -d staging -t someSecretToken my-dataset.ndjson
+FLAGS
+  -d, --dataset=<value>                    (required) Dataset to import to
+  -p, --project=<value>                    (required) Project ID to import to
+  -t, --token=<value>                      Token to authenticate with
+      --allow-assets-in-different-dataset  Allow asset documents to reference
+                                           different project/dataset
+      --allow-failing-assets               Skip assets that cannot be
+                                           fetched/uploaded
+      --allow-system-documents             Imports system documents
+      --asset-concurrency=<value>          Number of parallel asset imports
+      --missing                            Skip documents that already exist
+      --replace                            Replace documents with the same IDs
+      --replace-assets                     Skip reuse of existing assets
+      --skip-cross-dataset-references      Skips references to other datasets
 
-    # Import into dataset "test" from stdin, read token from env var
-    $ cat my-dataset.ndjson | sanity-import -p myPrOj -d test -
+DESCRIPTION
+  Import documents to a Sanity dataset
 
-  Environment variables (fallbacks for missing flags)
-    --token = SANITY_IMPORT_TOKEN
+EXAMPLES
+  Import "./my-dataset.ndjson" into dataset "staging"
+
+    $ sanity-import  -p myPrOj -d staging -t someSecretToken \
+      my-dataset.ndjson
+
+  Import into dataset "test" from stdin, read token from env var
+
+    cat my-dataset.ndjson | sanity-import  -p myPrOj -d test -
+
+Environment variables (fallbacks for missing flags)
+  --token = SANITY_IMPORT_TOKEN
 ```
 
 ## Future improvements
