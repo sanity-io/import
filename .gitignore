@@ -14,3 +14,7 @@
 # Dev-fixtures
 moviedb.ndjson
 dist
+
+.DS_Store
+
+oclif.manifest.json

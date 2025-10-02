@@ -1,0 +1,2443 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`fails if asset download fails 1`] = `
+[Error: Failed to download image @ http://127.0.0.1:49999/img.gif:
+connect ECONNREFUSED 127.0.0.1:49999]
+`;
+
+exports[`groups patches per document > batch patching (batch #1) 1`] = `
+{
+  "mutations": [
+    {
+      "patch": {
+        "id": "doc_1",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_2",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_3",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_4",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_5",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_6",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_7",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_8",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_9",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_10",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_11",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_12",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_13",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_14",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_15",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_16",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_17",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_18",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_19",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_20",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_21",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_22",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_23",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_24",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_25",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_26",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_27",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_28",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_29",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_30",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_31",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_32",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_33",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_34",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_35",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_36",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_37",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_38",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_39",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_40",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_41",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_42",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_43",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_44",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_45",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_46",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_47",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_48",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_49",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_50",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+  ],
+}
+`;
+
+exports[`groups patches per document > batch patching (batch #2) 1`] = `
+{
+  "mutations": [
+    {
+      "patch": {
+        "id": "doc_51",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_52",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_53",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_54",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_55",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_56",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_57",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_58",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_59",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_60",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId1",
+            "_type": "reference",
+          },
+          "some.path1.asset": {
+            "_ref": "image-someAssetId2",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+          "some.path1": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+  ],
+}
+`;
+
+exports[`will reuse an existing asset if it exists > single asset mutation 1`] = `
+{
+  "mutations": [
+    {
+      "patch": {
+        "id": "movie_1",
+        "set": {
+          "metadata.poster.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "metadata.poster": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+  ],
+}
+`;
+
+exports[`will upload an asset if asset doc exists but file does not > single create mutation 1`] = `
+{
+  "mutations": [
+    {
+      "patch": {
+        "id": "movie_1",
+        "set": {
+          "metadata.poster.asset": {
+            "_ref": "image-newAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "metadata.poster": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+  ],
+}
+`;
+
+exports[`will upload asset that do not already exist > single create mutation 1`] = `
+{
+  "mutations": [
+    {
+      "patch": {
+        "id": "movie_1",
+        "set": {
+          "metadata.poster.asset": {
+            "_ref": "image-newAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "metadata.poster": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+  ],
+}
+`;
+
+exports[`will upload once but batch patches > batch patching (batch #1) 1`] = `
+{
+  "mutations": [
+    {
+      "patch": {
+        "id": "doc_1",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_2",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_3",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_4",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_5",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_6",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_7",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_8",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_9",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_10",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_11",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_12",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_13",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_14",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_15",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_16",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_17",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_18",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_19",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_20",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_21",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_22",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_23",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_24",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_25",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_26",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_27",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_28",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_29",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_30",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_31",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_32",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_33",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_34",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_35",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_36",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_37",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_38",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_39",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_40",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_41",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_42",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_43",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_44",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_45",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_46",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_47",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_48",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_49",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_50",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+  ],
+}
+`;
+
+exports[`will upload once but batch patches > batch patching (batch #2) 1`] = `
+{
+  "mutations": [
+    {
+      "patch": {
+        "id": "doc_51",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_52",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_53",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_54",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_55",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_56",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_57",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_58",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_59",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+    {
+      "patch": {
+        "id": "doc_60",
+        "set": {
+          "some.path0.asset": {
+            "_ref": "image-someAssetId",
+            "_type": "reference",
+          },
+        },
+        "setIfMissing": {
+          "some.path0": {
+            "_type": "image",
+          },
+        },
+      },
+    },
+  ],
+}
+`;
