@@ -5,6 +5,16 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.0](https://github.com/sanity-io/import/compare/v3.38.3...v4.0.0) (2025-10-02)
+
+### ⚠ BREAKING CHANGES
+
+- convert codebase to ESM and oclif based CLI (#24)
+
+### Code Refactoring
+
+- convert codebase to ESM and oclif based CLI ([#24](https://github.com/sanity-io/import/issues/24)) ([99b246a](https://github.com/sanity-io/import/commit/99b246ad9fea720116a1fe4ded381fbbb3befc54)), closes [#20](https://github.com/sanity-io/import/issues/20) [#21](https://github.com/sanity-io/import/issues/21) [#22](https://github.com/sanity-io/import/issues/22) [#25](https://github.com/sanity-io/import/issues/25)
+
 ## [3.38.3](https://github.com/sanity-io/import/compare/v3.38.2...v3.38.3) (2025-07-09)
 
 ### Bug Fixes
