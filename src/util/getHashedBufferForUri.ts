@@ -1,5 +1,7 @@
 import {createHash} from 'node:crypto'
+import {createReadStream} from 'node:fs'
 import {finished} from 'node:stream/promises'
+import {fileURLToPath} from 'node:url'
 
 import {getIt} from 'get-it'
 import {promise} from 'get-it/middleware'
@@ -37,14 +39,25 @@ async function getHashedBufferForUriInternal(uri: string): Promise<HashedBuffer>
 }
 
 async function getStream(uri: string): Promise<NodeJS.ReadableStream> {
-  const isHttp = /^https?:\/\//i.test(uri)
   const parsed = new URL(uri)
+  const isHttp = parsed.protocol === 'http:' || parsed.protocol === 'https:'
+  const isFile = parsed.protocol === 'file:'
   if (isHttp) {
     const res = (await request({url: parsed.href, stream: true})) as GetItResponse
     return res.body
   }
 
-  // For file, ftp, data urls
+  // For file:// URLs, use fs.createReadStream directly to avoid file descriptor issues
+  if (isFile) {
+    try {
+      const filePath = fileURLToPath(uri)
+      return createReadStream(filePath)
+    } catch (err) {
+      throw new Error(readError(uri, err as Error))
+    }
+  }
+
+  // For ftp, data urls, and other protocols
   try {
     const stream = await getUri(uri)
     if (!isReadableStream(stream)) {
