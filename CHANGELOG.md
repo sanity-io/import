@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.1](https://github.com/sanity-io/import/compare/v4.0.0...v4.0.1) (2025-12-16)
+
+### Bug Fixes
+
+- missing `default` condition breaking ESM envs ([f1c4ae4](https://github.com/sanity-io/import/commit/f1c4ae4310b7a127044aecd1dfbf363befb63e41))
+
 ## [4.0.0](https://github.com/sanity-io/import/compare/v3.38.3...v4.0.0) (2025-10-02)
 
 ### ⚠ BREAKING CHANGES

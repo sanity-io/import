@@ -1,6 +1,6 @@
 {
   "name": "@sanity/import",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Import documents to a Sanity dataset",
   "keywords": [
     "sanity",
