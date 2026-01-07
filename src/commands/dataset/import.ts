@@ -1,5 +1,6 @@
 import {Args, Flags} from '@oclif/core'
-import {SanityCommand, spinner} from '@sanity/cli-core'
+import {getProjectCliClient, SanityCommand} from '@sanity/cli-core'
+import {spinner} from '@sanity/cli-core/ux'
 import fs from 'fs'
 import {getIt} from 'get-it'
 import {promise} from 'get-it/middleware'
@@ -154,8 +155,8 @@ export class DatasetImportCommand extends SanityCommand<typeof DatasetImportComm
       releasesOperation = replace ? 'replace' : 'ignore'
     }
 
-    const client = await this.getProjectApiClient({
-      apiVersion: '2025-02-19',
+    const client = await getProjectCliClient({
+      apiVersion: 'v2025-02-19',
       projectId,
       dataset,
       token: tokenString,
