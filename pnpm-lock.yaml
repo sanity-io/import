@@ -24,8 +24,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       '@sanity/mutator':
-        specifier: ^4.22.0
-        version: 4.22.0(@types/react@19.1.12)
+        specifier: ^5.2.0
+        version: 5.2.0(@types/react@19.1.12)
       debug:
         specifier: ^4.4.3
         version: 4.4.3(supports-color@8.1.1)
@@ -1250,8 +1250,8 @@ packages:
   '@sanity/media-library-types@1.0.2':
     resolution: {integrity: sha512-OrAZ7mLDn3nd8fsRKPU6b4kNYMPLCFEXM1ghwC5xvcdD6k97b1sGR15USyG7e0exWIdH3S6Gm9xG/Jcfw+8l5A==}
 
-  '@sanity/mutator@4.22.0':
-    resolution: {integrity: sha512-ZuNjPHl5KPjaJzVICBYw24yabajYw2N9oJc6iX52UizGJdCkUTmseipBTL1eQxpleBPjuS+FVCeCftRH2FdezQ==}
+  '@sanity/mutator@5.2.0':
+    resolution: {integrity: sha512-SeH7c8UMs+Pzcan5HgG5dBgFWejCMGmvz5JXiLPv4cNdnLJlVMWnqaagqu7xZg23txJ+K85bgRLtpD4xaVtbYQ==}
 
   '@sanity/semantic-release-preset@5.0.0':
     resolution: {integrity: sha512-2lCuU57OZW6WY7O8d4vjbpghQIc9lnxS9+dLnzrBYh8e6pA467DxlCNum4NgDeDyHxNh9HGXNalXEWJz8tec+A==}
@@ -1259,10 +1259,10 @@ packages:
     peerDependencies:
       semantic-release: ^24
 
-  '@sanity/types@4.22.0':
-    resolution: {integrity: sha512-VWAUc8Xtj4IipQt99SzudRldJWHfBVnde+g5qnLZ/Nc1MpFjGiRWu/3smRN5mPOqlrtUfrr0ho/fBZnjE1CEMg==}
+  '@sanity/types@5.2.0':
+    resolution: {integrity: sha512-6Ugw36yLRlZWI5tc5USlL71SD0iQE5tWl8i8okKKCeAEaPdxlN+lVuwF8AdKX9d54rdtkOqjRnxzeCpsbzAsEg==}
     peerDependencies:
-      '@types/react': 18 || 19
+      '@types/react': ^19.2
 
   '@sanity/uuid@3.0.2':
     resolution: {integrity: sha512-vzdhqOrX7JGbMyK40KuIwwyXHm7GMLOGuYgn3xlC09e4ZVNofUO5mgezQqnRv0JAMthIRhofqs9f6ufUjMKOvw==}
@@ -5603,13 +5603,13 @@ snapshots:
 
   '@sanity/media-library-types@1.0.2': {}
 
-  '@sanity/mutator@4.22.0(@types/react@19.1.12)':
+  '@sanity/mutator@5.2.0(@types/react@19.1.12)':
     dependencies:
       '@sanity/diff-match-patch': 3.2.0
-      '@sanity/types': 4.22.0(@types/react@19.1.12)(debug@4.4.3)
+      '@sanity/types': 5.2.0(@types/react@19.1.12)(debug@4.4.3)
       '@sanity/uuid': 3.0.2
       debug: 4.4.3(supports-color@8.1.1)
-      lodash: 4.17.21
+      lodash-es: 4.17.22
     transitivePeerDependencies:
       - '@types/react'
       - supports-color
@@ -5625,7 +5625,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@sanity/types@4.22.0(@types/react@19.1.12)(debug@4.4.3)':
+  '@sanity/types@5.2.0(@types/react@19.1.12)(debug@4.4.3)':
     dependencies:
       '@sanity/client': 7.14.0(debug@4.4.3)
       '@sanity/media-library-types': 1.0.2

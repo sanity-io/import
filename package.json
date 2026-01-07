@@ -71,7 +71,7 @@
     "@sanity/asset-utils": "^2.3.0",
     "@sanity/cli-core": "0.0.2-alpha.2",
     "@sanity/generate-help-url": "^3.0.1",
-    "@sanity/mutator": "^4.22.0",
+    "@sanity/mutator": "^5.2.0",
     "debug": "^4.4.3",
     "get-it": "^8.7.0",
     "get-uri": "^6.0.5",
