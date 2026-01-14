@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.0.4](https://github.com/sanity-io/import/compare/v4.0.3...v4.0.4) (2026-01-14)
+
+### Bug Fixes
+
+- handle file:// URIs directly to prevent EBADF errors ([#34](https://github.com/sanity-io/import/issues/34)) ([2f183f6](https://github.com/sanity-io/import/commit/2f183f622b6a824dbdb1eb6d37774699129bb5be)), closes [sanity-io/sanity#11750](https://github.com/sanity-io/sanity/issues/11750)
+
 ## [4.0.3](https://github.com/sanity-io/import/compare/v4.0.2...v4.0.3) (2026-01-07)
 
 ### Bug Fixes
