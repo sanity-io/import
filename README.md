@@ -66,6 +66,14 @@ const options = {
   allowAssetsInDifferentDataset: false,
 
   /**
+   * Whether or not to allow unicode replacement characters (U+FFFD) in imported
+   * documents. This is often a sign of a corrupt export.
+   *
+   * Optional, defaults to `false`.
+   */
+  allowReplacementCharacters: false,
+
+  /**
    * Whether or not to allow failing assets due to download/upload errors.
    *
    * Optional, defaults to `false`.

@@ -32,13 +32,15 @@ interface ImportersContext {
 class StreamRouter extends Transform {
   private firstChunk: Buffer | null = null
   private outputPath: string
+  private options: ImportOptions
   private targetStream: NodeJS.WritableStream | null = null
   private jsonDocuments: SanityDocument[] = []
   private isTarFile = false
 
-  constructor(outputPath: string) {
+  constructor(outputPath: string, options: ImportOptions) {
     super()
     this.outputPath = outputPath
+    this.options = options
   }
 
   get isTar(): boolean {
@@ -62,7 +64,9 @@ class StreamRouter extends Transform {
       } else {
         debug('Stream is an ndjson file, streaming JSON')
         this.isTarFile = false
-        const jsonStreamer = getJsonStreamer()
+        const jsonStreamer = getJsonStreamer({
+          allowReplacementCharacters: this.options.allowReplacementCharacters,
+        })
         this.targetStream = jsonStreamer
 
         // Collect documents as they're parsed
@@ -115,7 +119,7 @@ export async function importFromStream(
   const outputPath = path.join(os.tmpdir(), `sanity-import-${slugDate}`)
   debug('Importing from stream')
 
-  const router = new StreamRouter(outputPath)
+  const router = new StreamRouter(outputPath, options)
 
   try {
     // gunzipMaybe is an untyped library

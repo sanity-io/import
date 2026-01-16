@@ -46,6 +46,7 @@ export interface ImportOptions {
   assetConcurrency?: number
   assetVerificationConcurrency?: number
   allowFailingAssets?: boolean
+  allowReplacementCharacters?: boolean
   assetMap?: AssetMap
   unreferencedAssets?: string[]
   assetsBase?: string

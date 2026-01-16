@@ -1,7 +1,7 @@
 import {runCommand} from '@oclif/test'
 import {expect, test} from 'vitest'
 
-test('import command works', async () => {
+test('import command shows help', async () => {
   const {stdout} = await runCommand('sanity-import --help')
 
   expect(stdout).toMatchInlineSnapshot(`
@@ -11,8 +11,8 @@ test('import command works', async () => {
       $ sanity-import  SOURCE -p <value> -d <value> [-t <value>]
         [--replace | --missing] [--allow-failing-assets]
         [--allow-assets-in-different-dataset] [--replace-assets]
-        [--skip-cross-dataset-references] [--allow-system-documents]
-        [--asset-concurrency <value>]
+        [--skip-cross-dataset-references] [--allow-replacement-characters]
+        [--allow-system-documents] [--asset-concurrency <value>]
 
     ARGUMENTS
       SOURCE  Source file (use "-" for stdin)
@@ -26,6 +26,8 @@ test('import command works', async () => {
                                                different project/dataset
           --allow-failing-assets               Skip assets that cannot be
                                                fetched/uploaded
+          --allow-replacement-characters       Allow unicode replacement characters
+                                               in imported documents
           --allow-system-documents             Imports system documents
           --asset-concurrency=<value>          Number of parallel asset imports
           --missing                            Skip documents that already exist
@@ -48,4 +50,14 @@ test('import command works', async () => {
 
     "
   `)
+})
+
+test('rejects file with unicode replacement character', async () => {
+  const {error} = await runCommand(
+    '. test/fixtures/replacement-char.ndjson -p test-project -d test-dataset -t test-token',
+  )
+
+  expect(error?.message).toContain('unicode replacement character')
+  expect(error?.message).toContain('If you are certain you want to proceed')
+  expect(error?.message).toContain('--allow-replacement-characters')
 })
