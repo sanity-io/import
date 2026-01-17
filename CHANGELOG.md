@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.0](https://github.com/sanity-io/import/compare/v4.0.4...v4.1.0) (2026-01-17)
+
+### Features
+
+- check for unicode replacement before import ([#35](https://github.com/sanity-io/import/issues/35)) ([8f7e5dd](https://github.com/sanity-io/import/commit/8f7e5dd4223343732e450192c5eb0e8d2cbf6725))
+
 ## [4.0.4](https://github.com/sanity-io/import/compare/v4.0.3...v4.0.4) (2026-01-14)
 
 ### Bug Fixes
