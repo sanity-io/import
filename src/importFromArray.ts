@@ -17,6 +17,7 @@ import {
 import type {ImportOptions, ImportResult, SanityDocument} from './types.js'
 import {uploadAssets} from './uploadAssets.js'
 import {ensureUniqueIds} from './util/ensureUniqueIds.js'
+import {validateAssetMapForReplacementChars} from './util/validateReplacementCharacters.js'
 import {validateAssetDocuments} from './validateAssetDocuments.js'
 import {validateCdrDatasets} from './validateCdrDatasets.js'
 
@@ -28,6 +29,11 @@ async function importDocuments(
 ): Promise<ImportResult> {
   options.onProgress({step: 'Reading/validating data file'})
   documents.forEach(documentHasError)
+
+  // Validate assetMap for replacement characters
+  if (options.assetMap && options.allowReplacementCharacters !== true) {
+    validateAssetMapForReplacementChars(options.assetMap)
+  }
 
   // Validate that there are no duplicate IDs in the documents
   ensureUniqueIds(documents)

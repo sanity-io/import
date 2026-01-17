@@ -2,9 +2,18 @@ import split from 'split2'
 
 import {validateDocument} from '../documentHasErrors.js'
 import type {SanityDocument} from '../types.js'
+import {
+  ReplacementCharError,
+  validateLineForReplacementChar,
+} from './validateReplacementCharacters.js'
 
-export function getJsonStreamer(): NodeJS.ReadWriteStream {
+export interface JsonStreamerOptions {
+  allowReplacementCharacters?: boolean | undefined
+}
+
+export function getJsonStreamer(options: JsonStreamerOptions = {}): NodeJS.ReadWriteStream {
   let lineNumber = 0
+  const {allowReplacementCharacters} = options
 
   const getErrorMessage = (err: Error): string => {
     const suffix =
@@ -23,6 +32,14 @@ export function getJsonStreamer(): NodeJS.ReadWriteStream {
     }
 
     try {
+      // Check for replacement characters before parsing JSON
+      if (allowReplacementCharacters !== true) {
+        const replacementError = validateLineForReplacementChar(row, lineNumber)
+        if (replacementError) {
+          throw new ReplacementCharError(replacementError)
+        }
+      }
+
       const doc = JSON.parse(row) as SanityDocument
       const error = validateDocument(doc)
       if (error) {
@@ -31,8 +48,16 @@ export function getJsonStreamer(): NodeJS.ReadWriteStream {
 
       return doc
     } catch (err) {
-      const errorMessage = getErrorMessage(err as Error)
-      this.emit('error', new Error(errorMessage))
+      if (err instanceof ReplacementCharError) {
+        this.emit('error', err)
+      } else if (err instanceof Error) {
+        this.emit('error', new Error(getErrorMessage(err)))
+      } else {
+        this.emit(
+          'error',
+          new Error(`Unknown error occurred at line #${lineNumber}: ${String(err)}`),
+        )
+      }
     }
 
     return undefined

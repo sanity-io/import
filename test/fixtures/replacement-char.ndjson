@@ -1,0 +1,3 @@
+{"_id": "doc1", "_type": "test", "title": "Valid document"}
+{"_id": "doc2", "_type": "test", "title": "Bad char: �"}
+{"_id": "doc3", "_type": "test", "title": "Never reached"}

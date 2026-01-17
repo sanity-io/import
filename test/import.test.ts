@@ -206,6 +206,59 @@ test('allows system documents if asked', async () => {
   expect(res).toMatchObject({numDocs: 5, warnings: []})
 })
 
+test('rejects on Unicode replacement character in stream', async () => {
+  expect.assertions(1)
+  await expect(
+    sanityImport(getNDJSONFixtureStream('replacement-char'), importOptions),
+  ).rejects.toHaveProperty(
+    'message',
+    'Unicode replacement character (U+FFFD) found on line 2. This usually indicates encoding issues in the source data.',
+  )
+})
+
+test('allows replacement character when allowReplacementCharacters is true', async () => {
+  expect.assertions(2)
+  const client = getSanityClient(getMockMutationHandler())
+  const res = await sanityImport(getNDJSONFixtureStream('replacement-char'), {
+    client,
+    allowReplacementCharacters: true,
+  })
+  expect(res).toMatchObject({numDocs: 3, warnings: []})
+})
+
+test('rejects on Unicode replacement character in assetMap', async () => {
+  expect.assertions(1)
+  const docs = getNDJSONFixtureArray('employees')
+  const assetMap = {
+    'https://example.com/image.png': {
+      _id: 'image-abc',
+      _type: 'sanity.imageAsset' as const,
+      url: 'https://example.com/image.png',
+      originalFilename: 'bad\uFFFDname.png',
+    },
+  }
+  await expect(sanityImport(docs, {...importOptions, assetMap})).rejects.toHaveProperty(
+    'message',
+    'Unicode replacement character (U+FFFD) found at assetMap["https://example.com/image.png"].originalFilename. This usually indicates encoding issues in the source data.',
+  )
+})
+
+test('allows replacement character in assetMap when allowReplacementCharacters is true', async () => {
+  expect.assertions(2)
+  const docs = getNDJSONFixtureArray('employees')
+  const client = getSanityClient(getMockMutationHandler())
+  const assetMap = {
+    'https://example.com/image.png': {
+      _id: 'image-abc',
+      _type: 'sanity.imageAsset' as const,
+      url: 'https://example.com/image.png',
+      originalFilename: 'bad\uFFFDname.png',
+    },
+  }
+  const res = await sanityImport(docs, {client, assetMap, allowReplacementCharacters: true})
+  expect(res).toMatchObject({numDocs: 2, warnings: []})
+})
+
 function getMockMutationHandler(
   match: string | ((body: MockMutationsBody) => void) = 'employee creation',
 ): InjectFunction {

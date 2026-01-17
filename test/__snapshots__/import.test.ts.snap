@@ -63,6 +63,55 @@ exports[`accepts an array as source > employee creation 1`] = `
 }
 `;
 
+exports[`allows replacement character in assetMap when allowReplacementCharacters is true > employee creation 1`] = `
+{
+  "mutations": [
+    {
+      "create": {
+        "_id": "espen",
+        "_type": "employee",
+        "name": "Espen",
+      },
+    },
+    {
+      "create": {
+        "_id": "pk",
+        "_type": "employee",
+        "name": "Per-Kristian",
+      },
+    },
+  ],
+}
+`;
+
+exports[`allows replacement character when allowReplacementCharacters is true > employee creation 1`] = `
+{
+  "mutations": [
+    {
+      "create": {
+        "_id": "doc1",
+        "_type": "test",
+        "title": "Valid document",
+      },
+    },
+    {
+      "create": {
+        "_id": "doc2",
+        "_type": "test",
+        "title": "Bad char: �",
+      },
+    },
+    {
+      "create": {
+        "_id": "doc3",
+        "_type": "test",
+        "title": "Never reached",
+      },
+    },
+  ],
+}
+`;
+
 exports[`allows system documents if asked > employee creation 1`] = `
 {
   "mutations": [

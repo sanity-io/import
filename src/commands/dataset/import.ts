@@ -9,6 +9,7 @@ import prettyMs from 'pretty-ms'
 
 import {sanityImport} from '../../import.js'
 import type {ImportOptions, ProgressEvent} from '../../types.js'
+import {ReplacementCharError} from '../../util/validateReplacementCharacters.js'
 
 function getAssetsBase(source: string): string | undefined {
   if (/^https:\/\//i.test(source) || source === '-') {
@@ -102,6 +103,10 @@ export class DatasetImportCommand extends SanityCommand<typeof DatasetImportComm
       description: 'Skips references to other datasets',
       default: false,
     }),
+    'allow-replacement-characters': Flags.boolean({
+      description: 'Allow unicode replacement characters in imported documents',
+      default: false,
+    }),
     'allow-system-documents': Flags.boolean({
       description: 'Imports system documents',
       default: false,
@@ -136,6 +141,7 @@ export class DatasetImportCommand extends SanityCommand<typeof DatasetImportComm
       'allow-assets-in-different-dataset': allowAssetsInDifferentDataset,
       'replace-assets': replaceAssets,
       'skip-cross-dataset-references': skipCrossDatasetReferences,
+      'allow-replacement-characters': allowReplacementCharacters,
       'allow-system-documents': allowSystemDocuments,
       'asset-concurrency': assetConcurrency,
     } = flags
@@ -173,6 +179,7 @@ export class DatasetImportCommand extends SanityCommand<typeof DatasetImportComm
         allowFailingAssets: allowFailingAssets || false,
         allowAssetsInDifferentDataset: allowAssetsInDifferentDataset || false,
         skipCrossDatasetReferences: skipCrossDatasetReferences || false,
+        allowReplacementCharacters: allowReplacementCharacters || false,
         allowSystemDocuments: allowSystemDocuments || false,
         replaceAssets: replaceAssets || false,
         releasesOperation,
@@ -206,7 +213,14 @@ export class DatasetImportCommand extends SanityCommand<typeof DatasetImportComm
         this.currentProgress.fail()
       }
 
-      this.error((err as Error).stack || (err as Error).message, {exit: 1})
+      if (err instanceof ReplacementCharError) {
+        this.error(
+          `Import failed due to unicode replacement characters in the data.\n${err.message}\n\nIf you are certain you want to proceed with the import despite potentially corrupt data, re-run the import with the \`--allow-replacement-characters\` flag set.`,
+          {exit: 1},
+        )
+      } else {
+        this.error((err as Error).stack || (err as Error).message, {exit: 1})
+      }
     }
   }
 
