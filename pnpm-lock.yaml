@@ -24,8 +24,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       '@sanity/mutator':
-        specifier: ^5.6.0
-        version: 5.6.0(@types/react@19.1.12)
+        specifier: ^5.7.0
+        version: 5.7.0(@types/react@19.1.12)
       debug:
         specifier: ^4.4.3
         version: 4.4.3(supports-color@8.1.1)
@@ -39,7 +39,7 @@ importers:
         specifier: ^1.4.2
         version: 1.4.2
       lodash-es:
-        specifier: ^4.17.22
+        specifier: ^4.17.23
         version: 4.17.23
       p-map:
         specifier: ^7.0.3
@@ -115,7 +115,7 @@ importers:
         specifier: ^13.5.6
         version: 13.5.6
       oclif:
-        specifier: ^4.22.68
+        specifier: ^4.22.70
         version: 4.22.70(@types/node@24.10.9)
       prettier:
         specifier: ^3.8.1
@@ -1265,8 +1265,8 @@ packages:
   '@sanity/media-library-types@1.2.0':
     resolution: {integrity: sha512-p+Bw96I63SwBcMNA/L5dnMdEcS88EEDUDZ65LGuwOCMXrESRGMFCSxgc+0HnL0JXDIzgYgfrPuf1I3bO9QneAw==}
 
-  '@sanity/mutator@5.6.0':
-    resolution: {integrity: sha512-ILL/eM2N5s8OEXe3M/EZincIkvTx0t2bJD0TZoNzZP8XYKkKzAjvWgXidO+oyafxOP7GBmv1pjZN5pKSPYPNug==}
+  '@sanity/mutator@5.7.0':
+    resolution: {integrity: sha512-FcZPoaOUPimtNEXXIRqlHyUceVtKUiDBVYqD57qASjT2BKv0ccCs8P9wF1+/S5WgGYcSQn/gMOvXuLPgD+j67g==}
 
   '@sanity/semantic-release-preset@5.0.0':
     resolution: {integrity: sha512-2lCuU57OZW6WY7O8d4vjbpghQIc9lnxS9+dLnzrBYh8e6pA467DxlCNum4NgDeDyHxNh9HGXNalXEWJz8tec+A==}
@@ -1274,8 +1274,8 @@ packages:
     peerDependencies:
       semantic-release: ^24
 
-  '@sanity/types@5.6.0':
-    resolution: {integrity: sha512-O1d2PZGA5HAhRL0RO9Hgsf4HY2O2f7cdqlHfgre43rm8Pi3w3YnnbNvKhML892inR+td85rCrNPsomSeRpZ9OA==}
+  '@sanity/types@5.7.0':
+    resolution: {integrity: sha512-Nsj5YAI/oO77muq/uKDt5/ZnStInc6DfR5TeL1ePWoPVAzLIga1vJRNK1oWH5MefNtWzGVlmyEjJxMZ4OBJWXg==}
     peerDependencies:
       '@types/react': ^19.2
 
@@ -5676,7 +5676,7 @@ snapshots:
       '@inquirer/prompts': 8.1.0(@types/node@24.10.9)
       '@oclif/core': 4.8.0
       '@sanity/client': 7.14.1(debug@4.4.3)
-      '@sanity/types': 5.6.0(@types/react@19.1.12)(debug@4.4.3)
+      '@sanity/types': 5.7.0(@types/react@19.1.12)(debug@4.4.3)
       babel-plugin-react-compiler: 1.0.0
       chalk: 5.6.2
       configstore: 7.0.0
@@ -5730,10 +5730,10 @@ snapshots:
 
   '@sanity/media-library-types@1.2.0': {}
 
-  '@sanity/mutator@5.6.0(@types/react@19.1.12)':
+  '@sanity/mutator@5.7.0(@types/react@19.1.12)':
     dependencies:
       '@sanity/diff-match-patch': 3.2.0
-      '@sanity/types': 5.6.0(@types/react@19.1.12)(debug@4.4.3)
+      '@sanity/types': 5.7.0(@types/react@19.1.12)(debug@4.4.3)
       '@sanity/uuid': 3.0.2
       debug: 4.4.3(supports-color@8.1.1)
       lodash-es: 4.17.23
@@ -5752,7 +5752,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@sanity/types@5.6.0(@types/react@19.1.12)(debug@4.4.3)':
+  '@sanity/types@5.7.0(@types/react@19.1.12)(debug@4.4.3)':
     dependencies:
       '@sanity/client': 7.14.1(debug@4.4.3)
       '@sanity/media-library-types': 1.2.0
