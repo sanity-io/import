@@ -25,7 +25,7 @@ jobs:
         shell: bash
 
       - name: Cache pnpm store
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-node-${{ inputs.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
