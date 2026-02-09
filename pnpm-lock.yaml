@@ -70,8 +70,8 @@ importers:
         specifier: ^7.14.1
         version: 7.14.1(debug@4.4.3)
       '@sanity/semantic-release-preset':
-        specifier: ^5.0.0
-        version: 5.0.0(semantic-release@25.0.3(typescript@5.9.3))
+        specifier: ^6.0.0
+        version: 6.0.0(semantic-release@25.0.3(typescript@5.9.3))
       '@swc/cli':
         specifier: ^0.8.0
         version: 0.8.0(@swc/core@1.15.11)
@@ -1256,11 +1256,11 @@ packages:
   '@sanity/mutator@5.8.1':
     resolution: {integrity: sha512-z4Afe/3hdF2waI659lTV9GlGoiQpYB9TMdAnUGp+RR40B5J7lYgqgpAyEdhWrXK+b1vgral+gUYvPQSNyS4e4Q==}
 
-  '@sanity/semantic-release-preset@5.0.0':
-    resolution: {integrity: sha512-2lCuU57OZW6WY7O8d4vjbpghQIc9lnxS9+dLnzrBYh8e6pA467DxlCNum4NgDeDyHxNh9HGXNalXEWJz8tec+A==}
-    engines: {node: '>= 20.8'}
+  '@sanity/semantic-release-preset@6.0.0':
+    resolution: {integrity: sha512-iw2aS0w2iVgVVw0IKRry3kUpuE9f5YlFFkKqribNkCzCOvzZcCFuXVIDUaijn3netjJIbQWR6XdqNAI1ifKkYg==}
+    engines: {node: ^22.14.0 || >=24.10.0}
     peerDependencies:
-      semantic-release: ^24
+      semantic-release: ^25
 
   '@sanity/telemetry@0.8.1':
     resolution: {integrity: sha512-YybPb6s3IO2HmHZ4dLC3JCX+IAwAnVk5/qmhH4CWbC3iL/VsikRbz4FfOIIIt0cj2UOKrahL/wpSPBR/3quQzg==}
@@ -5720,7 +5720,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@sanity/semantic-release-preset@5.0.0(semantic-release@25.0.3(typescript@5.9.3))':
+  '@sanity/semantic-release-preset@6.0.0(semantic-release@25.0.3(typescript@5.9.3))':
     dependencies:
       '@semantic-release/changelog': 6.0.3(semantic-release@25.0.3(typescript@5.9.3))
       '@semantic-release/exec': 6.0.3(semantic-release@25.0.3(typescript@5.9.3))

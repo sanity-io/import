@@ -88,7 +88,7 @@
     "@eslint/js": "^9.39.2",
     "@oclif/test": "^4.1.16",
     "@sanity/client": "^7.14.1",
-    "@sanity/semantic-release-preset": "^5.0.0",
+    "@sanity/semantic-release-preset": "^6.0.0",
     "@swc/cli": "^0.8.0",
     "@swc/core": "^1.15.11",
     "@types/debug": "^4.1.12",
