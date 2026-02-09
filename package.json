@@ -69,7 +69,7 @@
     "@oclif/core": "^4.8.0",
     "@oclif/plugin-help": "^6.2.37",
     "@sanity/asset-utils": "^2.3.0",
-    "@sanity/cli-core": "0.1.0-alpha.11",
+    "@sanity/cli-core": "^0.1.0-alpha.11",
     "@sanity/generate-help-url": "^4.0.0",
     "@sanity/mutator": "^5.8.1",
     "debug": "^4.4.3",
