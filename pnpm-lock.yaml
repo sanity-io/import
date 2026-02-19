@@ -18,8 +18,8 @@ importers:
         specifier: ^2.3.0
         version: 2.3.0
       '@sanity/cli-core':
-        specifier: ^0.1.0-alpha.11
-        version: 0.1.0-alpha.11(@sanity/telemetry@0.8.1(react@19.2.4))(@types/node@24.10.12)(@types/react@19.1.12)
+        specifier: ^0.1.0-alpha.13
+        version: 0.1.0-alpha.13(@sanity/telemetry@0.8.1(react@19.2.4))(@types/node@24.10.12)(@types/react@19.1.12)
       '@sanity/generate-help-url':
         specifier: ^4.0.0
         version: 4.0.0
@@ -1242,14 +1242,18 @@ packages:
     resolution: {integrity: sha512-dlEmALjQ5iyQG0O8ZVmkkE3wUYCKfRmiyMvuuGN5SF9buAHxmseBOKJ/Iy2DU/8ef70mtUXlzeCRSlTN/nmZsg==}
     engines: {node: '>=18'}
 
-  '@sanity/cli-core@0.1.0-alpha.11':
-    resolution: {integrity: sha512-bdM05TeHAwfa8sSSsB0MVZy3ivlzXdVlyfrE9L2v3X6jM0iwKSz5DxkWdC4beADpTE3qpHAgH7eWufUamJsf+w==}
+  '@sanity/cli-core@0.1.0-alpha.13':
+    resolution: {integrity: sha512-Sc5qRmoCKgV4uSrBV32cgAc5cYHoF2lflB+i68BcMOgAmpTLdlGGvl63TV2LVHhvE/jO4Nr2i+xRs/JpaAXtUA==}
     engines: {node: '>=20.19.1 <22 || >=22.12'}
     peerDependencies:
       '@sanity/telemetry': '>=0.8.1 <0.9.0'
 
   '@sanity/client@7.14.1':
     resolution: {integrity: sha512-lCDx0vuNUgg9FL2E5Hiv1q7u6iHd1Z+jjMZAaYtfzzFPoBKOiyZlaFwqyLVHRyTbwnXQdIGDPmx2AvfBTbGQsQ==}
+    engines: {node: '>=20'}
+
+  '@sanity/client@7.15.0':
+    resolution: {integrity: sha512-3RlK9c1lhNT4c4PhQp9/z6Zghb7n/HCmB5U1AgX8eFQBnx7vDUPwBge3mOakCh279cUA4e+8uys+rN9oQsrjXA==}
     engines: {node: '>=20'}
 
   '@sanity/diff-match-patch@3.2.0':
@@ -1279,6 +1283,11 @@ packages:
     engines: {node: '>=16.0.0'}
     peerDependencies:
       react: ^18.2 || ^19.0.0
+
+  '@sanity/types@5.10.0':
+    resolution: {integrity: sha512-oxtssb6sHJfxcIcMogNt2EuHrnd9JZQpjz9pZJdA7+sc1ioJSTfBDdCO2Eh00kOBI8Z7bAVASCkTqWBC1MWo2w==}
+    peerDependencies:
+      '@types/react': ^19.2
 
   '@sanity/types@5.8.1':
     resolution: {integrity: sha512-HZuukk19haJYfIMKYjbjCeVrxFY2HrtcIamolVBBbQVty1y/C4TM4kG2O5W48Sop7MgbA60w26wL1utkLl4mfA==}
@@ -5593,16 +5602,15 @@ snapshots:
 
   '@sanity/asset-utils@2.3.0': {}
 
-  '@sanity/cli-core@0.1.0-alpha.11(@sanity/telemetry@0.8.1(react@19.2.4))(@types/node@24.10.12)(@types/react@19.1.12)':
+  '@sanity/cli-core@0.1.0-alpha.13(@sanity/telemetry@0.8.1(react@19.2.4))(@types/node@24.10.12)(@types/react@19.1.12)':
     dependencies:
       '@inquirer/prompts': 8.2.0(@types/node@24.10.12)
       '@oclif/core': 4.8.0
       '@sanity/client': 7.14.1(debug@4.4.3)
       '@sanity/telemetry': 0.8.1(react@19.2.4)
-      '@sanity/types': 5.8.1(@types/react@19.1.12)(debug@4.4.3)
+      '@sanity/types': 5.10.0(@types/react@19.1.12)(debug@4.4.3)
       babel-plugin-react-compiler: 1.0.0
       boxen: 8.0.1
-      chalk: 5.6.2
       configstore: 7.0.0
       debug: 4.4.3(supports-color@8.1.1)
       get-tsconfig: 4.13.6
@@ -5636,6 +5644,15 @@ snapshots:
       - yaml
 
   '@sanity/client@7.14.1(debug@4.4.3)':
+    dependencies:
+      '@sanity/eventsource': 5.0.2
+      get-it: 8.7.0(debug@4.4.3)
+      nanoid: 3.3.11
+      rxjs: 7.8.2
+    transitivePeerDependencies:
+      - debug
+
+  '@sanity/client@7.15.0(debug@4.4.3)':
     dependencies:
       '@sanity/eventsource': 5.0.2
       get-it: 8.7.0(debug@4.4.3)
@@ -5685,6 +5702,14 @@ snapshots:
       react: 19.2.4
       rxjs: 7.8.2
       typeid-js: 0.3.0
+
+  '@sanity/types@5.10.0(@types/react@19.1.12)(debug@4.4.3)':
+    dependencies:
+      '@sanity/client': 7.15.0(debug@4.4.3)
+      '@sanity/media-library-types': 1.2.0
+      '@types/react': 19.1.12
+    transitivePeerDependencies:
+      - debug
 
   '@sanity/types@5.8.1(@types/react@19.1.12)(debug@4.4.3)':
     dependencies:
