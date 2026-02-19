@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.2](https://github.com/sanity-io/import/compare/v4.1.1...v4.1.2) (2026-02-19)
+
+### Bug Fixes
+
+- **deps:** bump @sanity/cli-core dependency ([#50](https://github.com/sanity-io/import/issues/50)) ([1bbbdef](https://github.com/sanity-io/import/commit/1bbbdef48bee45b45dc79fafd0a1077390a376bc))
+
 ## [4.1.1](https://github.com/sanity-io/import/compare/v4.1.0...v4.1.1) (2026-02-09)
 
 ### Bug Fixes
