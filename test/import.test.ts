@@ -1,6 +1,7 @@
  
 import fs from 'node:fs'
 import path from 'node:path'
+import {pathToFileURL} from 'node:url'
 
 import {createClient} from '@sanity/client'
 import {expect, test} from 'vitest'
@@ -257,6 +258,81 @@ test('allows replacement character in assetMap when allowReplacementCharacters i
   }
   const res = await sanityImport(docs, {client, assetMap, allowReplacementCharacters: true})
   expect(res).toMatchObject({numDocs: 2, warnings: []})
+})
+
+test('skips asset uploads for already-existing documents in createIfNotExists mode', async () => {
+  // movie_1 and movie_3 already exist (API returns operation: 'none')
+  // movie_2 is new (API returns operation: 'create')
+  // Only movie_2's asset should be uploaded/patched
+  const existingIds = new Set(['movie_1', 'movie_3'])
+  const patchedDocumentIds: string[] = []
+
+  const imgUrl = pathToFileURL(path.join(fixturesDir, 'img.gif')).href
+
+  const client = getSanityClient((event: MockRequestEvent) => {
+    const options = event.context.options as TestRequestOptions
+    const uri = options.uri || options.url
+
+    if (uri?.includes('/data/mutate')) {
+      const body = JSON.parse(options.body as string) as MockMutationsBody
+
+      // Check if this is a document import batch (createIfNotExists) or asset ref patch
+      const hasCreateIfNotExists = body.mutations.some((mut) => mut.createIfNotExists)
+      if (hasCreateIfNotExists) {
+        // Simulate API: return 'none' for existing docs, 'create' for new ones
+        const results = body.mutations.map((mut) => {
+          const id = mut.createIfNotExists!._id
+          return {
+            id,
+            operation: existingIds.has(id) ? 'none' : 'create',
+          }
+        })
+        return {body: {results}}
+      }
+
+      // This is an asset reference patch — track which documents get patched
+      for (const mut of body.mutations) {
+        if (mut.patch) {
+          patchedDocumentIds.push(mut.patch.id)
+        }
+      }
+      const results = body.mutations.map((mut) => ({
+        id: mut.patch?.id,
+        operation: 'update',
+      }))
+      return {body: {results}}
+    }
+
+    // Asset lookup — pretend no existing assets so upload is attempted
+    if (uri?.includes('/data/query')) {
+      return {body: {result: null}}
+    }
+
+    // Asset upload
+    if (uri?.includes('assets/images')) {
+      return {body: {document: {_id: 'image-newAssetId'}}}
+    }
+
+    return {statusCode: 400, body: {error: `"${uri}" should not be called`}}
+  })
+
+  const docs: SanityDocument[] = [
+    {_id: 'movie_1', _type: 'movie', title: 'Alien', poster: {_sanityAsset: `image@${imgUrl}`}},
+    {
+      _id: 'movie_2',
+      _type: 'movie',
+      title: 'Blade Runner',
+      poster: {_sanityAsset: `image@${imgUrl}`},
+    },
+    {_id: 'movie_3', _type: 'movie', title: 'Arrival', poster: {_sanityAsset: `image@${imgUrl}`}},
+  ]
+  const res = await sanityImport(docs, {client, operation: 'createIfNotExists'})
+
+  // All 3 docs counted as processed
+  expect(res.numDocs).toBe(3)
+
+  // Only movie_2 (the newly created doc) should have its asset reference patched
+  expect(patchedDocumentIds).toEqual(['movie_2'])
 })
 
 function getMockMutationHandler(

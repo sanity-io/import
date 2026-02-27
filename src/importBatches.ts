@@ -9,26 +9,41 @@ import {suffixTag} from './util/suffixTag.js'
 
 const DOCUMENT_IMPORT_CONCURRENCY = 6
 
+export interface BatchImportResult {
+  count: number
+  importedIds: string[]
+}
+
 export async function importBatches(
   batches: SanityDocument[][],
   options: ImportOptions,
-): Promise<number> {
+): Promise<BatchImportResult> {
   const progress = progressStepper(options.onProgress, {
     step: 'Importing documents',
     total: batches.length,
   })
 
   const mapOptions = {concurrency: DOCUMENT_IMPORT_CONCURRENCY}
-  const batchSizes = await pMap(batches, importBatch.bind(null, options, progress), mapOptions)
+  const batchResults = await pMap(
+    batches,
+    importBatch.bind(null, options, progress),
+    mapOptions,
+  )
 
-  return batchSizes.reduce((prev, add) => prev + add, 0)
+  return batchResults.reduce<BatchImportResult>(
+    (acc, result) => ({
+      count: acc.count + result.count,
+      importedIds: acc.importedIds.concat(result.importedIds),
+    }),
+    {count: 0, importedIds: []},
+  )
 }
 
 function importBatch(
   options: ImportOptions,
   progress: () => void,
   batch: SanityDocument[],
-): Promise<number> {
+): Promise<BatchImportResult> {
   const {client, operation, releasesOperation, tag} = options
   const maxRetries = operation === 'create' ? 1 : 3
 
@@ -48,9 +63,12 @@ function importBatch(
               .commit({visibility: 'async', tag: suffixTag(tag, 'doc.create')})
               .then((res: MultipleMutationResult) => {
                 progress()
-                return res.results.length
+                const importedIds = res.results
+                  .filter((r) => r.operation !== 'none')
+                  .map((r) => r.id)
+                return {count: res.results.length, importedIds}
               })
-          : Promise.resolve(0)
+          : Promise.resolve({count: 0, importedIds: [] as string[]})
 
       const releasesAction = releaseDocs.map((doc: SanityDocument) => {
         const actionParams: ImportReleaseAction = {
@@ -61,17 +79,22 @@ function importBatch(
         }
         return client
           .action(actionParams)
-          .then(() => 1)
+          .then(() => ({count: 1, importedIds: [doc._id]}))
           .catch((err: Error) => {
             err.message = `Release import failed for ${doc._id}: ${err.message}`
             throw err
           })
       })
 
-      return Promise.all([docsTransaction, ...releasesAction]).then((results) => {
-        const totalCount = results.reduce((sum: number, count: number) => sum + count, 0)
-        return totalCount
-      })
+      return Promise.all([docsTransaction, ...releasesAction]).then((results) =>
+        results.reduce<BatchImportResult>(
+          (acc, result) => ({
+            count: acc.count + result.count,
+            importedIds: acc.importedIds.concat(result.importedIds),
+          }),
+          {count: 0, importedIds: []},
+        ),
+      )
     },
     {maxTries: maxRetries, isRetriable},
   )

@@ -90,11 +90,24 @@ async function importDocuments(
 
   // Trigger actual import process
   debug('Starting import of documents')
-  const docsImported = await importBatches(batches, options)
+  const {count: docsImported, importedIds} = await importBatches(batches, options)
+
+  // When using createIfNotExists (--missing), only upload assets for documents
+  // that were actually created. Documents that already existed in the dataset
+  // are assumed to already have their assets in place.
+  let filteredAssetRefs = assetRefs
+  if (options.operation === 'createIfNotExists') {
+    const importedIdSet = new Set(importedIds)
+    filteredAssetRefs = assetRefs.filter((ref) => importedIdSet.has(ref.documentId))
+    const skipped = assetRefs.length - filteredAssetRefs.length
+    if (skipped > 0) {
+      debug('Skipping %d asset refs for %d already-existing documents', skipped, skipped)
+    }
+  }
 
   // Documents are imported, now proceed with post-import operations
   debug('Uploading assets')
-  const {failures: assetWarnings} = await uploadAssets(assetRefs, options)
+  const {failures: assetWarnings} = await uploadAssets(filteredAssetRefs, options)
 
   // Strengthen references
   debug('Strengthening references')
