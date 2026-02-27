@@ -5,6 +5,12 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.3](https://github.com/sanity-io/import/compare/v4.1.2...v4.1.3) (2026-02-27)
+
+### Bug Fixes
+
+- skip asset uploads for existing docs in createIfNotExists mode ([#54](https://github.com/sanity-io/import/issues/54)) ([98d1068](https://github.com/sanity-io/import/commit/98d1068a2ff0fc6d97bb22c9ac447da6f4cf503e)), closes [#51](https://github.com/sanity-io/import/issues/51)
+
 ## [4.1.2](https://github.com/sanity-io/import/compare/v4.1.1...v4.1.2) (2026-02-19)
 
 ### Bug Fixes
