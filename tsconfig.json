@@ -24,6 +24,6 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "test/**/*", "bin/**/*", "*.ts", "*.mjs"],
+  "include": ["src/**/*", "test/**/*", "*.ts", "*.mjs"],
   "exclude": ["node_modules", "dist"]
 }

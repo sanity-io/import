@@ -32,11 +32,7 @@
   },
   "main": "./dist/_exports/index.js",
   "types": "./dist/_exports/index.d.ts",
-  "bin": {
-    "sanity-import": "./bin/run.js"
-  },
   "files": [
-    "bin",
     "dist",
     "oclif.manifest.json",
     "src"
@@ -56,21 +52,13 @@
     "watch": "swc src -d dist --strip-leading-paths --watch"
   },
   "oclif": {
-    "bin": "sanity-import",
-    "commands": {
-      "strategy": "single",
-      "target": "./dist/commands/dataset/import.js"
-    },
+    "bin": "sanity",
+    "commands": "./dist/commands",
     "dirname": "sanity-import",
-    "plugins": [
-      "@oclif/plugin-help"
-    ]
+    "topicSeparator": " "
   },
   "dependencies": {
-    "@oclif/core": "^4.8.1",
-    "@oclif/plugin-help": "^6.2.37",
     "@sanity/asset-utils": "^2.3.0",
-    "@sanity/cli-core": "^0.1.0-alpha.16",
     "@sanity/generate-help-url": "^4.0.0",
     "@sanity/mutator": "^5.12.0",
     "debug": "^4.4.3",
@@ -109,6 +97,8 @@
     "vitest": "^4.0.18"
   },
   "peerDependencies": {
+    "@oclif/core": "^4.8.1",
+    "@sanity/cli-core": "^0.1.0-alpha.16",
     "@sanity/client": "^5.0.0 || ^6.0.0 || ^7.0.0"
   },
   "packageManager": "pnpm@10.29.2",
