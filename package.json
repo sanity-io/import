@@ -84,10 +84,10 @@
     "tinyglobby": "^0.2.15"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.4",
-    "@eslint/js": "^9.39.3",
-"@sanity/cli-test": "^0.0.2-alpha.15",
+    "@eslint/compat": "^2.0.2",
+    "@sanity/cli-test": "^0.0.2-alpha.15",
     "@sanity/client": "^7.16.0",
+    "@sanity/eslint-config-cli": "0.0.0-alpha.2",
     "@swc/cli": "^0.8.0",
     "@swc/core": "^1.15.13",
     "@types/debug": "^4.1.12",
@@ -98,16 +98,15 @@
     "@types/tar-fs": "2.0.4",
     "@vitest/coverage-v8": "4.0.18",
     "eslint": "^9.39.3",
-    "eslint-config-prettier": "^9.1.2",
-    "eslint-config-sanity": "^7.1.4",
-    "globals": "^17.3.0",
     "nock": "^14.0.11",
     "oclif": "^4.22.81",
     "prettier": "^3.8.1",
     "prettier-plugin-packagejson": "^2.5.22",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.56.1",
     "vitest": "^4.0.18"
+  },
+  "peerDependencies": {
+    "@sanity/client": "^7.0.0"
   },
   "packageManager": "pnpm@10.29.2",
   "engines": {

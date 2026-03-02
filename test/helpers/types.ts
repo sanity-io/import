@@ -1,4 +1,4 @@
-import type {HttpContext, MiddlewareResponse} from 'get-it'
+import {type HttpContext, type MiddlewareResponse} from 'get-it'
 
 /**
  * Type for the inject function parameter structure used in get-it middleware
@@ -24,21 +24,22 @@ export type InjectFunction = (
  * Type for mutation structure used in Sanity API tests
  */
 export interface TestMutation {
-  patch?: {id: string}
-  create?: {_id: string; [key: string]: unknown}
-  createIfNotExists?: {_id: string; [key: string]: unknown}
-  createOrReplace?: {_id: string; [key: string]: unknown}
+  create?: {[key: string]: unknown; _id: string}
+  createIfNotExists?: {[key: string]: unknown; _id: string}
+  createOrReplace?: {[key: string]: unknown; _id: string}
   delete?: {id: string}
+  patch?: {id: string}
 }
 
 /**
  * Type for request options that include uri/url (test-specific extension)
  */
 export interface TestRequestOptions {
+  [key: string]: unknown
+
+  body?: string
   uri?: string
   url?: string
-  body?: string
-  [key: string]: unknown
 }
 
 /**
@@ -52,5 +53,5 @@ export interface MockMutationsBody {
  * Type for mutation with required create property (used in test match functions)
  */
 export interface TestMutationWithCreate {
-  create: {_id: string; [key: string]: unknown}
+  create: {[key: string]: unknown; _id: string}
 }

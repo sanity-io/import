@@ -5,8 +5,8 @@ import {DatasetImportCommand} from '../src/commands/dataset/import.js'
 import {ReplacementCharError} from '../src/util/validateReplacementCharacters.js'
 
 const mocks = vi.hoisted(() => ({
-  sanityImport: vi.fn(),
   getProjectCliClient: vi.fn(),
+  sanityImport: vi.fn(),
 }))
 
 vi.mock('../src/import.js', () => ({
@@ -22,7 +22,7 @@ vi.mock('@sanity/cli-core', async () => {
 })
 
 const defaultMocks = {
-  cliConfig: {api: {projectId: 'test-project', dataset: 'production'}},
+  cliConfig: {api: {dataset: 'production', projectId: 'test-project'}},
   projectRoot: {
     directory: '/test/path',
     path: '/test/path/sanity.config.ts',
@@ -111,7 +111,7 @@ describe('DatasetImportCommand', () => {
   test('imports ndjson file successfully', async () => {
     mocks.sanityImport.mockResolvedValue({numDocs: 2, warnings: []})
 
-    const {stdout, error} = await testCommand(DatasetImportCommand, defaultArgs, {
+    const {error, stdout} = await testCommand(DatasetImportCommand, defaultArgs, {
       mocks: defaultMocks,
     })
 
@@ -170,10 +170,10 @@ describe('DatasetImportCommand', () => {
       expect.anything(),
       expect.objectContaining({
         allowFailingAssets: true,
-        skipCrossDatasetReferences: true,
         allowSystemDocuments: true,
-        replaceAssets: true,
         assetConcurrency: 5,
+        replaceAssets: true,
+        skipCrossDatasetReferences: true,
       }),
     )
   })
@@ -182,13 +182,13 @@ describe('DatasetImportCommand', () => {
     mocks.sanityImport.mockResolvedValue({
       numDocs: 1,
       warnings: [
-        {type: 'document', message: 'Failed to import document', documentId: 'doc1', path: 'title'},
-        {type: 'asset', message: 'Failed to upload', url: 'https://example.com/image.png'},
-        {type: 'asset', message: 'Failed to upload', url: 'https://example.com/file.pdf'},
+        {documentId: 'doc1', message: 'Failed to import document', path: 'title', type: 'document'},
+        {message: 'Failed to upload', type: 'asset', url: 'https://example.com/image.png'},
+        {message: 'Failed to upload', type: 'asset', url: 'https://example.com/file.pdf'},
       ],
     })
 
-    const {stderr, error} = await testCommand(DatasetImportCommand, defaultArgs, {
+    const {error, stderr} = await testCommand(DatasetImportCommand, defaultArgs, {
       mocks: defaultMocks,
     })
 

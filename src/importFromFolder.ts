@@ -6,7 +6,12 @@ import {pathToFileURL} from 'node:url'
 import createDebug from 'debug'
 import {glob} from 'tinyglobby'
 
-import type {AssetMap, ImportersContext, ImportOptions, ImportResult} from './types.js'
+import {
+  type AssetMap,
+  type ImportersContext,
+  type ImportOptions,
+  type ImportResult,
+} from './types.js'
 import {readJson} from './util/readJson.js'
 
 const debug = createDebug('sanity:import:folder')
@@ -17,7 +22,7 @@ export async function importFromFolder(
   importers: ImportersContext,
 ): Promise<ImportResult> {
   debug('Importing from folder %s', fromDir)
-  const dataFiles = await glob(['*.ndjson'], {cwd: fromDir, absolute: true})
+  const dataFiles = await glob(['*.ndjson'], {absolute: true, cwd: fromDir})
   if (dataFiles.length === 0) {
     throw new Error(`No .ndjson file found in ${fromDir}`)
   }
@@ -34,19 +39,19 @@ export async function importFromFolder(
   debug('Importing from file %s', dataFile)
 
   const stream = fs.createReadStream(dataFile!)
-  const images = await glob('images/*', {cwd: fromDir, absolute: true})
-  const files = await glob('files/*', {cwd: fromDir, absolute: true})
+  const images = await glob('images/*', {absolute: true, cwd: fromDir})
+  const files = await glob('files/*', {absolute: true, cwd: fromDir})
   const imageAssets = images.map((imgPath: string) => `image#${pathToFileURL(imgPath).href}`)
   const fileAssets = files.map((filePath: string) => `file#${pathToFileURL(filePath).href}`)
   const unreferencedAssets: string[] = [...imageAssets, ...fileAssets]
 
   debug('Queueing %d assets', unreferencedAssets.length)
 
-  const streamOptions = {...options, unreferencedAssets, assetsBase: fromDir, assetMap}
+  const streamOptions = {...options, assetMap, assetsBase: fromDir, unreferencedAssets}
   const result = await importers.fromStream(stream, streamOptions, importers)
 
   if (options.deleteOnComplete) {
-    await rm(fromDir, {recursive: true, force: true})
+    await rm(fromDir, {force: true, recursive: true})
   }
 
   return result

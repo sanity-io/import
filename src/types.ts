@@ -1,23 +1,25 @@
-import type {SanityClient} from '@sanity/client'
+import {type SanityClient} from '@sanity/client'
 
 export interface SanityDocument {
+  [key: string]: unknown
   _id: string
   _type: string
-  _rev?: string
+
   _createdAt?: string
+  _rev?: string
   _updatedAt?: string
-  [key: string]: unknown
 }
 
 export interface AssetDocument extends SanityDocument {
-  _type: 'sanity.imageAsset' | 'sanity.fileAsset'
-  url?: string
+  _type: 'sanity.fileAsset' | 'sanity.imageAsset'
+
+  metadata?: Record<string, unknown>
+  mimeType?: string
+  originalFilename?: string
   path?: string
   sha1hash?: string
   size?: number
-  mimeType?: string
-  originalFilename?: string
-  metadata?: Record<string, unknown>
+  url?: string
 }
 
 export interface AssetMap {
@@ -26,31 +28,33 @@ export interface AssetMap {
 
 export interface ProgressEvent {
   step: string
+
   current?: number
   total?: number
   update?: string
 }
 
 export interface ImportOptions {
-  client: SanityClient
-  operation: 'create' | 'createIfNotExists' | 'createOrReplace'
-  onProgress: (event: ProgressEvent) => void
   allowAssetsInDifferentDataset: boolean
+  allowSystemDocuments: boolean
+  client: SanityClient
+  onProgress: (event: ProgressEvent) => void
+  operation: 'create' | 'createIfNotExists' | 'createOrReplace'
+  releasesOperation: 'fail' | 'ignore' | 'replace'
   replaceAssets: boolean
   skipCrossDatasetReferences: boolean
-  allowSystemDocuments: boolean
-  releasesOperation: 'fail' | 'ignore' | 'replace'
   tag: string
-  targetProjectId?: string
-  targetDataset?: string
-  assetConcurrency?: number
-  assetVerificationConcurrency?: number
+
   allowFailingAssets?: boolean
   allowReplacementCharacters?: boolean
+  assetConcurrency?: number
   assetMap?: AssetMap
-  unreferencedAssets?: string[]
   assetsBase?: string
+  assetVerificationConcurrency?: number
   deleteOnComplete?: boolean
+  targetDataset?: string
+  targetProjectId?: string
+  unreferencedAssets?: string[]
 }
 
 export interface ImportResult {
@@ -71,14 +75,15 @@ export interface AssetResult {
 }
 
 export interface DocumentWithAssets {
-  document: SanityDocument
   assets: AssetDocument[]
+  document: SanityDocument
 }
 
 export interface StreamReference {
   _ref: string
-  _weak?: boolean
+
   _strengthenOnPublish?: boolean
+  _weak?: boolean
 }
 
 export interface Reference extends StreamReference {
@@ -88,16 +93,17 @@ export interface Reference extends StreamReference {
 export type ImportSource = NodeJS.ReadableStream | SanityDocument[] | string
 
 export interface ImportContext {
-  options: ImportOptions
   assets: AssetMap
+  options: ImportOptions
   references: Map<string, StreamReference[]>
 }
 
 // Error interfaces for better type safety
 export interface AssetUploadError extends Error {
   url: string
-  type?: string
+
   attempts?: number
+  type?: string
 }
 
 export interface SanityApiError extends Error {
@@ -115,30 +121,31 @@ export interface TarExtractError extends Error {
 
 // Fetch response types
 export interface SanityFetchResponse {
-  _id: string
-  url?: string
   [key: string]: unknown
+  _id: string
+
+  url?: string
 }
 
 // Asset document with dimensions for validation
 export interface AssetDocumentWithMetadata extends AssetDocument {
   metadata?: {
-    dimensions?: {
-      width: number
-      height: number
-    }
     [key: string]: unknown
+    dimensions?: {
+      height: number
+      width: number
+    }
   }
 }
 
 // Asset failure for reporting
 export interface AssetFailure {
-  type: 'asset'
-  url: string
   documents: Array<{
     documentId: string
     path: string
   }>
+  type: 'asset'
+  url: string
 }
 
 // Tar-stream types for stream processing
@@ -150,7 +157,8 @@ export interface TarEntry {
 
 // JSON streaming event emitter types
 export interface JsonStreamEvent {
-  type: 'data' | 'error' | 'end'
+  type: 'data' | 'end' | 'error'
+
   data?: unknown
   error?: Error
 }
@@ -158,21 +166,22 @@ export interface JsonStreamEvent {
 // HTTP response from get-it library
 export interface GetItResponse {
   body: NodeJS.ReadableStream
+
   headers?: Record<string, string>
   status?: number
 }
 
 // Circular dependency context for importers
 export interface ImportersContext {
-  fromStream: (
-    stream: NodeJS.ReadableStream,
-    options: ImportOptions,
-    ctx: ImportersContext,
-  ) => Promise<ImportResult>
   fromArray: (documents: SanityDocument[], options: ImportOptions) => Promise<ImportResult>
   fromFolder: (
     fromDir: string,
     options: ImportOptions & {deleteOnComplete?: boolean},
+    ctx: ImportersContext,
+  ) => Promise<ImportResult>
+  fromStream: (
+    stream: NodeJS.ReadableStream,
+    options: ImportOptions,
     ctx: ImportersContext,
   ) => Promise<ImportResult>
 }
@@ -180,14 +189,16 @@ export interface ImportersContext {
 // Cross-dataset reference
 export interface CrossDatasetReference extends StreamReference {
   _dataset: string
+
   _projectId?: string
 }
 
 // Asset metadata structure
 export interface AssetMetadata {
-  dimensions?: {
-    width: number
-    height: number
-  }
   [key: string]: unknown
+
+  dimensions?: {
+    height: number
+    width: number
+  }
 }

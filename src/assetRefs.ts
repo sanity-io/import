@@ -4,7 +4,7 @@ import {extractWithPath} from '@sanity/mutator'
 import {get, set, unset} from 'lodash-es'
 
 import {serializePath} from './serializePath.js'
-import type {SanityDocument} from './types.js'
+import {type SanityDocument} from './types.js'
 
 const assetKey = '_sanityAsset'
 const assetMatcher = /^(file|image)@([a-z]+:\/\/.*)/
@@ -12,13 +12,13 @@ const assetMatcher = /^(file|image)@([a-z]+:\/\/.*)/
 export interface AssetRef {
   documentId: string
   path: string
-  url: string
   type: string
+  url: string
 }
 
 // Note: mutates in-place
 export function unsetAssetRefs(doc: SanityDocument): SanityDocument {
-  findAssetRefs(doc).forEach((path) => {
+  for (const path of findAssetRefs(doc)) {
     const parentPath = path.slice(0, -1)
     const parent = get(doc, parentPath) as Record<string, unknown>
 
@@ -29,7 +29,7 @@ export function unsetAssetRefs(doc: SanityDocument): SanityDocument {
     const unsetPath = isOnlyKey ? parentPath : path
 
     unset(doc, unsetPath)
-  })
+  }
 
   return doc
 }
@@ -45,10 +45,10 @@ export function absolutifyPaths(doc: SanityDocument, absPath?: string): SanityDo
       .replace(/file:\/\/\.\//i, `${pathToFileURL(absPath).href}/`)
       .replace(/(https?):\/\/\.\//, `$1://${absPath}/`)
 
-  findAssetRefs(doc).forEach((path) => {
+  for (const path of findAssetRefs(doc)) {
     const value = get(doc, path) as string
     set(doc, path, modifier(value))
-  })
+  }
 
   return doc
 }
@@ -60,25 +60,25 @@ export function getAssetRefs(doc: SanityDocument): AssetRef[] {
       const value = get(doc, path) as string
       return {
         documentId: doc._id,
-        path: serializePath({path: path.filter(isNotAssetKey)}),
-        url: value.replace(assetMatcher, '$2'),
+        path: serializePath({path: path.filter((segment) => isNotAssetKey(segment))}),
         type: value.replace(assetMatcher, '$1'),
+        url: value.replace(assetMatcher, '$2'),
       }
     })
 }
 
-function isNotAssetKey(segment: string | number): boolean {
+function isNotAssetKey(segment: number | string): boolean {
   return segment !== assetKey
 }
 
-function findAssetRefs(doc: SanityDocument): (string | number)[][] {
+function findAssetRefs(doc: SanityDocument): (number | string)[][] {
   return extractWithPath(`..[${assetKey}]`, doc).map((match) => match.path)
 }
 
 export function validateAssetImportKey(
-  path: (string | number)[],
+  path: (number | string)[],
   doc: SanityDocument,
-): (string | number)[] {
+): (number | string)[] {
   if (!assetMatcher.test(get(doc, path) as string)) {
     throw new Error(
       [

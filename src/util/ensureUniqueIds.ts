@@ -1,29 +1,20 @@
-import type {SanityDocument} from '../types.js'
-
-interface IdAccumulator {
-  seen: string[]
-  duplicates: string[]
-}
-
-function reduceDuplicateIds(ids: IdAccumulator, doc: SanityDocument): IdAccumulator {
-  if (!doc._id) {
-    return ids
-  }
-
-  if (ids.seen.includes(doc._id)) {
-    ids.duplicates.push(doc._id)
-  } else {
-    ids.seen.push(doc._id)
-  }
-
-  return ids
-}
+import {type SanityDocument} from '../types.js'
 
 export function ensureUniqueIds(documents: SanityDocument[]): void {
-  const {duplicates} = documents.reduce(reduceDuplicateIds, {
-    seen: [],
-    duplicates: [],
-  })
+  const seen: string[] = []
+  const duplicates: string[] = []
+
+  for (const doc of documents) {
+    if (!doc._id) {
+      continue
+    }
+
+    if (seen.includes(doc._id)) {
+      duplicates.push(doc._id)
+    } else {
+      seen.push(doc._id)
+    }
+  }
 
   const numDupes = duplicates.length
   if (numDupes === 0) {

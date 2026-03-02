@@ -1,16 +1,16 @@
-import type {MultipleMutationResult, SanityClient, Transaction} from '@sanity/client'
+import {type MultipleMutationResult, type SanityClient, type Transaction} from '@sanity/client'
 import {extractWithPath} from '@sanity/mutator'
 import debug from 'debug'
 import {get} from 'lodash-es'
 import pMap from 'p-map'
 
 import {serializePath} from './serializePath.js'
-import type {
-  ImportOptions,
-  Reference,
-  SanityApiError,
-  SanityDocument,
-  StreamReference,
+import {
+  type ImportOptions,
+  type Reference,
+  type SanityApiError,
+  type SanityDocument,
+  type StreamReference,
 } from './types.js'
 import {progressStepper} from './util/progressStepper.js'
 import {retryOnFailure} from './util/retryOnFailure.js'
@@ -27,13 +27,13 @@ export interface StrongRefsTask {
 }
 
 interface RefPathItem {
-  path: (string | number)[]
+  path: (number | string)[]
   ref: StreamReference
 }
 
 export function getStrongRefs(doc: SanityDocument): StrongRefsTask | null {
-  const refs = findStrongRefs(doc).map(serializePath)
-  if (refs.length) {
+  const refs = findStrongRefs(doc).map((item) => serializePath(item))
+  if (refs.length > 0) {
     return {
       documentId: doc._id,
       references: refs,
@@ -47,44 +47,44 @@ export function getStrongRefs(doc: SanityDocument): StrongRefsTask | null {
 export function weakenStrongRefs(doc: SanityDocument): SanityDocument {
   const refs = findStrongRefs(doc)
 
-  refs.forEach((item) => {
+  for (const item of refs) {
     item.ref._weak = true
-  })
+  }
 
   return doc
 }
 
 // Note: mutates in-place
 export function cleanupReferences(doc: SanityDocument, options: ImportOptions): SanityDocument {
-  const {targetProjectId, skipCrossDatasetReferences} = options
-  extractWithPath('..[_ref]', doc)
+  const {skipCrossDatasetReferences, targetProjectId} = options
+  const refPathItems = extractWithPath('..[_ref]', doc)
     .map((match) => match.path.slice(0, -1))
     .map((path) => ({path, ref: get(doc, path) as StreamReference}))
-    .forEach((item: RefPathItem) => {
-      // We may want to skip cross-dataset references, eg when importing to other projects
-      if (skipCrossDatasetReferences && '_dataset' in item.ref) {
-        const leaf = item.path[item.path.length - 1]
-        const parent =
-          item.path.length > 1
-            ? (get(doc, item.path.slice(0, -1)) as Record<string | number, unknown>)
-            : doc
-        if (typeof leaf === 'string' || typeof leaf === 'number') {
-          delete parent[leaf]
-        }
-        return
+  for (const item of refPathItems) {
+    // We may want to skip cross-dataset references, eg when importing to other projects
+    if (skipCrossDatasetReferences && '_dataset' in item.ref) {
+      const leaf = item.path.at(-1)
+      const parent =
+        item.path.length > 1
+          ? (get(doc, item.path.slice(0, -1)) as Record<number | string, unknown>)
+          : doc
+      if (typeof leaf === 'string' || typeof leaf === 'number') {
+        delete parent[leaf]
       }
+      continue
+    }
 
-      // Apply missing _type on references
-      if (typeof (item.ref as Reference)._type === 'undefined') {
-        ;(item.ref as Reference)._type = 'reference'
-      }
+    // Apply missing _type on references
+    if ((item.ref as Reference)._type === undefined) {
+      ;(item.ref as Reference)._type = 'reference'
+    }
 
-      // Ensure cross-dataset references point to the same project ID as being imported to
-      const refWithProjectId = item.ref as StreamReference & {_projectId?: string}
-      if (typeof refWithProjectId._projectId !== 'undefined') {
-        refWithProjectId._projectId = targetProjectId!
-      }
-    })
+    // Ensure cross-dataset references point to the same project ID as being imported to
+    const refWithProjectId = item.ref as StreamReference & {_projectId?: string}
+    if (refWithProjectId._projectId !== undefined) {
+      refWithProjectId._projectId = targetProjectId!
+    }
+  }
 
   return doc
 }
@@ -128,10 +128,13 @@ function unsetWeakBatch(
 ): Promise<number> {
   logger('Strengthening batch of %d documents', batch.length)
   return retryOnFailure(
-    () =>
-      batch
-        .reduce(reducePatch, client.transaction())
-        .commit({visibility: 'async', tag: suffixTag(tag, 'ref.strengthen')})
+    () => {
+      let trx = client.transaction()
+      for (const task of batch) {
+        trx = reducePatch(trx, task)
+      }
+      return trx
+        .commit({tag: suffixTag(tag, 'ref.strengthen'), visibility: 'async'})
         .then((res: MultipleMutationResult) => {
           progress()
           return res.results.length
@@ -140,7 +143,8 @@ function unsetWeakBatch(
           const apiError = err as SanityApiError & {step?: string}
           apiError.step = 'strengthen-references'
           throw apiError
-        }),
+        })
+    },
     {isRetriable: (err: SanityApiError) => !err.statusCode || err.statusCode !== 409},
   )
 }

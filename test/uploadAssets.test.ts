@@ -4,24 +4,28 @@ import {pathToFileURL} from 'node:url'
 import nock from 'nock'
 import {afterEach, expect, test} from 'vitest'
 
-import type {ImportOptions} from '../src/types.js'
+import {type ImportOptions} from '../src/types.js'
 import {uploadAssets} from '../src/uploadAssets.js'
+import mockAssets from './fixtures/mock-assets.js'
+import {getSanityClient} from './helpers/helpers.js'
+import {
+  type MockMutationsBody,
+  type MockRequestEvent,
+  type TestRequestOptions,
+} from './helpers/types.js'
 
 // Test helper to create minimal ImportOptions for uploadAssets tests
 function createTestImportOptions(overrides: Partial<ImportOptions>): ImportOptions {
   return {
-    operation: 'createOrReplace',
     allowAssetsInDifferentDataset: false,
+    allowSystemDocuments: false,
+    operation: 'createOrReplace',
+    releasesOperation: 'ignore',
     replaceAssets: false,
     skipCrossDatasetReferences: false,
-    allowSystemDocuments: false,
-    releasesOperation: 'ignore',
     ...overrides,
   } as ImportOptions
 }
-import mockAssets from './fixtures/mock-assets.js'
-import {getSanityClient} from './helpers/helpers.js'
-import type {MockMutationsBody, MockRequestEvent, TestRequestOptions} from './helpers/types.js'
 
 afterEach(() => {
   nock.cleanAll()
@@ -93,7 +97,7 @@ test('will reuse an existing asset if it exists', () => {
       return {body: {results}}
     }
 
-    return {statusCode: 400, body: {error: `"${uri}" should not be called`}}
+    return {body: {error: `"${uri}" should not be called`}, statusCode: 400}
   })
 
   return expect(
@@ -143,7 +147,7 @@ test('will upload an asset if asset doc exists but file does not', () => {
       return {body: {results}}
     }
 
-    return {statusCode: 400, body: {error: `"${uri}" should not be called`}}
+    return {body: {error: `"${uri}" should not be called`}, statusCode: 400}
   })
 
   return expect(
@@ -183,7 +187,7 @@ test('will upload asset that do not already exist', () => {
       return {body: {results}}
     }
 
-    return {statusCode: 400, body: {error: `"${uri}" should not be called`}}
+    return {body: {error: `"${uri}" should not be called`}, statusCode: 400}
   })
 
   return expect(
@@ -230,11 +234,11 @@ test('will upload once but batch patches', () => {
       return {body: {results}}
     }
 
-    return {statusCode: 400, body: {error: `"${uri}" should not be called`}}
+    return {body: {error: `"${uri}" should not be called`}, statusCode: 400}
   })
 
   const upload = uploadAssets(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockAssets([imgFileUrl]) as any,
     createTestImportOptions({
       client,
@@ -295,14 +299,14 @@ test('groups patches per document', () => {
       return {body: {results}}
     }
 
-    return {statusCode: 400, body: {error: `"${uri}" should not be called`}}
+    return {body: {error: `"${uri}" should not be called`}, statusCode: 400}
   })
 
   const imgFileUrl1 = pathToFileURL(path.join(fixturesDir, 'img.gif')).href
   const imgFileUrl2 = pathToFileURL(path.join(fixturesDir, 'img1.png')).href
 
   const upload = uploadAssets(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockAssets([imgFileUrl1, imgFileUrl2]) as any,
     createTestImportOptions({
       client,

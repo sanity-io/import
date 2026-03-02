@@ -1,10 +1,16 @@
 import {request} from 'node:https'
-import {parse as parseUrl} from 'node:url'
 
 const MAX_RETRIES = 5
 
 function getStatusCodeForUrl(url: string): Promise<number> {
-  const options = {...parseUrl(url), method: 'HEAD' as const}
+  const parsedUrl = new URL(url)
+  const options = {
+    hostname: parsedUrl.hostname,
+    method: 'HEAD' as const,
+    path: parsedUrl.pathname + parsedUrl.search,
+    port: parsedUrl.port,
+    protocol: parsedUrl.protocol,
+  }
   return new Promise((resolve, reject) => {
     const req = request(options, (res) => {
       res.resume()

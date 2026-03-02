@@ -7,14 +7,14 @@ import {assignDocumentId} from './assignDocumentId.js'
 import {batchDocuments} from './batchDocuments.js'
 import {documentHasError} from './documentHasErrors.js'
 import {importBatches} from './importBatches.js'
-import type {StrongRefsTask} from './references.js'
 import {
   cleanupReferences,
   getStrongRefs,
   strengthenReferences,
+  type StrongRefsTask,
   weakenStrongRefs,
 } from './references.js'
-import type {ImportOptions, ImportResult, SanityDocument} from './types.js'
+import {type ImportOptions, type ImportResult, type SanityDocument} from './types.js'
 import {uploadAssets} from './uploadAssets.js'
 import {ensureUniqueIds} from './util/ensureUniqueIds.js'
 import {validateAssetMapForReplacementChars} from './util/validateReplacementCharacters.js'
@@ -28,7 +28,9 @@ async function importDocuments(
   options: ImportOptions,
 ): Promise<ImportResult> {
   options.onProgress({step: 'Reading/validating data file'})
-  documents.forEach(documentHasError)
+  for (const [i, doc] of documents.entries()) {
+    documentHasError(doc, i)
+  }
 
   // Validate assetMap for replacement characters
   if (options.assetMap && options.allowReplacementCharacters !== true) {
@@ -69,16 +71,18 @@ async function importDocuments(
   const docs = keyed.map((doc) => cleanupReferences(doc, options))
 
   // Find references that will need strengthening when import is done
-  const strongRefs = docs.map(getStrongRefs).filter((ref): ref is StrongRefsTask => ref !== null)
+  const strongRefs = docs
+    .map((doc) => getStrongRefs(doc))
+    .filter((ref): ref is StrongRefsTask => ref !== null)
 
   // Extract asset references from the documents
-  const assetRefs = flatten(docs.map(getAssetRefs).filter((ref) => ref.length))
+  const assetRefs = flatten(docs.map((doc) => getAssetRefs(doc)).filter((ref) => ref.length))
 
   // Remove asset references from the documents
-  const assetless = docs.map(unsetAssetRefs)
+  const assetless = docs.map((doc) => unsetAssetRefs(doc))
 
   // Make strong references weak so they can be imported in any order
-  const weakened = assetless.map(weakenStrongRefs)
+  const weakened = assetless.map((doc) => weakenStrongRefs(doc))
 
   // Create batches of documents to import. Try to keep batches below a certain
   // byte-size (since document may vary greatly in size depending on type etc)

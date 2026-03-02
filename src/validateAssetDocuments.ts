@@ -2,7 +2,12 @@ import {generateHelpUrl} from '@sanity/generate-help-url'
 import debug from 'debug'
 import pMap from 'p-map'
 
-import type {AssetDocument, AssetMetadata, ImportOptions, SanityDocument} from './types.js'
+import {
+  type AssetDocument,
+  type AssetMetadata,
+  type ImportOptions,
+  type SanityDocument,
+} from './types.js'
 import {urlExists} from './util/urlExists.js'
 
 const logger = debug('sanity:import:asset-validation')
@@ -24,7 +29,7 @@ export async function validateAssetDocuments(
   docs: SanityDocument[],
   options: ImportOptions,
 ): Promise<void> {
-  const {targetProjectId, targetDataset} = options
+  const {targetDataset, targetProjectId} = options
   const concurrency = options.assetVerificationConcurrency || DEFAULT_VERIFY_CONCURRENCY
 
   const assetDocs = docs.filter((doc) =>
@@ -36,13 +41,13 @@ export async function validateAssetDocuments(
 
   options.onProgress({step: 'Validating asset documents'})
 
-  assetDocs.forEach((doc) => validateAssetDocumentProperties(doc))
+  for (const doc of assetDocs) validateAssetDocumentProperties(doc)
 
   // Don't allow assets that reference different datasets (unless explicitly allowing it)
   if (!options.allowAssetsInDifferentDataset) {
-    assetDocs.forEach((doc) => {
+    for (const doc of assetDocs) {
       const id = doc._id || doc.url
-      const {projectId, dataset} = getLocationFromDocument(doc)
+      const {dataset, projectId} = getLocationFromDocument(doc)
       const resolveText = `See ${generateHelpUrl('import-asset-has-different-target')}`
 
       if (projectId !== targetProjectId) {
@@ -56,7 +61,7 @@ export async function validateAssetDocuments(
           `Asset ${id} references a different dataset than the specified target (asset is in ${dataset}, importing to ${targetDataset}). ${resolveText}`,
         )
       }
-    })
+    }
   }
 
   if (!options.allowFailingAssets) {
@@ -64,11 +69,11 @@ export async function validateAssetDocuments(
   }
 }
 
-function getLocationFromDocument(doc: AssetDocument): {projectId: string; dataset: string} {
+function getLocationFromDocument(doc: AssetDocument): {dataset: string; projectId: string} {
   const url = doc.path || doc.url || ''
   const path = url.replace(/^https:\/\/cdn\.sanity\.[a-z]+\//, '')
   const [, projectId, dataset] = path.split('/')
-  return {projectId: projectId || '', dataset: dataset || ''}
+  return {dataset: dataset || '', projectId: projectId || ''}
 }
 
 async function ensureAssetUrlExists(assetDoc: AssetDocument): Promise<boolean> {
@@ -88,15 +93,15 @@ async function ensureAssetUrlExists(assetDoc: AssetDocument): Promise<boolean> {
 }
 
 function validateAssetDocumentProperties(assetDoc: AssetDocument): void {
-  Object.keys(REQUIRED_PROPERTIES).forEach((prop) => {
+  for (const prop of Object.keys(REQUIRED_PROPERTIES)) {
     const expectedType = REQUIRED_PROPERTIES[prop as keyof typeof REQUIRED_PROPERTIES]
     const propValue = (assetDoc as Record<string, unknown>)[prop]
     if (typeof propValue !== expectedType) {
-      const errorType = typeof propValue === 'undefined' ? 'is missing' : 'has invalid type for'
+      const errorType = propValue === undefined ? 'is missing' : 'has invalid type for'
 
       throw new Error(`Asset document ${assetDoc._id} ${errorType} required property "${prop}"`)
     }
-  })
+  }
 
   if (assetDoc._type === 'sanity.imageAsset') {
     validateImageMetadata(assetDoc)
@@ -116,11 +121,11 @@ function validateImageMetadata(assetDoc: AssetDocument): void {
 
   const dimensionProps = ['width', 'height', 'aspectRatio']
   const metadata = assetDoc.metadata as AssetMetadata
-  dimensionProps.forEach((prop) => {
+  for (const prop of dimensionProps) {
     if (typeof metadata.dimensions?.[prop as keyof typeof metadata.dimensions] !== 'number') {
-      throw new Error(
+      throw new TypeError(
         `Asset document ${assetDoc._id} is missing required property "metadata.dimensions.${prop}"`,
       )
     }
-  })
+  }
 }

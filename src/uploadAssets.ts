@@ -1,12 +1,16 @@
 import {basename} from 'node:path'
-import {parse as parseUrl} from 'node:url'
 
 import {isSanityImageUrl} from '@sanity/asset-utils'
-import type {SanityClient, Transaction} from '@sanity/client'
+import {type SanityClient, type Transaction} from '@sanity/client'
 import debug from 'debug'
 import pMap from 'p-map'
 
-import type {AssetFailure, AssetUploadError, ImportOptions, SanityFetchResponse} from './types.js'
+import {
+  type AssetFailure,
+  type AssetUploadError,
+  type ImportOptions,
+  type SanityFetchResponse,
+} from './types.js'
 import {getHashedBufferForUri} from './util/getHashedBufferForUri.js'
 import {progressStepper} from './util/progressStepper.js'
 import {retryOnFailure} from './util/retryOnFailure.js'
@@ -23,8 +27,8 @@ const ASSET_PATCH_BATCH_TASK_SIZE = 1000
 export interface AssetRef {
   documentId: string
   path: string
-  url: string
   type: string
+  url: string
 }
 
 export interface AssetRefMapItem {
@@ -46,7 +50,7 @@ interface AssetData {
 
 interface DocumentTasks {
   documentId: string
-  tasks: Array<{path: string; assetId: string}>
+  tasks: Array<{assetId: string; path: string}>
 }
 
 export async function uploadAssets(
@@ -64,11 +68,11 @@ export async function uploadAssets(
   // We might have additional assets that is not referenced by any documents, but was part of a
   // dataset when exporting, for instance. Add these to the map without any references to update.
   const unreferencedAssets = options.unreferencedAssets || []
-  unreferencedAssets.forEach((asset) => {
+  for (const asset of unreferencedAssets) {
     if (!assetRefMap.has(asset)) {
       assetRefMap.set(asset, [])
     }
-  })
+  }
 
   if (assetRefMap.size === 0) {
     return {
@@ -99,15 +103,20 @@ export async function uploadAssets(
 
   // Loop over all documents that need asset references to be set
   const batches = await setAssetReferences(assetRefMap, assetIds, options)
+  let totalBatches = 0
+  for (const batch of batches) {
+    totalBatches += batch
+  }
   return {
-    batches: batches.reduce((prev, add) => prev + add, 0),
+    batches: totalBatches,
     failures: assetFailures,
   }
 }
 
 function getAssetRefMap(assets: AssetRef[]): Map<string, AssetRefMapItem[]> {
-  return assets.reduce((assetRefMap, item) => {
-    const {documentId, path, url, type} = item
+  const assetRefMap = new Map<string, AssetRefMapItem[]>()
+  for (const item of assets) {
+    const {documentId, path, type, url} = item
     const key = `${type}#${url}`
     let refs = assetRefMap.get(key)
     if (!refs) {
@@ -116,8 +125,8 @@ function getAssetRefMap(assets: AssetRef[]): Map<string, AssetRefMapItem[]> {
     }
 
     refs.push({documentId, path})
-    return assetRefMap
-  }, new Map<string, AssetRefMapItem[]>())
+  }
+  return assetRefMap
 }
 
 async function ensureAssetWithRetries(
@@ -169,7 +178,7 @@ function downloadAsset(url: string, i: number): Promise<{buffer: Buffer; sha1has
 
 async function ensureAsset(asset: AssetData, options: ImportOptions, i: number): Promise<string> {
   const {buffer, sha1hash, type, url} = asset
-  const {client, assetMap = {}, replaceAssets, tag} = options
+  const {assetMap = {}, client, replaceAssets, tag} = options
 
   // See if the item exists on the server
   if (!replaceAssets) {
@@ -192,12 +201,12 @@ async function ensureAsset(asset: AssetData, options: ImportOptions, i: number):
   const assetMeta = assetMap[`${type}-${sha1hash}`]
   const hasFilename = assetMeta && assetMeta.originalFilename
   const hasNonFilenameMeta = assetMeta && Object.keys(assetMap).length > 1
-  const {pathname} = parseUrl(url)
+  const {pathname} = new URL(url)
   const filename = hasFilename ? assetMeta.originalFilename : basename(pathname || '')
 
   // If it doesn't exist, we want to upload it
   logger('[Asset #%d] Uploading %s with URL %s', i, type, url)
-  const uploadOptions: {tag: string; filename?: string} = {
+  const uploadOptions: {filename?: string; tag: string} = {
     tag: suffixTag(tag, 'asset.upload'),
   }
   if (filename) {
@@ -211,7 +220,7 @@ async function ensureAsset(asset: AssetData, options: ImportOptions, i: number):
     await client
       .patch(assetDoc._id)
       .set(assetMeta)
-      .commit({visibility: 'async', tag: suffixTag(tag, 'asset.add-meta')})
+      .commit({tag: suffixTag(tag, 'asset.add-meta'), visibility: 'async'})
   }
 
   return assetDoc._id
@@ -224,7 +233,6 @@ async function getAssetDocumentIdForHash(
   attemptNum: number,
   tag: string,
 ): Promise<string | null> {
-  // eslint-disable-next-line no-warning-comments
   // @todo remove retry logic when client has reintroduced it
   try {
     const dataType = type === 'file' ? 'sanity.fileAsset' : 'sanity.imageAsset'
@@ -260,56 +268,56 @@ async function getAssetDocumentIdForHash(
 
 function getUploadFailures(
   assetRefMap: Map<string, AssetRefMapItem[]>,
-  assetIds: (string | Error)[],
+  assetIds: (Error | string)[],
 ): AssetFailure[] {
+  const failures: AssetFailure[] = []
   const lookup = assetRefMap.values()
 
-  return assetIds.reduce((failures: AssetFailure[], assetId) => {
+  for (const assetId of assetIds) {
     const documents = lookup.next().value
     if (typeof assetId === 'string') {
-      return failures
+      continue
     }
 
     const errorWithUrl = assetId as AssetUploadError
-    return failures.concat({
-      type: 'asset',
-      url: errorWithUrl.url,
+    failures.push({
       documents: documents
         ? documents.map(({documentId, path}) => ({
             documentId,
             path,
           }))
         : [],
+      type: 'asset',
+      url: errorWithUrl.url,
     })
-  }, [])
+  }
+
+  return failures
 }
 
 function setAssetReferences(
   assetRefMap: Map<string, AssetRefMapItem[]>,
-  assetIds: (string | Error)[],
+  assetIds: (Error | string)[],
   options: ImportOptions,
 ): Promise<number[]> {
   const {client, tag} = options
   const lookup = assetRefMap.values()
 
   // Collects patch tasks per document to avoid patching the same document multiple times
-  const patchTasksPerDoc: Record<string, Array<{path: string; assetId: string}>> = assetIds.reduce(
-    (tasks: Record<string, Array<{path: string; assetId: string}>>, assetId) => {
-      const documents = lookup.next().value
-      if (typeof assetId !== 'string') {
-        return tasks
-      }
+  const patchTasksPerDoc: Record<string, Array<{assetId: string; path: string}>> = {}
+  for (const assetId of assetIds) {
+    const documents = lookup.next().value
+    if (typeof assetId !== 'string') {
+      continue
+    }
 
-      if (documents) {
-        documents.forEach(({documentId, path}) => {
-          tasks[documentId] = tasks[documentId] || []
-          tasks[documentId].push({path, assetId})
-        })
+    if (documents) {
+      for (const {documentId, path} of documents) {
+        patchTasksPerDoc[documentId] = patchTasksPerDoc[documentId] || []
+        patchTasksPerDoc[documentId].push({assetId, path})
       }
-      return tasks
-    },
-    {},
-  )
+    }
+  }
 
   const patchTasks: DocumentTasks[] = Object.entries(patchTasksPerDoc).map(
     ([documentId, tasks]) => ({
@@ -321,29 +329,30 @@ function setAssetReferences(
   // We now have an array of tasks per document, each containing:
   // {documentId: string, tasks: [{path, assetId}]}
   // Instead of doing a single mutation per document, let's batch  them up
-  const batches = patchTasks.reduce((acc: DocumentTasks[][], task) => {
-    if (acc.length === 0) {
-      return [[task]]
+  const batches: DocumentTasks[][] = []
+  for (const task of patchTasks) {
+    if (batches.length === 0) {
+      batches.push([task])
+      continue
     }
 
-    const currentBatch = acc[acc.length - 1]!
-    const overallSize = currentBatch.reduce(
-      (prev: number, add) => prev + (add.tasks ? add.tasks.length : 0),
-      0,
-    )
+    const currentBatch = batches.at(-1)!
+    let overallSize = 0
+    for (const add of currentBatch) {
+      overallSize += add.tasks ? add.tasks.length : 0
+    }
 
     if (
       overallSize + task.tasks.length > ASSET_PATCH_BATCH_TASK_SIZE ||
       currentBatch.length >= ASSET_PATCH_BATCH_SIZE
     ) {
       // Create a new batch if the current one is full
-      acc.push([task])
-      return acc
+      batches.push([task])
+      continue
     }
 
     currentBatch.push(task)
-    return acc
-  }, [])
+  }
 
   if (batches.length === 0) {
     return Promise.resolve([0])
@@ -368,13 +377,22 @@ function setAssetReferenceBatch(
   batch: DocumentTasks[],
 ): Promise<number> {
   logger('Setting asset references on %d documents', batch.length)
-  return retryOnFailure(() =>
-    batch
-      .reduce(reducePatch, client.transaction())
-      .commit({visibility: 'async', tag: suffixTag(tag, 'asset.set-refs')})
+  return retryOnFailure(() => {
+    let trx = client.transaction()
+    for (const documentTasks of batch) {
+      trx = reducePatch(trx, documentTasks)
+    }
+    return trx
+      .commit({tag: suffixTag(tag, 'asset.set-refs'), visibility: 'async'})
       .then(progress)
-      .then(() => batch.reduce((prev, add) => prev + add.tasks.length, 0)),
-  )
+      .then(() => {
+        let total = 0
+        for (const add of batch) {
+          total += add.tasks.length
+        }
+        return total
+      })
+  })
 }
 
 function getAssetType(assetId: string): string {
@@ -383,18 +401,18 @@ function getAssetType(assetId: string): string {
 
 function reducePatch(trx: Transaction, documentTasks: DocumentTasks): Transaction {
   return trx.patch(documentTasks.documentId, (patch) => {
-    documentTasks.tasks.forEach((task) =>
+    for (const task of documentTasks.tasks)
       patch
         .setIfMissing({
           [task.path]: {_type: getAssetType(task.assetId)},
         })
         .set({
           [`${task.path}.asset`]: {
-            _type: 'reference',
             _ref: task.assetId,
+            _type: 'reference',
           },
-        }),
-    )
+        })
+
     return patch
   })
 }
