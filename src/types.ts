@@ -62,23 +62,6 @@ export interface ImportResult {
   warnings: Array<{message: string}>
 }
 
-export interface BatchResult extends ImportResult {
-  results: Array<{
-    id: string
-    operation: string
-  }>
-}
-
-export interface AssetResult {
-  _id: string
-  document: AssetDocument
-}
-
-export interface DocumentWithAssets {
-  assets: AssetDocument[]
-  document: SanityDocument
-}
-
 export interface StreamReference {
   _ref: string
 
@@ -91,12 +74,6 @@ export interface Reference extends StreamReference {
 }
 
 export type ImportSource = NodeJS.ReadableStream | SanityDocument[] | string
-
-export interface ImportContext {
-  assets: AssetMap
-  options: ImportOptions
-  references: Map<string, StreamReference[]>
-}
 
 // Error interfaces for better type safety
 export interface AssetUploadError extends Error {
@@ -115,27 +92,12 @@ export interface SanityApiError extends Error {
   statusCode?: number
 }
 
-export interface TarExtractError extends Error {
-  extract?: unknown
-}
-
 // Fetch response types
 export interface SanityFetchResponse {
   [key: string]: unknown
   _id: string
 
   url?: string
-}
-
-// Asset document with dimensions for validation
-export interface AssetDocumentWithMetadata extends AssetDocument {
-  metadata?: {
-    [key: string]: unknown
-    dimensions?: {
-      height: number
-      width: number
-    }
-  }
 }
 
 // Asset failure for reporting
@@ -146,21 +108,6 @@ export interface AssetFailure {
   }>
   type: 'asset'
   url: string
-}
-
-// Tar-stream types for stream processing
-export interface TarEntry {
-  name: string
-  size: number
-  type: string
-}
-
-// JSON streaming event emitter types
-export interface JsonStreamEvent {
-  type: 'data' | 'end' | 'error'
-
-  data?: unknown
-  error?: Error
 }
 
 // HTTP response from get-it library

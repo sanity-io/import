@@ -9,7 +9,7 @@ import {suffixTag} from './util/suffixTag.js'
 
 const DOCUMENT_IMPORT_CONCURRENCY = 6
 
-export interface BatchImportResult {
+interface BatchImportResult {
   count: number
   importedIds: string[]
 }

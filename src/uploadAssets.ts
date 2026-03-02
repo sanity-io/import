@@ -24,19 +24,19 @@ const ASSET_PATCH_CONCURRENCY = 30
 const ASSET_PATCH_BATCH_SIZE = 50
 const ASSET_PATCH_BATCH_TASK_SIZE = 1000
 
-export interface AssetRef {
+interface AssetRef {
   documentId: string
   path: string
   type: string
   url: string
 }
 
-export interface AssetRefMapItem {
+interface AssetRefMapItem {
   documentId: string
   path: string
 }
 
-export interface UploadAssetsResult {
+interface UploadAssetsResult {
   batches: number
   failures: AssetFailure[]
 }
