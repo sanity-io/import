@@ -25,14 +25,14 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/import.d.ts",
-      "import": "./dist/import.js",
-      "default": "./dist/import.js"
+      "types": "./dist/_exports/index.d.ts",
+      "import": "./dist/_exports/index.js",
+      "default": "./dist/_exports/index.js"
     },
     "./package.json": "./package.json"
   },
-  "main": "./dist/import.js",
-  "types": "./dist/import.d.ts",
+  "main": "./dist/_exports/index.js",
+  "types": "./dist/_exports/index.d.ts",
   "bin": {
     "sanity-import": "./bin/run.js"
   },
@@ -87,7 +87,7 @@
     "@eslint/compat": "^2.0.2",
     "@sanity/cli-test": "^0.0.2-alpha.15",
     "@sanity/client": "^7.16.0",
-    "@sanity/eslint-config-cli": "0.0.0-alpha.2",
+    "@sanity/eslint-config-cli": "^0.0.0-alpha.2",
     "@swc/cli": "^0.8.0",
     "@swc/core": "^1.15.13",
     "@types/debug": "^4.1.12",

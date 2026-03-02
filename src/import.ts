@@ -9,9 +9,6 @@ import {
 } from './types.js'
 import {validateOptions} from './validateOptions.js'
 
-// eslint-disable-next-line import/no-cycle
-export {DatasetImportCommand} from './commands/dataset/import.js'
-
 export function sanityImport(
   input: ImportSource,
   opts: Partial<ImportOptions>,

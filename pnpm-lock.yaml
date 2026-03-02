@@ -67,7 +67,7 @@ importers:
         specifier: ^7.16.0
         version: 7.16.0(debug@4.4.3)
       '@sanity/eslint-config-cli':
-        specifier: 0.0.0-alpha.2
+        specifier: ^0.0.0-alpha.2
         version: 0.0.0-alpha.2(@typescript-eslint/eslint-plugin@8.56.1(@typescript-eslint/parser@8.56.1(eslint@9.39.3)(typescript@5.9.3))(eslint@9.39.3)(typescript@5.9.3))(@typescript-eslint/parser@8.56.1(eslint@9.39.3)(typescript@5.9.3))(eslint@9.39.3)(typescript@5.9.3)
       '@swc/cli':
         specifier: ^0.8.0
