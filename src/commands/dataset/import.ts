@@ -233,7 +233,7 @@ export class DatasetImportCommand extends SanityCommand<typeof DatasetImportComm
 
     this.warn(`Failed to import the following ${assetFails.length > 1 ? 'assets' : 'asset'}:`)
 
-    warnings.forEach((warning) => {
+    assetFails.forEach((warning) => {
       this.warn(`  ${warning.url}`)
     })
   }

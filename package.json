@@ -86,7 +86,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.4",
     "@eslint/js": "^9.39.3",
-    "@oclif/test": "^4.1.16",
+"@sanity/cli-test": "^0.0.2-alpha.15",
     "@sanity/client": "^7.16.0",
     "@sanity/semantic-release-preset": "^6.0.0",
     "@swc/cli": "^0.8.0",
