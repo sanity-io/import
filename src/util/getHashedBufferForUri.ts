@@ -7,7 +7,7 @@ import {getIt} from 'get-it'
 import {promise} from 'get-it/middleware'
 import {getUri} from 'get-uri'
 
-import type {GetItResponse} from '../types.js'
+import {type GetItResponse} from '../types.js'
 import {retryOnFailure} from './retryOnFailure.js'
 import {isReadableStream} from './streamTypeGuards.js'
 
@@ -78,7 +78,7 @@ async function getStream(uri: string): Promise<NodeJS.ReadableStream> {
   const isHttp = /^https?:\/\//i.test(uri)
   const parsed = new URL(uri)
   if (isHttp) {
-    const res = (await request({url: parsed.href, stream: true})) as GetItResponse
+    const res = (await request({stream: true, url: parsed.href})) as GetItResponse
     return res.body
   }
 

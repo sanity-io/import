@@ -1,8 +1,8 @@
-import type {ImportReleaseAction, MultipleMutationResult, Transaction} from '@sanity/client'
+import {type ImportReleaseAction, type MultipleMutationResult} from '@sanity/client'
 import {partition} from 'lodash-es'
 import pMap from 'p-map'
 
-import type {ImportOptions, SanityApiError, SanityDocument} from './types.js'
+import {type ImportOptions, type SanityApiError, type SanityDocument} from './types.js'
 import {progressStepper} from './util/progressStepper.js'
 import {retryOnFailure} from './util/retryOnFailure.js'
 import {suffixTag} from './util/suffixTag.js'
@@ -24,19 +24,14 @@ export async function importBatches(
   })
 
   const mapOptions = {concurrency: DOCUMENT_IMPORT_CONCURRENCY}
-  const batchResults = await pMap(
-    batches,
-    importBatch.bind(null, options, progress),
-    mapOptions,
-  )
+  const batchResults = await pMap(batches, importBatch.bind(null, options, progress), mapOptions)
 
-  return batchResults.reduce<BatchImportResult>(
-    (acc, result) => ({
-      count: acc.count + result.count,
-      importedIds: acc.importedIds.concat(result.importedIds),
-    }),
-    {count: 0, importedIds: []},
-  )
+  const result: BatchImportResult = {count: 0, importedIds: []}
+  for (const batchResult of batchResults) {
+    result.count += batchResult.count
+    result.importedIds = [...result.importedIds, ...batchResult.importedIds]
+  }
+  return result
 }
 
 function importBatch(
@@ -53,14 +48,30 @@ function importBatch(
 
       const docsTransaction =
         docs.length > 0
-          ? docs
-              .reduce((trx: Transaction, doc) => {
-                if (operation === 'create') return trx.create(doc)
-                if (operation === 'createIfNotExists') return trx.createIfNotExists(doc)
-                if (operation === 'createOrReplace') return trx.createOrReplace(doc)
-                throw new Error(`Unknown operation: ${operation as string}`)
-              }, client.transaction())
-              .commit({visibility: 'async', tag: suffixTag(tag, 'doc.create')})
+          ? (() => {
+              let trx = client.transaction()
+              for (const doc of docs) {
+                switch (operation) {
+                  case 'create': {
+                    trx = trx.create(doc)
+                    break
+                  }
+                  case 'createIfNotExists': {
+                    trx = trx.createIfNotExists(doc)
+                    break
+                  }
+                  case 'createOrReplace': {
+                    trx = trx.createOrReplace(doc)
+                    break
+                  }
+                  default: {
+                    throw new Error(`Unknown operation: ${operation as string}`)
+                  }
+                }
+              }
+              return trx
+            })()
+              .commit({tag: suffixTag(tag, 'doc.create'), visibility: 'async'})
               .then((res: MultipleMutationResult) => {
                 progress()
                 const importedIds = res.results
@@ -73,9 +84,9 @@ function importBatch(
       const releasesAction = releaseDocs.map((doc: SanityDocument) => {
         const actionParams: ImportReleaseAction = {
           actionType: 'sanity.action.release.import',
-          releaseId: doc.name as string,
           attributes: doc,
           ifExists: releasesOperation,
+          releaseId: doc.name as string,
         }
         return client
           .action(actionParams)
@@ -86,17 +97,16 @@ function importBatch(
           })
       })
 
-      return Promise.all([docsTransaction, ...releasesAction]).then((results) =>
-        results.reduce<BatchImportResult>(
-          (acc, result) => ({
-            count: acc.count + result.count,
-            importedIds: acc.importedIds.concat(result.importedIds),
-          }),
-          {count: 0, importedIds: []},
-        ),
-      )
+      return Promise.all([docsTransaction, ...releasesAction]).then((results) => {
+        const combined: BatchImportResult = {count: 0, importedIds: []}
+        for (const r of results) {
+          combined.count += r.count
+          combined.importedIds = [...combined.importedIds, ...r.importedIds]
+        }
+        return combined
+      })
     },
-    {maxTries: maxRetries, isRetriable},
+    {isRetriable, maxTries: maxRetries},
   )
 }
 

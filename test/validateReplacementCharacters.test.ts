@@ -61,7 +61,7 @@ describe('findReplacementCharInObject', () => {
   })
 
   test('returns null for non-string primitives', () => {
-    const obj = {num: 123, bool: true, nil: null}
+    const obj = {bool: true, nil: null, num: 123}
     expect(findReplacementCharInObject(obj)).toBeNull()
   })
 

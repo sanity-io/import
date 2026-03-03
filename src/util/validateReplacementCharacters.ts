@@ -34,8 +34,8 @@ export function findReplacementCharInObject(obj: unknown, currentPath: string = 
   }
 
   if (Array.isArray(obj)) {
-    for (let i = 0; i < obj.length; i++) {
-      const result = findReplacementCharInObject(obj[i], `${currentPath}[${i}]`)
+    for (const [i, element] of obj.entries()) {
+      const result = findReplacementCharInObject(element, `${currentPath}[${i}]`)
       if (result !== null) {
         return result
       }

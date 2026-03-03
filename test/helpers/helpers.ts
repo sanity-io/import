@@ -1,17 +1,17 @@
 import {createClient, requester as defaultRequester} from '@sanity/client'
 import {injectResponse} from 'get-it/middleware'
 
-import type {InjectFunction} from './types.js'
+import {type InjectFunction} from './types.js'
 
 process.on('unhandledRejection', (reason) => {
-   
+  // eslint-disable-next-line no-console
   console.error('UNHANDLED REJECTION', reason)
 })
 
 const defaultClientOptions = {
   apiVersion: '1',
-  projectId: 'foo',
   dataset: 'bar',
+  projectId: 'foo',
   token: 'abc123',
   useCdn: false,
 }

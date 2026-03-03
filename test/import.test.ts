@@ -1,4 +1,3 @@
- 
 import fs from 'node:fs'
 import path from 'node:path'
 import {pathToFileURL} from 'node:url'
@@ -7,22 +6,22 @@ import {createClient} from '@sanity/client'
 import {expect, test} from 'vitest'
 
 import {sanityImport} from '../src/import.js'
-import type {SanityDocument} from '../src/types.js'
+import {type SanityDocument} from '../src/types.js'
 import {getSanityClient} from './helpers/helpers.js'
-import type {
-  InjectFunction,
-  MockMutationsBody,
-  MockRequestEvent,
-  TestMutation,
-  TestRequestOptions,
+import {
+  type InjectFunction,
+  type MockMutationsBody,
+  type MockRequestEvent,
+  type TestMutation,
+  type TestRequestOptions,
 } from './helpers/types.js'
 
 const defaultClient = createClient({
   apiVersion: '2025-02-19',
-  projectId: 'foo',
   dataset: 'bar',
-  useCdn: false,
+  projectId: 'foo',
   token: 'foo',
+  useCdn: false,
 })
 
 const uuidMatcher = /^[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+$/
@@ -195,8 +194,8 @@ test('can drop cross-dataset references', async () => {
 test('allows system documents if asked', async () => {
   const client = getSanityClient(getMockMutationHandler())
   let res = await sanityImport(getNDJSONFixtureStream('system-documents'), {
-    client,
     allowSystemDocuments: true,
+    client,
   })
   // Release system documents are an exception to this flag
   expect(res).toMatchObject({numDocs: 8, warnings: []})
@@ -221,8 +220,8 @@ test('allows replacement character when allowReplacementCharacters is true', asy
   expect.assertions(2)
   const client = getSanityClient(getMockMutationHandler())
   const res = await sanityImport(getNDJSONFixtureStream('replacement-char'), {
-    client,
     allowReplacementCharacters: true,
+    client,
   })
   expect(res).toMatchObject({numDocs: 3, warnings: []})
 })
@@ -234,8 +233,8 @@ test('rejects on Unicode replacement character in assetMap', async () => {
     'https://example.com/image.png': {
       _id: 'image-abc',
       _type: 'sanity.imageAsset' as const,
-      url: 'https://example.com/image.png',
       originalFilename: 'bad\uFFFDname.png',
+      url: 'https://example.com/image.png',
     },
   }
   await expect(sanityImport(docs, {...importOptions, assetMap})).rejects.toHaveProperty(
@@ -252,11 +251,11 @@ test('allows replacement character in assetMap when allowReplacementCharacters i
     'https://example.com/image.png': {
       _id: 'image-abc',
       _type: 'sanity.imageAsset' as const,
-      url: 'https://example.com/image.png',
       originalFilename: 'bad\uFFFDname.png',
+      url: 'https://example.com/image.png',
     },
   }
-  const res = await sanityImport(docs, {client, assetMap, allowReplacementCharacters: true})
+  const res = await sanityImport(docs, {allowReplacementCharacters: true, assetMap, client})
   expect(res).toMatchObject({numDocs: 2, warnings: []})
 })
 
@@ -313,18 +312,18 @@ test('skips asset uploads for already-existing documents in createIfNotExists mo
       return {body: {document: {_id: 'image-newAssetId'}}}
     }
 
-    return {statusCode: 400, body: {error: `"${uri}" should not be called`}}
+    return {body: {error: `"${uri}" should not be called`}, statusCode: 400}
   })
 
   const docs: SanityDocument[] = [
-    {_id: 'movie_1', _type: 'movie', title: 'Alien', poster: {_sanityAsset: `image@${imgUrl}`}},
+    {_id: 'movie_1', _type: 'movie', poster: {_sanityAsset: `image@${imgUrl}`}, title: 'Alien'},
     {
       _id: 'movie_2',
       _type: 'movie',
-      title: 'Blade Runner',
       poster: {_sanityAsset: `image@${imgUrl}`},
+      title: 'Blade Runner',
     },
-    {_id: 'movie_3', _type: 'movie', title: 'Arrival', poster: {_sanityAsset: `image@${imgUrl}`}},
+    {_id: 'movie_3', _type: 'movie', poster: {_sanityAsset: `image@${imgUrl}`}, title: 'Arrival'},
   ]
   const res = await sanityImport(docs, {client, operation: 'createIfNotExists'})
 
@@ -336,7 +335,7 @@ test('skips asset uploads for already-existing documents in createIfNotExists mo
 })
 
 function getMockMutationHandler(
-  match: string | ((body: MockMutationsBody) => void) = 'employee creation',
+  match: ((body: MockMutationsBody) => void) | string = 'employee creation',
 ): InjectFunction {
   return (event: MockRequestEvent) => {
     const options = event.context.options as TestRequestOptions
@@ -370,25 +369,25 @@ function getMockMutationHandler(
       return {body: [{TransactionID: 'foo'}]}
     }
 
-    return {statusCode: 400, body: {error: `"${uri}" should not be called`}}
+    return {body: {error: `"${uri}" should not be called`}, statusCode: 400}
   }
 }
 
 function extractDetailsFromMutation(mut: TestMutation) {
   if (mut.patch) {
-    return {operation: 'update', id: mut.patch.id}
+    return {id: mut.patch.id, operation: 'update'}
   }
   if (mut.create) {
-    return {operation: 'create', id: mut.create._id}
+    return {id: mut.create._id, operation: 'create'}
   }
   if (mut.createIfNotExists) {
-    return {operation: 'create', id: mut.createIfNotExists._id}
+    return {id: mut.createIfNotExists._id, operation: 'create'}
   }
   if (mut.createOrReplace) {
-    return {operation: 'create', id: mut.createOrReplace._id}
+    return {id: mut.createOrReplace._id, operation: 'create'}
   }
   if (mut.delete) {
-    return {operation: 'delete', id: mut.delete.id}
+    return {id: mut.delete.id, operation: 'delete'}
   }
   throw new Error('Unknown mutation type')
 }

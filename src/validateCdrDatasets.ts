@@ -1,7 +1,7 @@
 import {extractWithPath} from '@sanity/mutator'
 import {get} from 'lodash-es'
 
-import type {CrossDatasetReference, ImportOptions, SanityDocument} from './types.js'
+import {type CrossDatasetReference, type ImportOptions, type SanityDocument} from './types.js'
 
 export async function validateCdrDatasets(
   docs: SanityDocument[],
@@ -13,8 +13,8 @@ export async function validateCdrDatasets(
   }
 
   const {client} = options
-  const existing = (await client.datasets.list()).map((dataset) => dataset.name)
-  const missing = datasets.filter((dataset) => !existing.includes(dataset))
+  const existing = new Set((await client.datasets.list()).map((dataset) => dataset.name))
+  const missing = datasets.filter((dataset) => !existing.has(dataset))
 
   if (missing.length > 1) {
     throw new Error(
@@ -43,12 +43,17 @@ function getDatasetsFromCrossDatasetReferences(docs: SanityDocument[]): string[]
     findCrossCdr(doc, datasets)
   }
 
-  return Array.from(datasets)
+  return [...datasets]
 }
 
 function findCrossCdr(doc: SanityDocument, set: Set<string>): Set<string> {
-  return extractWithPath('..[_ref]', doc)
+  const refs = extractWithPath('..[_ref]', doc)
     .map((match) => get(doc, match.path.slice(0, -1)) as CrossDatasetReference | undefined)
     .filter((ref): ref is CrossDatasetReference => typeof ref?._dataset === 'string')
-    .reduce((datasets, ref) => datasets.add(ref._dataset), set)
+
+  for (const ref of refs) {
+    set.add(ref._dataset)
+  }
+
+  return set
 }

@@ -1,10 +1,13 @@
 import {importDocuments as fromArray} from './importFromArray.js'
 import {importFromFolder as fromFolder} from './importFromFolder.js'
 import {importFromStream as fromStream} from './importFromStream.js'
-import type {ImportersContext, ImportOptions, ImportResult, ImportSource} from './types.js'
+import {
+  type ImportersContext,
+  type ImportOptions,
+  type ImportResult,
+  type ImportSource,
+} from './types.js'
 import {validateOptions} from './validateOptions.js'
-
-export {DatasetImportCommand} from './commands/dataset/import.js'
 
 export function sanityImport(
   input: ImportSource,
@@ -14,9 +17,9 @@ export function sanityImport(
 
   // Create the importers context to allow circular references
   const importers: ImportersContext = {
-    fromStream: (stream, importOptions, ctx) => fromStream(stream, importOptions, ctx),
     fromArray: (documents, importOptions) => fromArray(documents, importOptions),
     fromFolder: (fromDir, importOptions, ctx) => fromFolder(fromDir, importOptions, ctx),
+    fromStream: (stream, importOptions, ctx) => fromStream(stream, importOptions, ctx),
   }
 
   if (

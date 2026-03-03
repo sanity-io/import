@@ -1,4 +1,4 @@
-import type {ProgressEvent} from '../types.js'
+import {type ProgressEvent} from '../types.js'
 
 interface ProgressStepperOptions {
   step: string
@@ -15,9 +15,9 @@ function progressStepper<T>(
   // input argument verbatim so it may be used in the middle of a promise chain
   const step = (inp?: T): T => {
     onProgress({
+      current: Math.min(++current, options.total),
       step: options.step,
       total: options.total,
-      current: Math.min(++current, options.total),
     })
 
     return inp as T

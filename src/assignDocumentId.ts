@@ -1,6 +1,6 @@
 import {randomUUID} from 'node:crypto'
 
-import type {SanityDocument} from './types.js'
+import {type SanityDocument} from './types.js'
 
 export function assignDocumentId(doc: Partial<SanityDocument>): SanityDocument {
   if (doc._id) {

@@ -1,7 +1,7 @@
 import split from 'split2'
 
 import {validateDocument} from '../documentHasErrors.js'
-import type {SanityDocument} from '../types.js'
+import {type SanityDocument} from '../types.js'
 import {
   ReplacementCharError,
   validateLineForReplacementChar,
@@ -28,7 +28,7 @@ export function getJsonStreamer(options: JsonStreamerOptions = {}): NodeJS.ReadW
     lineNumber++
 
     if (!row) {
-      return undefined
+      return
     }
 
     try {
@@ -60,6 +60,6 @@ export function getJsonStreamer(options: JsonStreamerOptions = {}): NodeJS.ReadW
       }
     }
 
-    return undefined
+    return
   }
 }

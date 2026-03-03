@@ -7,22 +7,22 @@ type PlainObject = Record<string, unknown>
 // Note: Mutates in-place
 function assignArrayKeys<T>(obj: T): T {
   if (Array.isArray(obj)) {
-    obj.forEach((item: unknown) => {
+    for (const item of obj) {
       if (isPlainObject(item) && !('_key' in (item as object))) {
         ;(item as PlainObject)._key = generateKey()
       }
 
       assignArrayKeys(item)
-    })
+    }
 
     return obj
   }
 
   if (isPlainObject(obj)) {
     const plainObj = obj as PlainObject
-    Object.keys(plainObj).forEach((key: string) => {
+    for (const key of Object.keys(plainObj)) {
       assignArrayKeys(plainObj[key])
-    })
+    }
 
     return obj
   }

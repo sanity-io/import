@@ -1,13 +1,13 @@
-import type {SanityDocument} from './types.js'
+import {type SanityDocument} from './types.js'
 
 export function validateDocument(doc: unknown): string | null {
   const document = doc as Partial<SanityDocument>
 
-  if (typeof document._id !== 'undefined' && typeof document._id !== 'string') {
+  if (document._id !== undefined && typeof document._id !== 'string') {
     return `Document contained an invalid "_id" property - must be a string`
   }
 
-  if (typeof document._id !== 'undefined' && !/^[a-z0-9_.-]+$/i.test(document._id)) {
+  if (document._id !== undefined && !/^[a-z0-9_.-]+$/i.test(document._id)) {
     return `Document ID "${document._id}" is not valid: Please use alphanumeric document IDs. Dashes (-) and underscores (_) are also allowed.`
   }
 

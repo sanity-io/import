@@ -1,4 +1,4 @@
-import type {SanityDocument} from './types.js'
+import {type SanityDocument} from './types.js'
 
 const MAX_PAYLOAD_SIZE = 1024 * 256 // 256KB
 
@@ -7,7 +7,7 @@ function batchDocuments(docs: SanityDocument[]): SanityDocument[][] {
   let currentBatchSize = 0
   const batches: Array<SanityDocument[]> = [currentBatch]
 
-  docs.forEach((doc) => {
+  for (const doc of docs) {
     const docSize = JSON.stringify(doc).length
     const newBatchSize = currentBatchSize + docSize
 
@@ -16,7 +16,7 @@ function batchDocuments(docs: SanityDocument[]): SanityDocument[][] {
       currentBatch = [doc]
       currentBatchSize = docSize
       batches.push(currentBatch)
-      return
+      continue
     }
 
     // If this document *alone* is over the max payload size, try to allow it
@@ -29,7 +29,7 @@ function batchDocuments(docs: SanityDocument[]): SanityDocument[][] {
         currentBatchSize = docSize
         currentBatch = []
         batches.push(currentBatch)
-        return
+        continue
       }
 
       // Batch already has documents, so "close" that batch off and push this
@@ -43,7 +43,7 @@ function batchDocuments(docs: SanityDocument[]): SanityDocument[][] {
     // the batch and increase the size of it to match
     currentBatch.push(doc)
     currentBatchSize += docSize
-  })
+  }
 
   return batches
 }
