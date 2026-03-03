@@ -1,19 +1,24 @@
-name: Release
+name: Release Please
+
 on:
   push:
     branches:
       - main
-      - alpha
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish package to npm'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
 
 jobs:
-  release:
-    name: Release
-    environment:
-      name: npm-production
+  release-please:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read # for checkout
-      id-token: write # to enable use of OIDC for npm provenance
     steps:
       - name: Create app token
         uses: actions/create-github-app-token@v2
@@ -22,49 +27,61 @@ jobs:
           app-id: ${{ secrets.ECOSPARK_APP_ID }}
           private-key: ${{ secrets.ECOSPARK_APP_PRIVATE_KEY }}
 
-      - name: Checkout
-        uses: actions/checkout@v6
+      - name: Run release-please
+        uses: googleapis/release-please-action@v4
+        id: release
         with:
-          # Need all history to analyze commits since last release
-          fetch-depth: 0
-          # Uses generated token to allow pushing commits back
           token: ${{ steps.app-token.outputs.token }}
-          # Make sure GITHUB_TOKEN will not be persisted in repo's config
-          persist-credentials: false
+          release-type: node
+
+      - name: Checkout
+        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
+        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
         uses: actions/setup-node@v6
         with:
           node-version: lts/*
 
       - name: Install pnpm
+        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
         uses: pnpm/action-setup@v4
 
       - name: Get pnpm store directory
+        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
         run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
         shell: bash
 
       - name: Cache pnpm store
+        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
         uses: actions/cache@v5
         with:
           path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-node-${{ inputs.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-node-${{ inputs.node-version }}-
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
+        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
         run: pnpm install --frozen-lockfile
 
       - name: Build
+        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
         run: pnpm build
 
       - name: Run tests
+        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
         run: pnpm test
 
-      - name: Release
+      - name: Set publishing config
+        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
+        run: pnpm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           NPM_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
+
+      - name: Publish to npm
+        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
+        run: pnpm publish --no-git-checks
+        env:
           NPM_CONFIG_PROVENANCE: true
-        run: npx semantic-release
