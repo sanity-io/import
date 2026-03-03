@@ -105,7 +105,7 @@
     "vitest": "^4.0.18"
   },
   "peerDependencies": {
-    "@sanity/client": "^7.0.0"
+    "@sanity/client": "^5.0.0 || ^6.0.0 || ^7.0.0"
   },
   "packageManager": "pnpm@10.29.2",
   "engines": {
