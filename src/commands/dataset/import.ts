@@ -301,8 +301,10 @@ export class DatasetImportCommand extends SanityCommand<typeof DatasetImportComm
 
     this.warn(`Failed to import the following ${assetFails.length > 1 ? 'assets' : 'asset'}:`)
 
-    for (const warning of warnings) {
-      this.warn(`  ${warning.url}`)
+    for (const warning of assetFails) {
+      if (warning.url) {
+        this.warn(`  ${warning.url}`)
+      }
     }
   }
 }
