@@ -1,6 +1,6 @@
 import {getRandomValues} from 'node:crypto'
 
-import {isPlainObject} from 'lodash-es'
+import isPlainObject from 'lodash-es/isPlainObject.js'
 
 type PlainObject = Record<string, unknown>
 

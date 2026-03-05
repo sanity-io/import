@@ -74,9 +74,9 @@
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.2",
-    "@sanity/cli-test": "^0.0.2-alpha.15",
+    "@sanity/cli-test": "^0.1.0-alpha.17",
     "@sanity/client": "^7.16.0",
-    "@sanity/eslint-config-cli": "^0.0.0-alpha.2",
+    "@sanity/eslint-config-cli": "^0.0.0-alpha.4",
     "@sanity/pkg-utils": "^10.4.5",
     "@swc/cli": "^0.8.0",
     "@swc/core": "^1.15.13",
@@ -98,7 +98,7 @@
   },
   "peerDependencies": {
     "@oclif/core": "^4.8.1",
-    "@sanity/cli-core": "^0.1.0-alpha.16",
+    "@sanity/cli-core": "^0.1.0-alpha.19",
     "@sanity/client": "^5.0.0 || ^6.0.0 || ^7.0.0"
   },
   "packageManager": "pnpm@10.29.2",
