@@ -97,7 +97,7 @@
     "vitest": "^4.0.18"
   },
   "peerDependencies": {
-    "@oclif/core": "^4.8.1",
+    "@oclif/core": "^4.8.0",
     "@sanity/cli-core": "^0.1.0-alpha.19",
     "@sanity/client": "^5.0.0 || ^6.0.0 || ^7.0.0"
   },
