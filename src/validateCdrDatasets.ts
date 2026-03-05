@@ -1,5 +1,5 @@
 import {extractWithPath} from '@sanity/mutator'
-import {get} from 'lodash-es'
+import get from 'lodash-es/get.js'
 
 import {type CrossDatasetReference, type ImportOptions, type SanityDocument} from './types.js'
 

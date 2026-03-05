@@ -119,55 +119,22 @@ sanityImport(input, options)
   })
 ```
 
-## CLI-tool
+## CLI Plugin
 
-This functionality is built in to the `sanity` package as `sanity dataset import`, but is also usable through the `sanity-import` CLI tool, part of this package:
+This package provides import functionality as both a JavaScript library and as a CLI plugin for oclif-based command-line tools.
 
+For standalone CLI usage, this functionality is built into the `sanity` package as `sanity dataset import`:
+
+```bash
+$ sanity dataset import --help
 ```
-$ sanity-import --help
 
-Import documents to a Sanity dataset
+### Local Development & Testing
 
-USAGE
-  $ sanity-import  SOURCE -p <value> -d <value> [-t <value>]
-    [--replace | --missing] [--allow-failing-assets]
-    [--allow-assets-in-different-dataset] [--replace-assets]
-    [--skip-cross-dataset-references] [--allow-system-documents]
-    [--asset-concurrency <value>]
+For local development and testing of the CLI functionality, you can run the tests or use the library API programmatically:
 
-ARGUMENTS
-  SOURCE  Source file (use "-" for stdin)
-
-FLAGS
-  -d, --dataset=<value>                    (required) Dataset to import to
-  -p, --project=<value>                    (required) Project ID to import to
-  -t, --token=<value>                      Token to authenticate with
-      --allow-assets-in-different-dataset  Allow asset documents to reference
-                                           different project/dataset
-      --allow-failing-assets               Skip assets that cannot be
-                                           fetched/uploaded
-      --allow-system-documents             Imports system documents
-      --asset-concurrency=<value>          Number of parallel asset imports
-      --missing                            Skip documents that already exist
-      --replace                            Replace documents with the same IDs
-      --replace-assets                     Skip reuse of existing assets
-      --skip-cross-dataset-references      Skips references to other datasets
-
-DESCRIPTION
-  Import documents to a Sanity dataset
-
-EXAMPLES
-  Import "./my-dataset.ndjson" into dataset "staging"
-
-    $ sanity-import  -p myPrOj -d staging -t someSecretToken \
-      my-dataset.ndjson
-
-  Import into dataset "test" from stdin, read token from env var
-
-    cat my-dataset.ndjson | sanity-import  -p myPrOj -d test -
-
-Environment variables (fallbacks for missing flags)
-  --token = SANITY_IMPORT_TOKEN
+```bash
+$ node bin/run.js dataset import --help
 ```
 
 ## Future improvements

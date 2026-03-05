@@ -1,5 +1,5 @@
 import createDebug from 'debug'
-import {flatten} from 'lodash-es'
+import flatten from 'lodash-es/flatten.js'
 
 import {absolutifyPaths, getAssetRefs, unsetAssetRefs} from './assetRefs.js'
 import {assignArrayKeys} from './assignArrayKeys.js'

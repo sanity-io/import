@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 
-import {defaults, noop} from 'lodash-es'
+import defaults from 'lodash-es/defaults.js'
+import noop from 'lodash-es/noop.js'
 
 import {type ImportOptions, type ImportSource} from './types.js'
 
