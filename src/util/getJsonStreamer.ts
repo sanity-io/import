@@ -7,7 +7,7 @@ import {
   validateLineForReplacementChar,
 } from './validateReplacementCharacters.js'
 
-export interface JsonStreamerOptions {
+interface JsonStreamerOptions {
   allowReplacementCharacters?: boolean | undefined
 }
 

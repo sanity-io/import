@@ -9,7 +9,7 @@ import {type SanityDocument} from './types.js'
 const assetKey = '_sanityAsset'
 const assetMatcher = /^(file|image)@([a-z]+:\/\/.*)/
 
-export interface AssetRef {
+interface AssetRef {
   documentId: string
   path: string
   type: string
@@ -75,7 +75,7 @@ function findAssetRefs(doc: SanityDocument): (number | string)[][] {
   return extractWithPath(`..[${assetKey}]`, doc).map((match) => match.path)
 }
 
-export function validateAssetImportKey(
+function validateAssetImportKey(
   path: (number | string)[],
   doc: SanityDocument,
 ): (number | string)[] {
