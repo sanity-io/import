@@ -1,7 +1,7 @@
 import {type MultipleMutationResult, type SanityClient, type Transaction} from '@sanity/client'
 import {extractWithPath} from '@sanity/mutator'
 import debug from 'debug'
-import {get} from 'lodash-es'
+import get from 'lodash-es/get.js'
 import pMap from 'p-map'
 
 import {serializePath} from './serializePath.js'

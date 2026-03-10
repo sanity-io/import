@@ -32,18 +32,13 @@
   },
   "main": "./dist/_exports/index.js",
   "types": "./dist/_exports/index.d.ts",
-  "bin": {
-    "sanity-import": "./bin/run.js"
-  },
   "files": [
-    "bin",
     "dist",
     "oclif.manifest.json",
     "src"
   ],
   "scripts": {
     "build": "swc src -d dist --strip-leading-paths && pnpm run build:types",
-    "postbuild": "oclif manifest",
     "build:types": "pkg-utils build --emitDeclarationOnly",
     "coverage": "vitest run --coverage",
     "depcheck": "knip",
@@ -55,22 +50,8 @@
     "typecheck": "tsc --noEmit",
     "watch": "swc src -d dist --strip-leading-paths --watch"
   },
-  "oclif": {
-    "bin": "sanity-import",
-    "commands": {
-      "strategy": "single",
-      "target": "./dist/commands/dataset/import.js"
-    },
-    "dirname": "sanity-import",
-    "plugins": [
-      "@oclif/plugin-help"
-    ]
-  },
   "dependencies": {
-    "@oclif/core": "^4.8.1",
-    "@oclif/plugin-help": "^6.2.37",
     "@sanity/asset-utils": "^2.3.0",
-    "@sanity/cli-core": "^0.1.0-alpha.16",
     "@sanity/generate-help-url": "^4.0.0",
     "@sanity/mutator": "^5.12.0",
     "debug": "^4.4.3",
@@ -79,16 +60,14 @@
     "gunzip-maybe": "^1.4.2",
     "lodash-es": "^4.17.23",
     "p-map": "^7.0.3",
-    "pretty-ms": "^9.2.0",
     "split2": "^4.2.0",
     "tar-fs": "^2.1.4",
     "tinyglobby": "^0.2.15"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.2",
-    "@sanity/cli-test": "^0.0.2-alpha.15",
     "@sanity/client": "^7.16.0",
-    "@sanity/eslint-config-cli": "^0.0.0-alpha.2",
+    "@sanity/eslint-config-cli": "^0.0.0-alpha.4",
     "@sanity/pkg-utils": "^10.4.5",
     "@swc/cli": "^0.8.0",
     "@swc/core": "^1.15.13",
@@ -102,7 +81,6 @@
     "eslint": "^9.39.3",
     "knip": "^5.85.0",
     "nock": "^14.0.11",
-    "oclif": "^4.22.81",
     "prettier": "^3.8.1",
     "prettier-plugin-packagejson": "^2.5.22",
     "typescript": "^5.9.3",

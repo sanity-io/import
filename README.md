@@ -119,57 +119,6 @@ sanityImport(input, options)
   })
 ```
 
-## CLI-tool
-
-This functionality is built in to the `sanity` package as `sanity dataset import`, but is also usable through the `sanity-import` CLI tool, part of this package:
-
-```
-$ sanity-import --help
-
-Import documents to a Sanity dataset
-
-USAGE
-  $ sanity-import  SOURCE -p <value> -d <value> [-t <value>]
-    [--replace | --missing] [--allow-failing-assets]
-    [--allow-assets-in-different-dataset] [--replace-assets]
-    [--skip-cross-dataset-references] [--allow-system-documents]
-    [--asset-concurrency <value>]
-
-ARGUMENTS
-  SOURCE  Source file (use "-" for stdin)
-
-FLAGS
-  -d, --dataset=<value>                    (required) Dataset to import to
-  -p, --project=<value>                    (required) Project ID to import to
-  -t, --token=<value>                      Token to authenticate with
-      --allow-assets-in-different-dataset  Allow asset documents to reference
-                                           different project/dataset
-      --allow-failing-assets               Skip assets that cannot be
-                                           fetched/uploaded
-      --allow-system-documents             Imports system documents
-      --asset-concurrency=<value>          Number of parallel asset imports
-      --missing                            Skip documents that already exist
-      --replace                            Replace documents with the same IDs
-      --replace-assets                     Skip reuse of existing assets
-      --skip-cross-dataset-references      Skips references to other datasets
-
-DESCRIPTION
-  Import documents to a Sanity dataset
-
-EXAMPLES
-  Import "./my-dataset.ndjson" into dataset "staging"
-
-    $ sanity-import  -p myPrOj -d staging -t someSecretToken \
-      my-dataset.ndjson
-
-  Import into dataset "test" from stdin, read token from env var
-
-    cat my-dataset.ndjson | sanity-import  -p myPrOj -d test -
-
-Environment variables (fallbacks for missing flags)
-  --token = SANITY_IMPORT_TOKEN
-```
-
 ## Future improvements
 
 - When documents are imported, record which IDs are actually touched

@@ -1,5 +1,5 @@
 import debug from 'debug'
-import {defaults} from 'lodash-es'
+import defaults from 'lodash-es/defaults.js'
 
 const log = debug('sanity:import')
 

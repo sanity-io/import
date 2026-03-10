@@ -1,5 +1,5 @@
 import {type ImportReleaseAction, type MultipleMutationResult} from '@sanity/client'
-import {partition} from 'lodash-es'
+import partition from 'lodash-es/partition.js'
 import pMap from 'p-map'
 
 import {type ImportOptions, type SanityApiError, type SanityDocument} from './types.js'
