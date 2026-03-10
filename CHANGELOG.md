@@ -5,6 +5,17 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.0](https://github.com/sanity-io/import/compare/v4.1.3...v5.0.0) (2026-03-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* Removes the standalone import CLI command. Use `sanity dataset import` instead. ([#60](https://github.com/sanity-io/import/issues/60))
+
+### Features
+
+* Removes the standalone import CLI command. Use `sanity dataset import` instead. ([#60](https://github.com/sanity-io/import/issues/60)) ([df2c6b8](https://github.com/sanity-io/import/commit/df2c6b835021920cfe6a4c32d6362c575e27e7f1))
+
 ## [4.1.3](https://github.com/sanity-io/import/compare/v4.1.2...v4.1.3) (2026-02-27)
 
 ### Bug Fixes
