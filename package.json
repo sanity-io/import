@@ -39,7 +39,6 @@
   ],
   "scripts": {
     "build": "swc src -d dist --strip-leading-paths && pnpm run build:types",
-    "postbuild": "oclif manifest",
     "build:types": "pkg-utils build --emitDeclarationOnly",
     "coverage": "vitest run --coverage",
     "depcheck": "knip",
@@ -51,12 +50,6 @@
     "typecheck": "tsc --noEmit",
     "watch": "swc src -d dist --strip-leading-paths --watch"
   },
-  "oclif": {
-    "bin": "sanity",
-    "commands": "./dist/commands",
-    "dirname": "sanity-import",
-    "topicSeparator": " "
-  },
   "dependencies": {
     "@sanity/asset-utils": "^2.3.0",
     "@sanity/generate-help-url": "^4.0.0",
@@ -67,14 +60,12 @@
     "gunzip-maybe": "^1.4.2",
     "lodash-es": "^4.17.23",
     "p-map": "^7.0.3",
-    "pretty-ms": "^9.2.0",
     "split2": "^4.2.0",
     "tar-fs": "^2.1.4",
     "tinyglobby": "^0.2.15"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.2",
-    "@sanity/cli-test": "^0.1.0-alpha.17",
     "@sanity/client": "^7.16.0",
     "@sanity/eslint-config-cli": "^0.0.0-alpha.4",
     "@sanity/pkg-utils": "^10.4.5",
@@ -90,15 +81,12 @@
     "eslint": "^9.39.3",
     "knip": "^5.85.0",
     "nock": "^14.0.11",
-    "oclif": "^4.22.81",
     "prettier": "^3.8.1",
     "prettier-plugin-packagejson": "^2.5.22",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
   "peerDependencies": {
-    "@oclif/core": "^4.8.0",
-    "@sanity/cli-core": "^0.1.0-alpha.19",
     "@sanity/client": "^5.0.0 || ^6.0.0 || ^7.0.0"
   },
   "packageManager": "pnpm@10.29.2",

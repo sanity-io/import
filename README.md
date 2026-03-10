@@ -119,24 +119,6 @@ sanityImport(input, options)
   })
 ```
 
-## CLI Plugin
-
-This package provides import functionality as both a JavaScript library and as a CLI plugin for oclif-based command-line tools.
-
-For standalone CLI usage, this functionality is built into the `sanity` package as `sanity dataset import`:
-
-```bash
-$ sanity dataset import --help
-```
-
-### Local Development & Testing
-
-For local development and testing of the CLI functionality, you can run the tests or use the library API programmatically:
-
-```bash
-$ node bin/run.js dataset import --help
-```
-
 ## Future improvements
 
 - When documents are imported, record which IDs are actually touched
