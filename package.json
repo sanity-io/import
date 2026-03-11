@@ -61,7 +61,7 @@
     "lodash-es": "^4.17.23",
     "p-map": "^7.0.3",
     "split2": "^4.2.0",
-    "tar-fs": "^2.1.4",
+    "tar-fs": "^3.1.2",
     "tinyglobby": "^0.2.15"
   },
   "devDependencies": {
