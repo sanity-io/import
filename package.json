@@ -56,7 +56,7 @@
     "@sanity/mutator": "^5.14.1",
     "debug": "^4.4.3",
     "get-it": "^8.7.0",
-    "get-uri": "^6.0.5",
+    "get-uri": "^7.0.0",
     "gunzip-maybe": "^1.4.2",
     "lodash-es": "^4.17.23",
     "p-map": "^7.0.3",
@@ -67,7 +67,7 @@
   "devDependencies": {
     "@eslint/compat": "^2.0.3",
     "@sanity/client": "^7.17.0",
-    "@sanity/eslint-config-cli": "^0.0.0-alpha.4",
+    "@sanity/eslint-config-cli": "^1.0.0",
     "@sanity/pkg-utils": "^10.4.8",
     "@swc/cli": "^0.8.0",
     "@swc/core": "^1.15.18",
