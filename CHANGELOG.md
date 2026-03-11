@@ -5,6 +5,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.1](https://github.com/sanity-io/import/compare/v5.0.0...v5.0.1) (2026-03-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency tar-fs to v3 ([#63](https://github.com/sanity-io/import/issues/63)) ([fd43976](https://github.com/sanity-io/import/commit/fd439763b8e405dc3cdc77ba15e4592d884d97b5))
+* **deps:** upgrade get-uri to v7 ([#69](https://github.com/sanity-io/import/issues/69)) ([3a57c6b](https://github.com/sanity-io/import/commit/3a57c6be95743c6956e68af8da3bb6b593bb1f23))
+
 ## [5.0.0](https://github.com/sanity-io/import/compare/v4.1.3...v5.0.0) (2026-03-10)
 
 
