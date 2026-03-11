@@ -52,8 +52,8 @@ importers:
         specifier: ^7.17.0
         version: 7.17.0(debug@4.4.3)
       '@sanity/eslint-config-cli':
-        specifier: ^0.0.0-alpha.4
-        version: 0.0.0-alpha.4(@typescript-eslint/eslint-plugin@8.56.1(@typescript-eslint/parser@8.56.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(@typescript-eslint/parser@8.56.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
+        specifier: ^1.0.0
+        version: 1.0.0(@typescript-eslint/eslint-plugin@8.56.1(@typescript-eslint/parser@8.56.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(@typescript-eslint/parser@8.56.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
       '@sanity/pkg-utils':
         specifier: ^10.4.8
         version: 10.4.8(@types/node@24.12.0)(babel-plugin-react-compiler@1.0.0)(debug@4.4.3)(oxc-resolver@11.19.1)(typescript@5.9.3)
@@ -1230,8 +1230,8 @@ packages:
     resolution: {integrity: sha512-4hPADs0qUThFZkBK/crnfKKHg71qkRowfktBljH2UIxGHHTxIzt8g8fBiXItyCjxkuNy+zpYOdRMifQNv8+Yww==}
     engines: {node: '>=18.18'}
 
-  '@sanity/eslint-config-cli@0.0.0-alpha.4':
-    resolution: {integrity: sha512-gkOL6ionnBFdVmfV0bFit19/fPIafZAMuK+MjpM7AKdyWUsY0E2fsg7B2rCW3jMM04IJ/nbJ+A7N0+NWbfthow==}
+  '@sanity/eslint-config-cli@1.0.0':
+    resolution: {integrity: sha512-9UbSBdMsdGPpCUoFduUF6wlEYXXwlQQnGko2PvMidZ/LsvUQvMIaR3ifJAWs3mOcWItV+yDawGlPO4HNjL8b7w==}
     peerDependencies:
       eslint: ^9.0.0
 
@@ -5058,7 +5058,7 @@ snapshots:
 
   '@sanity/diff-match-patch@3.2.0': {}
 
-  '@sanity/eslint-config-cli@0.0.0-alpha.4(@typescript-eslint/eslint-plugin@8.56.1(@typescript-eslint/parser@8.56.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(@typescript-eslint/parser@8.56.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
+  '@sanity/eslint-config-cli@1.0.0(@typescript-eslint/eslint-plugin@8.56.1(@typescript-eslint/parser@8.56.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(@typescript-eslint/parser@8.56.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
     dependencies:
       '@eslint/js': 9.39.4
       eslint: 9.39.4(jiti@2.6.1)
