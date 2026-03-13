@@ -1,4 +1,5 @@
-import split from 'split2'
+import {Transform, type TransformCallback} from 'node:stream'
+import {StringDecoder} from 'node:string_decoder'
 
 import {validateDocument} from '../documentHasErrors.js'
 import {type SanityDocument} from '../types.js'
@@ -13,18 +14,38 @@ interface JsonStreamerOptions {
 
 export function getJsonStreamer(options: JsonStreamerOptions = {}): NodeJS.ReadWriteStream {
   let lineNumber = 0
+  let remainder = ''
+  const decoder = new StringDecoder('utf8')
   const {allowReplacementCharacters} = options
 
-  const getErrorMessage = (err: Error): string => {
-    const suffix =
-      lineNumber === 1 ? '\n\nMake sure this is valid ndjson (one JSON-document *per line*)' : ''
+  return new Transform({
+    objectMode: true,
 
-    return `Failed to parse line #${lineNumber}: ${err.message}${suffix}`
-  }
+    transform(chunk: Buffer, _encoding: string, callback: TransformCallback) {
+      const text = remainder + decoder.write(chunk)
+      const lines = text.split('\n')
+      // Last element may be an incomplete line - save for next chunk
+      remainder = lines.pop() ?? ''
 
-  return split(parseRow)
+      for (const line of lines) {
+        parseLine(this, line)
+      }
 
-  function parseRow(this: NodeJS.ReadWriteStream, row: string) {
+      callback()
+    },
+
+    flush(callback: TransformCallback) {
+      // Flush any remaining bytes from the decoder
+      remainder += decoder.end()
+      if (remainder) {
+        parseLine(this, remainder)
+        remainder = ''
+      }
+      callback()
+    },
+  })
+
+  function parseLine(stream: Transform, row: string) {
     lineNumber++
 
     if (!row) {
@@ -32,7 +53,6 @@ export function getJsonStreamer(options: JsonStreamerOptions = {}): NodeJS.ReadW
     }
 
     try {
-      // Check for replacement characters before parsing JSON
       if (allowReplacementCharacters !== true) {
         const replacementError = validateLineForReplacementChar(row, lineNumber)
         if (replacementError) {
@@ -46,20 +66,25 @@ export function getJsonStreamer(options: JsonStreamerOptions = {}): NodeJS.ReadW
         throw new Error(error)
       }
 
-      return doc
+      stream.push(doc)
     } catch (err) {
       if (err instanceof ReplacementCharError) {
-        this.emit('error', err)
+        stream.emit('error', err)
       } else if (err instanceof Error) {
-        this.emit('error', new Error(getErrorMessage(err)))
+        stream.emit('error', new Error(getErrorMessage(err)))
       } else {
-        this.emit(
+        stream.emit(
           'error',
           new Error(`Unknown error occurred at line #${lineNumber}: ${String(err)}`),
         )
       }
     }
+  }
 
-    return
+  function getErrorMessage(err: Error): string {
+    const suffix =
+      lineNumber === 1 ? '\n\nMake sure this is valid ndjson (one JSON-document *per line*)' : ''
+
+    return `Failed to parse line #${lineNumber}: ${err.message}${suffix}`
   }
 }
