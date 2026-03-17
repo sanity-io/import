@@ -1,5 +1,4 @@
 import createDebug from 'debug'
-import flatten from 'lodash-es/flatten.js'
 
 import {absolutifyPaths, getAssetRefs, unsetAssetRefs} from './assetRefs.js'
 import {assignArrayKeys} from './assignArrayKeys.js'
@@ -76,7 +75,7 @@ async function importDocuments(
     .filter((ref): ref is StrongRefsTask => ref !== null)
 
   // Extract asset references from the documents
-  const assetRefs = flatten(docs.map((doc) => getAssetRefs(doc)).filter((ref) => ref.length))
+  const assetRefs = docs.flatMap((doc) => getAssetRefs(doc))
 
   // Remove asset references from the documents
   const assetless = docs.map((doc) => unsetAssetRefs(doc))

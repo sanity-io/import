@@ -1,7 +1,6 @@
 import {type MultipleMutationResult, type SanityClient, type Transaction} from '@sanity/client'
 import {extractWithPath} from '@sanity/mutator'
 import debug from 'debug'
-import get from 'lodash-es/get.js'
 import pMap from 'p-map'
 
 import {serializePath} from './serializePath.js'
@@ -12,6 +11,7 @@ import {
   type SanityDocument,
   type StreamReference,
 } from './types.js'
+import {deepGet} from './util/deepGet.js'
 import {progressStepper} from './util/progressStepper.js'
 import {retryOnFailure} from './util/retryOnFailure.js'
 import {suffixTag} from './util/suffixTag.js'
@@ -59,14 +59,14 @@ export function cleanupReferences(doc: SanityDocument, options: ImportOptions): 
   const {skipCrossDatasetReferences, targetProjectId} = options
   const refPathItems = extractWithPath('..[_ref]', doc)
     .map((match) => match.path.slice(0, -1))
-    .map((path) => ({path, ref: get(doc, path) as StreamReference}))
+    .map((path) => ({path, ref: deepGet(doc, path) as StreamReference}))
   for (const item of refPathItems) {
     // We may want to skip cross-dataset references, eg when importing to other projects
     if (skipCrossDatasetReferences && '_dataset' in item.ref) {
       const leaf = item.path.at(-1)
       const parent =
         item.path.length > 1
-          ? (get(doc, item.path.slice(0, -1)) as Record<number | string, unknown>)
+          ? (deepGet(doc, item.path.slice(0, -1)) as Record<number | string, unknown>)
           : doc
       if (typeof leaf === 'string' || typeof leaf === 'number') {
         delete parent[leaf]
@@ -92,7 +92,7 @@ export function cleanupReferences(doc: SanityDocument, options: ImportOptions): 
 function findStrongRefs(doc: SanityDocument): RefPathItem[] {
   return extractWithPath('..[_ref]', doc)
     .map((match) => match.path.slice(0, -1))
-    .map((path) => ({path, ref: get(doc, path) as StreamReference}))
+    .map((path) => ({path, ref: deepGet(doc, path) as StreamReference}))
     .filter((item) => item.ref._weak !== true)
 }
 

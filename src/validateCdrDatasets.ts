@@ -1,7 +1,7 @@
 import {extractWithPath} from '@sanity/mutator'
-import get from 'lodash-es/get.js'
 
 import {type CrossDatasetReference, type ImportOptions, type SanityDocument} from './types.js'
+import {deepGet} from './util/deepGet.js'
 
 export async function validateCdrDatasets(
   docs: SanityDocument[],
@@ -48,7 +48,7 @@ function getDatasetsFromCrossDatasetReferences(docs: SanityDocument[]): string[]
 
 function findCrossCdr(doc: SanityDocument, set: Set<string>): Set<string> {
   const refs = extractWithPath('..[_ref]', doc)
-    .map((match) => get(doc, match.path.slice(0, -1)) as CrossDatasetReference | undefined)
+    .map((match) => deepGet(doc, match.path.slice(0, -1)) as CrossDatasetReference | undefined)
     .filter((ref): ref is CrossDatasetReference => typeof ref?._dataset === 'string')
 
   for (const ref of refs) {

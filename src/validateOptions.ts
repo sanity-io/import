@@ -1,8 +1,5 @@
 import fs from 'node:fs'
 
-import defaults from 'lodash-es/defaults.js'
-import noop from 'lodash-es/noop.js'
-
 import {type ImportOptions, type ImportSource} from './types.js'
 
 const clientMethods = ['fetch', 'transaction', 'config'] as const
@@ -12,16 +9,17 @@ const defaultOperation = allowedOperations[0]
 const defaultReleasesOperation = allowedReleasesOperations[0]
 
 export function validateOptions(input: ImportSource, opts: Partial<ImportOptions>): ImportOptions {
-  const options = defaults({}, opts, {
+  const options = {
     allowAssetsInDifferentDataset: false,
     allowSystemDocuments: false,
-    onProgress: noop,
+    onProgress: () => {},
     operation: defaultOperation,
     releasesOperation: defaultReleasesOperation,
     replaceAssets: false,
     skipCrossDatasetReferences: false,
     tag: 'sanity.import',
-  })
+    ...opts,
+  }
 
   if (!isValidInput(input)) {
     throw new Error(

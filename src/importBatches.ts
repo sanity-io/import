@@ -1,5 +1,4 @@
 import {type ImportReleaseAction, type MultipleMutationResult} from '@sanity/client'
-import partition from 'lodash-es/partition.js'
 import pMap from 'p-map'
 
 import {type ImportOptions, type SanityApiError, type SanityDocument} from './types.js'
@@ -44,7 +43,15 @@ function importBatch(
 
   return retryOnFailure(
     () => {
-      const [releaseDocs, docs] = partition(batch, (doc) => doc._id.startsWith('_.releases.'))
+      const releaseDocs: SanityDocument[] = []
+      const docs: SanityDocument[] = []
+      for (const doc of batch) {
+        if (doc._id.startsWith('_.releases.')) {
+          releaseDocs.push(doc)
+        } else {
+          docs.push(doc)
+        }
+      }
 
       const docsTransaction =
         docs.length > 0

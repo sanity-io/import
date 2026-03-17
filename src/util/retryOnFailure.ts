@@ -1,5 +1,4 @@
 import debug from 'debug'
-import defaults from 'lodash-es/defaults.js'
 
 const log = debug('sanity:import')
 
@@ -10,7 +9,7 @@ interface RetryOptions {
 }
 
 export async function retryOnFailure<T>(op: () => Promise<T>, opts: RetryOptions = {}): Promise<T> {
-  const options = defaults({}, opts, {delay: 150, isRetriable: () => true, maxTries: 3})
+  const options = {delay: 150, isRetriable: () => true, maxTries: 3, ...opts}
 
   for (let attempt = 1; attempt <= options.maxTries; attempt++) {
     try {

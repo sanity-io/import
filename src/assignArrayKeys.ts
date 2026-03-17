@@ -1,8 +1,12 @@
 import {getRandomValues} from 'node:crypto'
 
-import isPlainObject from 'lodash-es/isPlainObject.js'
-
 type PlainObject = Record<string, unknown>
+
+function isPlainObject(value: unknown): value is PlainObject {
+  if (typeof value !== 'object' || value === null) return false
+  const proto = Object.getPrototypeOf(value)
+  return proto === Object.prototype || proto === null
+}
 
 // Note: Mutates in-place
 function assignArrayKeys<T>(obj: T): T {
