@@ -5,6 +5,17 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.0](https://github.com/sanity-io/import/compare/v5.0.1...v6.0.0) (2026-03-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop ftp support + get-uri, split2, lodash-es dependencies ([#70](https://github.com/sanity-io/import/issues/70))
+
+### Features
+
+* drop ftp support + get-uri, split2, lodash-es dependencies ([#70](https://github.com/sanity-io/import/issues/70)) ([a5cbee2](https://github.com/sanity-io/import/commit/a5cbee2899d3d1954f610c2156bd791840213a34))
+
 ## [5.0.1](https://github.com/sanity-io/import/compare/v5.0.0...v5.0.1) (2026-03-11)
 
 
