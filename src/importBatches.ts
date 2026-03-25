@@ -134,5 +134,10 @@ function importBatch(
 }
 
 function isRetriable(err: SanityApiError): boolean {
-  return !err.response || err.response.statusCode !== 409
+  const statusCode = err.response?.statusCode ?? err.statusCode
+  // 409 Conflict and 403 Forbidden are not retriable
+  if (statusCode === 409 || statusCode === 403) {
+    return false
+  }
+  return true
 }

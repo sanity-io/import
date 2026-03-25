@@ -392,6 +392,47 @@ test('release imports are concurrency-limited', async () => {
   expect(maxConcurrent).toBeGreaterThan(0)
 })
 
+test('does not retry on permission errors (403)', async () => {
+  let actionCallCount = 0
+
+  const client = getSanityClient((event: MockRequestEvent) => {
+    const options = event.context.options as TestRequestOptions
+    const uri = options.uri || options.url
+
+    if (uri?.includes('/actions')) {
+      actionCallCount++
+      return {
+        body: {error: 'Insufficient permissions', message: 'Insufficient permissions'},
+        statusCode: 403,
+      }
+    }
+
+    if (uri?.includes('/datasets')) {
+      return {body: [{name: 'foo'}, {name: 'bar'}]}
+    }
+
+    return {body: {}}
+  })
+
+  const releaseDocs: SanityDocument[] = [{
+    _id: '_.releases.test-1',
+    _type: 'system.release',
+    name: 'test-1',
+    state: 'active',
+  }]
+
+  await expect(
+    sanityImport(releaseDocs, {
+      allowSystemDocuments: true,
+      client,
+      operation: 'createOrReplace',
+    }),
+  ).rejects.toThrow(/Insufficient permissions/)
+
+  // Should NOT have retried — 403 is not retriable (maxTries would be 3 for createOrReplace)
+  expect(actionCallCount).toBe(1)
+})
+
 test('surfaces permission errors (403) over rate limit errors (429)', async () => {
   let callCount = 0
 
