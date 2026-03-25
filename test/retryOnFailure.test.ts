@@ -43,4 +43,22 @@ describe('retry on failure utility', () => {
 
     expect(fn).toHaveBeenCalledTimes(2)
   })
+
+  test('respects Retry-After header on 429 errors', async () => {
+    const start = Date.now()
+    const fn = vi.fn()
+
+    const rateLimitError = Object.assign(new Error('Rate limit exceeded'), {
+      response: {statusCode: 429},
+      retryAfter: 1, // 1 second
+    })
+
+    fn.mockReturnValueOnce(Promise.reject(rateLimitError))
+    fn.mockReturnValueOnce(Promise.resolve('success'))
+
+    expect(await retryOnFailure(fn)).toEqual('success')
+    expect(fn).toHaveBeenCalledTimes(2)
+    // Should wait at least 1000ms (Retry-After value), not the default 150ms
+    expect(Date.now() - start).toBeGreaterThanOrEqual(900)
+  })
 })

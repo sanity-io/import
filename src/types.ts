@@ -89,6 +89,7 @@ export interface SanityApiError extends Error {
     statusCode: number
     statusText: string
   }
+  retryAfter?: number
   statusCode?: number
 }
 
