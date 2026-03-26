@@ -53,7 +53,7 @@
   "dependencies": {
     "@sanity/asset-utils": "^2.3.0",
     "@sanity/generate-help-url": "^4.0.0",
-    "@sanity/mutator": "^5.14.1",
+    "@sanity/mutator": "^5.18.0",
     "debug": "^4.4.3",
     "get-it": "^8.7.0",
     "gunzip-maybe": "^1.4.2",
@@ -63,23 +63,23 @@
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.3",
-    "@sanity/client": "^7.17.0",
-    "@sanity/eslint-config-cli": "^1.0.0",
-    "@sanity/pkg-utils": "^10.4.8",
+    "@sanity/client": "^7.20.0",
+    "@sanity/eslint-config-cli": "^1.0.1",
+    "@sanity/pkg-utils": "^10.4.13",
     "@swc/cli": "^0.8.0",
-    "@swc/core": "^1.15.18",
-    "@types/debug": "^4.1.12",
+    "@swc/core": "^1.15.21",
+    "@types/debug": "^4.1.13",
     "@types/gunzip-maybe": "1.4.3",
     "@types/node": "^24.12.0",
     "@types/tar-fs": "2.0.4",
-    "@vitest/coverage-v8": "4.0.18",
+    "@vitest/coverage-v8": "4.1.1",
     "eslint": "^9.39.4",
-    "knip": "^5.86.0",
+    "knip": "^5.88.1",
     "nock": "^14.0.11",
     "prettier": "^3.8.1",
     "prettier-plugin-packagejson": "^2.5.22",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.1"
   },
   "peerDependencies": {
     "@sanity/client": "^5.0.0 || ^6.0.0 || ^7.0.0"
