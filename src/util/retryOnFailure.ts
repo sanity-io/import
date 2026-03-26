@@ -15,7 +15,7 @@ export async function retryOnFailure<T>(op: () => Promise<T>, opts: RetryOptions
     try {
       return await op()
     } catch (err) {
-      const error = err as Error
+      const error = err as Error & {retryAfter?: number}
       if (!options.isRetriable(error)) {
         log('Encountered error which is not retriable, giving up')
         throw error
@@ -25,7 +25,8 @@ export async function retryOnFailure<T>(op: () => Promise<T>, opts: RetryOptions
         log('Error encountered, max retries hit - giving up (attempt #%d)', attempt)
         throw error
       } else {
-        const ms = options.delay * attempt
+        const retryAfterMs = error.retryAfter ? error.retryAfter * 1000 : 0
+        const ms = Math.max(options.delay * attempt, retryAfterMs)
         log('Error encountered, waiting %d ms before retrying (attempt #%d)', ms, attempt)
         log('Error details: %s', error.message)
         await delay(ms)

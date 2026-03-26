@@ -334,6 +334,145 @@ test('skips asset uploads for already-existing documents in createIfNotExists mo
   expect(patchedDocumentIds).toEqual(['movie_2'])
 })
 
+test('release imports are concurrency-limited', async () => {
+  let activeCalls = 0
+  let maxConcurrent = 0
+
+  const client = getSanityClient((event: MockRequestEvent) => {
+    const options = event.context.options as TestRequestOptions
+    const uri = options.uri || options.url
+
+    if (uri?.includes('/actions')) {
+      return {body: [{TransactionID: 'foo'}]}
+    }
+
+    if (uri?.includes('/data/mutate')) {
+      const body = JSON.parse(options.body as string) as MockMutationsBody
+      const results = body.mutations.map((mut) => extractDetailsFromMutation(mut))
+      return {body: {results}}
+    }
+
+    if (uri?.includes('/datasets')) {
+      return {body: [{name: 'foo'}, {name: 'bar'}]}
+    }
+
+    return {body: {error: `"${uri}" should not be called`}, statusCode: 400}
+  })
+
+  // Wrap client.action to track concurrency with actual async delays
+  const originalAction = client.action.bind(client)
+  client.action = ((...args: Parameters<typeof client.action>) => {
+    activeCalls++
+    maxConcurrent = Math.max(maxConcurrent, activeCalls)
+    return new Promise<Awaited<ReturnType<typeof client.action>>>((resolve, reject) => {
+      setTimeout(() => {
+        originalAction(...args)
+          .then((res) => {
+            activeCalls--
+            resolve(res)
+          })
+          .catch((err: unknown) => {
+            activeCalls--
+            reject(err)
+          })
+      }, 10)
+    })
+  }) as typeof client.action
+
+  const releaseDocs: SanityDocument[] = Array.from({length: 20}, (_, i) => ({
+    _id: `_.releases.test-${i}`,
+    _type: 'system.release',
+    name: `test-${i}`,
+    state: 'active',
+  }))
+
+  await sanityImport(releaseDocs, {allowSystemDocuments: true, client})
+
+  expect(maxConcurrent).toBeLessThanOrEqual(3)
+  expect(maxConcurrent).toBeGreaterThan(0)
+})
+
+test('does not retry on permission errors (403)', async () => {
+  let actionCallCount = 0
+
+  const client = getSanityClient((event: MockRequestEvent) => {
+    const options = event.context.options as TestRequestOptions
+    const uri = options.uri || options.url
+
+    if (uri?.includes('/actions')) {
+      actionCallCount++
+      return {
+        body: {error: 'Insufficient permissions', message: 'Insufficient permissions'},
+        statusCode: 403,
+      }
+    }
+
+    if (uri?.includes('/datasets')) {
+      return {body: [{name: 'foo'}, {name: 'bar'}]}
+    }
+
+    return {body: {}}
+  })
+
+  const releaseDocs: SanityDocument[] = [{
+    _id: '_.releases.test-1',
+    _type: 'system.release',
+    name: 'test-1',
+    state: 'active',
+  }]
+
+  await expect(
+    sanityImport(releaseDocs, {
+      allowSystemDocuments: true,
+      client,
+      operation: 'createOrReplace',
+    }),
+  ).rejects.toThrow(/Insufficient permissions/)
+
+  // Should NOT have retried — 403 is not retriable (maxTries would be 3 for createOrReplace)
+  expect(actionCallCount).toBe(1)
+})
+
+test('surfaces permission errors (403) over rate limit errors (429)', async () => {
+  let callCount = 0
+
+  const client = getSanityClient((event: MockRequestEvent) => {
+    const options = event.context.options as TestRequestOptions
+    const uri = options.uri || options.url
+
+    if (uri?.includes('/actions')) {
+      callCount++
+      if (callCount === 1) {
+        return {
+          body: {error: 'Insufficient permissions', message: 'Insufficient permissions'},
+          statusCode: 403,
+        }
+      }
+      return {
+        body: {error: 'API rate limit exceeded', message: 'API rate limit exceeded'},
+        statusCode: 429,
+      }
+    }
+
+    if (uri?.includes('/datasets')) {
+      return {body: [{name: 'foo'}, {name: 'bar'}]}
+    }
+
+    return {body: {}}
+  })
+
+  const releaseDocs: SanityDocument[] = Array.from({length: 5}, (_, i) => ({
+    _id: `_.releases.test-${i}`,
+    _type: 'system.release',
+    name: `test-${i}`,
+    state: 'active',
+  }))
+
+  await expect(
+    sanityImport(releaseDocs, {allowSystemDocuments: true, client}),
+  ).rejects.toThrow(/Insufficient permissions/)
+})
+
 function getMockMutationHandler(
   match: ((body: MockMutationsBody) => void) | string = 'employee creation',
 ): InjectFunction {

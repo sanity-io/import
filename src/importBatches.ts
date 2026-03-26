@@ -7,6 +7,7 @@ import {retryOnFailure} from './util/retryOnFailure.js'
 import {suffixTag} from './util/suffixTag.js'
 
 const DOCUMENT_IMPORT_CONCURRENCY = 6
+const RELEASE_IMPORT_CONCURRENCY = 3
 
 interface BatchImportResult {
   count: number
@@ -42,7 +43,7 @@ function importBatch(
   const maxRetries = operation === 'create' ? 1 : 3
 
   return retryOnFailure(
-    () => {
+    async () => {
       const releaseDocs: SanityDocument[] = []
       const docs: SanityDocument[] = []
       for (const doc of batch) {
@@ -88,35 +89,55 @@ function importBatch(
               })
           : Promise.resolve({count: 0, importedIds: [] as string[]})
 
-      const releasesAction = releaseDocs.map((doc: SanityDocument) => {
-        const actionParams: ImportReleaseAction = {
-          actionType: 'sanity.action.release.import',
-          attributes: doc,
-          ifExists: releasesOperation,
-          releaseId: doc.name as string,
-        }
-        return client
-          .action(actionParams)
-          .then(() => ({count: 1, importedIds: [doc._id]}))
-          .catch((err: Error) => {
-            err.message = `Release import failed for ${doc._id}: ${err.message}`
-            throw err
-          })
-      })
+      const releaseResults =
+        releaseDocs.length > 0
+          ? await pMap(
+              releaseDocs,
+              (doc: SanityDocument) => {
+                const actionParams: ImportReleaseAction = {
+                  actionType: 'sanity.action.release.import',
+                  attributes: doc,
+                  ifExists: releasesOperation,
+                  releaseId: doc.name as string,
+                }
+                return client
+                  .action(actionParams)
+                  .then((): BatchImportResult => ({count: 1, importedIds: [doc._id]}))
+                  .catch((err: SanityApiError) => {
+                    err.message = `Release import failed for ${doc._id}: ${err.message}`
+                    throw err
+                  })
+              },
+              {concurrency: RELEASE_IMPORT_CONCURRENCY, stopOnError: false},
+            ).catch((err: AggregateError | SanityApiError) => {
+              if (err instanceof AggregateError) {
+                const permissionError = err.errors.find(
+                  (e: SanityApiError) =>
+                    e.response?.statusCode === 403 || e.statusCode === 403,
+                )
+                throw permissionError || err.errors[0]
+              }
+              throw err
+            })
+          : []
 
-      return Promise.all([docsTransaction, ...releasesAction]).then((results) => {
-        const combined: BatchImportResult = {count: 0, importedIds: []}
-        for (const r of results) {
-          combined.count += r.count
-          combined.importedIds = [...combined.importedIds, ...r.importedIds]
-        }
-        return combined
-      })
+      const docsResult = await docsTransaction
+      const combined: BatchImportResult = {count: 0, importedIds: []}
+      for (const r of [docsResult, ...releaseResults]) {
+        combined.count += r.count
+        combined.importedIds = [...combined.importedIds, ...r.importedIds]
+      }
+      return combined
     },
     {isRetriable, maxTries: maxRetries},
   )
 }
 
 function isRetriable(err: SanityApiError): boolean {
-  return !err.response || err.response.statusCode !== 409
+  const statusCode = err.response?.statusCode ?? err.statusCode
+  // 409 Conflict and 403 Forbidden are not retriable
+  if (statusCode === 409 || statusCode === 403) {
+    return false
+  }
+  return true
 }
