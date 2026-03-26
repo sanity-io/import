@@ -5,6 +5,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.1](https://github.com/sanity-io/import/compare/v6.0.0...v6.0.1) (2026-03-26)
+
+
+### Bug Fixes
+
+* add concurrency control to release imports ([#75](https://github.com/sanity-io/import/issues/75)) ([3f4afa3](https://github.com/sanity-io/import/commit/3f4afa32e6aacdd7006024697e9e11af92e920ba))
+* the flag name for skipping CDRs ([#74](https://github.com/sanity-io/import/issues/74)) ([57aca22](https://github.com/sanity-io/import/commit/57aca2217fbcbbd3a3cafe175a8f45d877870ff4))
+
 ## [6.0.0](https://github.com/sanity-io/import/compare/v5.0.1...v6.0.0) (2026-03-17)
 
 
