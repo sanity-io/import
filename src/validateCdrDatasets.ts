@@ -21,7 +21,7 @@ export async function validateCdrDatasets(
       [
         `The data to be imported contains one or more cross-dataset references, which refers to datasets that do not exist in the target project.`,
         `Missing datasets: ${missing.map((ds) => `"${ds}"`).join(', ')}`,
-        'Either create these datasets in the given project, or use the `skipCrossDatasetReferences` option to skip these references.',
+        'Either create these datasets in the given project, or use the `--skip-cross-dataset-references` flag to skip these references.',
       ].join('\n'),
     )
   }
@@ -31,7 +31,7 @@ export async function validateCdrDatasets(
       [
         `The data to be imported contains one or more cross-dataset references, which refers to a dataset that do not exist in the target project.`,
         `Missing dataset: "${missing[0]}"`,
-        'Either create this dataset in the given project, or use the `skipCrossDatasetReferences` option to skip these references.',
+        'Either create this dataset in the given project, or use the `--skip-cross-dataset-references` flag to skip these references.',
       ].join('\n'),
     )
   }
