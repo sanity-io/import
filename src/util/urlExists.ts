@@ -21,21 +21,32 @@ function getStatusCodeForUrl(url: string): Promise<number> {
   })
 }
 
-async function urlExists(url: string): Promise<boolean> {
+async function getAssetUrlStatus(url: string): Promise<number> {
   let error: Error = new Error('Max retries exceeded')
+  let lastStatus: number | undefined
   for (let i = 0; i < MAX_RETRIES; i++) {
     try {
-      const statusCode = await getStatusCodeForUrl(url)
-      return statusCode === 200
+      const status = await getStatusCodeForUrl(url)
+      if (status < 500) {
+        return status
+      }
+      lastStatus = status
     } catch (err) {
       error = err as Error
-
-      // Wait one second before retrying the request
-      await new Promise<void>((resolve) => setTimeout(resolve, 1000))
     }
+
+    // Wait one second before retrying the request
+    await new Promise<void>((resolve) => setTimeout(resolve, 1000))
   }
 
+  if (lastStatus !== undefined) {
+    return lastStatus
+  }
   throw error
 }
 
-export {urlExists}
+async function urlExists(url: string): Promise<boolean> {
+  return (await getAssetUrlStatus(url)) === 200
+}
+
+export {getAssetUrlStatus, urlExists}
