@@ -8,7 +8,7 @@ import {
   type ImportOptions,
   type SanityDocument,
 } from './types.js'
-import {urlExists} from './util/urlExists.js'
+import {getAssetUrlStatus} from './util/urlExists.js'
 
 const logger = debug('sanity:import:asset-validation')
 
@@ -79,17 +79,25 @@ function getLocationFromDocument(doc: AssetDocument): {dataset: string; projectI
 async function ensureAssetUrlExists(assetDoc: AssetDocument): Promise<boolean> {
   const url = assetDoc.url!
   const start = Date.now()
-  const exists = await urlExists(url)
-  logger(`${url}: %s (%d ms)`, exists ? 'exists' : 'does not exist', Date.now() - start)
+  const status = await getAssetUrlStatus(url)
+  logger(`${url}: %d (%d ms)`, status, Date.now() - start)
 
-  if (!exists) {
-    const helpUrl = generateHelpUrl('import-asset-file-does-not-exist')
+  if (status === 200) {
+    return true
+  }
+
+  if (status !== 404) {
     throw new Error(
-      `Document ${assetDoc._id} points to a URL that does not exist (${url}). See ${helpUrl}.`,
+      `Document ${assetDoc._id} points to a URL that could not be verified (${url}): ` +
+        `server returned HTTP ${status}. ` +
+        `Re-run with --allow-failing-assets to skip URL verification.`,
     )
   }
 
-  return true
+  const helpUrl = generateHelpUrl('import-asset-file-does-not-exist')
+  throw new Error(
+    `Document ${assetDoc._id} points to a URL that does not exist (${url}). See ${helpUrl}.`,
+  )
 }
 
 function validateAssetDocumentProperties(assetDoc: AssetDocument): void {
