@@ -5,6 +5,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.2](https://github.com/sanity-io/import/compare/v6.0.1...v6.0.2) (2026-05-21)
+
+
+### Bug Fixes
+
+* **validateAssetDocuments:** distinguish unverifiable assets from missing ones ([b92c2fe](https://github.com/sanity-io/import/commit/b92c2fee9291ef4d3e2e7e9191a33e786d0fef66))
+
 ## [6.0.1](https://github.com/sanity-io/import/compare/v6.0.0...v6.0.1) (2026-03-26)
 
 
