@@ -262,7 +262,9 @@ async function getAssetDocumentIdForHash(
 
     const errorWithAttempts = err as AssetUploadError
     errorWithAttempts.attempts = attemptNum
-    throw new Error(`Error while attempt to query Sanity API:\n${errorWithAttempts.message}`)
+    throw new Error(`Error while attempt to query Sanity API:\n${errorWithAttempts.message}`, {
+      cause: err,
+    })
   }
 }
 
