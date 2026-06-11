@@ -5,6 +5,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.3](https://github.com/sanity-io/import/compare/v6.0.2...v6.0.3) (2026-06-11)
+
+
+### Bug Fixes
+
+* bump `@sanity/mutator` to v6 ([#85](https://github.com/sanity-io/import/issues/85)) ([b3aa7b8](https://github.com/sanity-io/import/commit/b3aa7b837381257cf6b5eeeef0688464595bc06f))
+
 ## [6.0.2](https://github.com/sanity-io/import/compare/v6.0.1...v6.0.2) (2026-05-21)
 
 
