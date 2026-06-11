@@ -63,9 +63,9 @@
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.3",
-    "@sanity/client": "^7.20.0",
-    "@sanity/eslint-config-cli": "^1.0.1",
-    "@sanity/pkg-utils": "^10.4.13",
+    "@sanity/client": "^7.22.1",
+    "@sanity/eslint-config-cli": "^1.1.2",
+    "@sanity/pkg-utils": "^10.5.3",
     "@swc/cli": "^0.8.0",
     "@swc/core": "^1.15.21",
     "@types/debug": "^4.1.13",
