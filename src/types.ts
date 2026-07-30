@@ -19,6 +19,7 @@ export interface AssetDocument extends SanityDocument {
   path?: string
   sha1hash?: string
   size?: number
+  uploadId?: string
   url?: string
 }
 
