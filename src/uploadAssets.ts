@@ -6,6 +6,7 @@ import debug from 'debug'
 import pMap from 'p-map'
 
 import {
+  type AssetDocument,
   type AssetFailure,
   type AssetUploadError,
   type ImportOptions,
@@ -18,6 +19,22 @@ import {suffixTag} from './util/suffixTag.js'
 import {urlExists} from './util/urlExists.js'
 
 const logger = debug('sanity:import')
+
+// Fields that describe the stored binary or the document identity rather than user-authored
+// metadata. During import the binary is re-uploaded and the asset service derives these from
+// the NEW blob (in particular a fresh `uploadId`). Replaying the source dataset's values via
+// the `add-meta` patch would diverge the asset document from its blob and make the asset
+// impossible to delete later, so they are stripped before patching.
+const NON_RESTORABLE_ASSET_FIELDS = new Set([
+  '_createdAt',
+  '_id',
+  '_rev',
+  '_type',
+  '_updatedAt',
+  'sha1hash',
+  'size',
+  'uploadId',
+])
 
 const ASSET_UPLOAD_CONCURRENCY = 8
 const ASSET_PATCH_CONCURRENCY = 30
@@ -215,12 +232,18 @@ async function ensureAsset(asset: AssetData, options: ImportOptions, i: number):
 
   const assetDoc = await client.assets.upload(type as 'file' | 'image', buffer, uploadOptions)
 
-  // If we have more metadata to provide, update the asset document
-  if (hasNonFilenameMeta) {
-    await client
-      .patch(assetDoc._id)
-      .set(assetMeta)
-      .commit({tag: suffixTag(tag, 'asset.add-meta'), visibility: 'async'})
+  // If we have more metadata to provide, update the asset document. Strip fields that the
+  // fresh upload already derived from the newly written blob (notably `uploadId`) so we don't
+  // replay the source dataset's values. Replaying the source `uploadId` here diverges the
+  // asset document from its blob and makes the asset impossible to delete later.
+  if (hasNonFilenameMeta && assetMeta) {
+    const restorableMeta = pickRestorableAssetMeta(assetMeta)
+    if (Object.keys(restorableMeta).length > 0) {
+      await client
+        .patch(assetDoc._id)
+        .set(restorableMeta)
+        .commit({tag: suffixTag(tag, 'asset.add-meta'), visibility: 'async'})
+    }
   }
 
   return assetDoc._id
@@ -395,6 +418,16 @@ function setAssetReferenceBatch(
         return total
       })
   })
+}
+
+function pickRestorableAssetMeta(assetMeta: AssetDocument): Record<string, unknown> {
+  const restorable: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(assetMeta)) {
+    if (!NON_RESTORABLE_ASSET_FIELDS.has(key)) {
+      restorable[key] = value
+    }
+  }
+  return restorable
 }
 
 function getAssetType(assetId: string): string {

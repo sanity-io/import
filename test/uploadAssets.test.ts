@@ -1,10 +1,12 @@
+import {createHash} from 'node:crypto'
+import {readFileSync} from 'node:fs'
 import path from 'node:path'
 import {pathToFileURL} from 'node:url'
 
 import nock from 'nock'
 import {afterEach, expect, test} from 'vitest'
 
-import {type ImportOptions} from '../src/types.js'
+import {type AssetDocument, type ImportOptions} from '../src/types.js'
 import {uploadAssets} from '../src/uploadAssets.js'
 import mockAssets from './fixtures/mock-assets.js'
 import {getSanityClient} from './helpers/helpers.js'
@@ -318,4 +320,130 @@ test('groups patches per document', () => {
     batches: 120,
     failures: [],
   })
+})
+
+// `uploadAssets` looks the exported metadata up by the sha1 of the bytes it downloaded, so this key
+// has to be derived from the fixture — a hardcoded hash silently stops matching if img.gif changes.
+const imgGifSha1 = createHash('sha1')
+  .update(readFileSync(path.join(fixturesDir, 'img.gif')))
+  .digest('hex')
+
+// A second entry that is never looked up: the `asset.add-meta` patch is gated on the whole map
+// holding more than one entry (`hasNonFilenameMeta`), not on the asset being imported.
+const unrelatedAssetId = 'image-unrelatedAsset'
+
+// Records the `set` payload of every patch aimed at the newly uploaded asset document — that is,
+// the `asset.add-meta` patch. Patches restoring references target the referencing document instead.
+function getUploadClient() {
+  const addMetaPatches: Record<string, unknown>[] = []
+
+  const client = getSanityClient((event: MockRequestEvent) => {
+    const options = event.context.options as TestRequestOptions
+    const uri = options.uri || options.url
+
+    if (uri?.includes('/data/query')) {
+      return {body: {result: null}}
+    }
+
+    if (uri?.includes('assets/images')) {
+      return {body: {document: {_id: 'image-newAssetId'}}}
+    }
+
+    if (uri?.includes('/data/mutate')) {
+      const body = JSON.parse(options.body as string) as MockMutationsBody
+      for (const mut of body.mutations) {
+        if (mut.patch?.id === 'image-newAssetId' && mut.patch.set) {
+          addMetaPatches.push(mut.patch.set)
+        }
+      }
+      const results = body.mutations.map((mut) => ({
+        id: mut.patch?.id,
+        operation: 'update',
+      }))
+      return {body: {results}}
+    }
+
+    return {body: {error: `"${uri}" should not be called`}, statusCode: 400}
+  })
+
+  return {addMetaPatches, client}
+}
+
+test('strips server-derived metadata from the asset add-meta patch', async () => {
+  // The re-upload gives the asset a fresh `uploadId` derived from the newly written blob.
+  // Replaying the source dataset's value would diverge the document from its blob and leave
+  // the asset impossible to delete, so it must not reach the patch.
+  const assetMap: Record<string, AssetDocument> = {
+    [`image-${imgGifSha1}`]: {
+      _createdAt: '2020-01-01T00:00:00Z',
+      _id: `image-${imgGifSha1}`,
+      _rev: 'sourceRev',
+      _type: 'sanity.imageAsset',
+      _updatedAt: '2020-01-02T00:00:00Z',
+      metadata: {dimensions: {height: 200, width: 200}},
+      originalFilename: 'source-name.gif',
+      sha1hash: imgGifSha1,
+      size: 1234,
+      uploadId: 'a3813c49e4a10c652e6c8db1a63432ce9946960e',
+    },
+    [unrelatedAssetId]: {
+      _id: unrelatedAssetId,
+      _type: 'sanity.imageAsset',
+      originalFilename: 'other.png',
+    },
+  }
+
+  const {addMetaPatches, client} = getUploadClient()
+
+  await uploadAssets(
+    [fileAsset],
+    createTestImportOptions({assetMap, client, onProgress: noop, tag: 'my.import'}),
+  )
+
+  expect(addMetaPatches).toHaveLength(1)
+  const [patch] = addMetaPatches
+  for (const field of [
+    '_createdAt',
+    '_id',
+    '_rev',
+    '_type',
+    '_updatedAt',
+    'sha1hash',
+    'size',
+    'uploadId',
+  ]) {
+    expect(patch).not.toHaveProperty(field)
+  }
+
+  // User-authored metadata is still restored
+  expect(patch).toEqual({
+    metadata: {dimensions: {height: 200, width: 200}},
+    originalFilename: 'source-name.gif',
+  })
+})
+
+test('skips the add-meta patch when only server-derived metadata is present', async () => {
+  const assetMap: Record<string, AssetDocument> = {
+    [`image-${imgGifSha1}`]: {
+      _id: `image-${imgGifSha1}`,
+      _type: 'sanity.imageAsset',
+      sha1hash: imgGifSha1,
+      size: 1234,
+      uploadId: 'a3813c49e4a10c652e6c8db1a63432ce9946960e',
+    },
+    [unrelatedAssetId]: {
+      _id: unrelatedAssetId,
+      _type: 'sanity.imageAsset',
+      originalFilename: 'other.png',
+    },
+  }
+
+  const {addMetaPatches, client} = getUploadClient()
+
+  await uploadAssets(
+    [fileAsset],
+    createTestImportOptions({assetMap, client, onProgress: noop, tag: 'my.import'}),
+  )
+
+  expect(addMetaPatches).toEqual([])
 })

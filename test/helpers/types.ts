@@ -28,7 +28,11 @@ export interface TestMutation {
   createIfNotExists?: {[key: string]: unknown; _id: string}
   createOrReplace?: {[key: string]: unknown; _id: string}
   delete?: {id: string}
-  patch?: {id: string}
+  patch?: {
+    id: string
+    set?: Record<string, unknown>
+    setIfMissing?: Record<string, unknown>
+  }
 }
 
 /**
