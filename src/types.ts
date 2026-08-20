@@ -112,14 +112,6 @@ export interface AssetFailure {
   url: string
 }
 
-// HTTP response from get-it library
-export interface GetItResponse {
-  body: NodeJS.ReadableStream
-
-  headers?: Record<string, string>
-  status?: number
-}
-
 // Circular dependency context for importers
 export interface ImportersContext {
   fromArray: (documents: SanityDocument[], options: ImportOptions) => Promise<ImportResult>

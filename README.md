@@ -4,7 +4,7 @@ Imports documents from an [ndjson](https://github.com/ndjson/ndjson-spec)-stream
 
 ## Requirements
 
-- Node.js >= 20.19.1 (or >= 22.12 for Node 22)
+- Node.js >= 22.12.0
 
 ## Installing
 

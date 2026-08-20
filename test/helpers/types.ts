@@ -1,24 +1,31 @@
-import {type HttpContext, type MiddlewareResponse} from 'get-it'
-
 /**
- * Type for the inject function parameter structure used in get-it middleware
+ * Type for the request passed to a test response handler
  */
 export interface MockRequestEvent {
-  context: HttpContext
+  context: {
+    options: TestRequestOptions
+  }
 }
 
 /**
  * Type for mock response returned by inject functions
  */
-export type MockResponse = Partial<MiddlewareResponse> | void
+export interface MockResponse {
+  body?: unknown
+  headers?: Record<string, string>
+  method?: string
+  statusCode?: number
+  statusMessage?: string
+  url?: string
+}
 
 /**
  * Type for inject function used in test mocks
  */
 export type InjectFunction = (
   event: MockRequestEvent,
-  prevValue?: MiddlewareResponse,
-) => MockResponse
+  prevValue?: MockResponse,
+) => MockResponse | void
 
 /**
  * Type for mutation structure used in Sanity API tests

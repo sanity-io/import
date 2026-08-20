@@ -2,6 +2,7 @@ import {basename} from 'node:path'
 
 import {isSanityImageUrl} from '@sanity/asset-utils'
 import {type SanityClient, type Transaction} from '@sanity/client'
+import {type FetchFunction} from 'get-it'
 import {createDebug} from 'obug'
 import pMap from 'p-map'
 
@@ -73,6 +74,7 @@ interface DocumentTasks {
 export async function uploadAssets(
   assets: AssetRef[],
   options: ImportOptions,
+  assetFetch?: FetchFunction,
 ): Promise<UploadAssetsResult> {
   const concurrency = options.assetConcurrency || ASSET_UPLOAD_CONCURRENCY
   logger('Uploading assets with a concurrency of %d', concurrency)
@@ -106,7 +108,7 @@ export async function uploadAssets(
 
   // If we should allow failures, we need to use a custom catch handler in order
   // to not set the asset references for the broken assets
-  const ensureAssetExists = ensureAssetWithRetries.bind(null, options, progress)
+  const ensureAssetExists = ensureAssetWithRetries.bind(null, options, progress, assetFetch)
   const ensureMethod = options.allowFailingAssets
     ? (assetKey: string, i: number) => ensureAssetExists(assetKey, i).catch((err: Error) => err)
     : ensureAssetExists
@@ -149,6 +151,7 @@ function getAssetRefMap(assets: AssetRef[]): Map<string, AssetRefMapItem[]> {
 async function ensureAssetWithRetries(
   options: ImportOptions,
   progress: () => void,
+  assetFetch: FetchFunction | undefined,
   assetKey: string,
   i: number,
 ): Promise<string> {
@@ -169,7 +172,7 @@ async function ensureAssetWithRetries(
   )
 
   const asset = {buffer, sha1hash, type: type!, url: url!}
-  return retryOnFailure(() => ensureAsset(asset, options, i))
+  return retryOnFailure(() => ensureAsset(asset, options, i, assetFetch))
     .then((result: string) => {
       progress()
       return result
@@ -193,7 +196,12 @@ function downloadAsset(url: string, i: number): Promise<{buffer: Buffer; sha1has
   return getHashedBufferForUri(url)
 }
 
-async function ensureAsset(asset: AssetData, options: ImportOptions, i: number): Promise<string> {
+async function ensureAsset(
+  asset: AssetData,
+  options: ImportOptions,
+  i: number,
+  assetFetch?: FetchFunction,
+): Promise<string> {
   const {buffer, sha1hash, type, url} = asset
   const {assetMap = {}, client, replaceAssets, tag} = options
 
@@ -206,6 +214,7 @@ async function ensureAsset(asset: AssetData, options: ImportOptions, i: number):
       sha1hash,
       0,
       suffixTag(tag, 'asset.get-id'),
+      assetFetch,
     )
 
     if (assetDocId) {
@@ -255,6 +264,7 @@ async function getAssetDocumentIdForHash(
   sha1hash: string,
   attemptNum: number,
   tag: string,
+  assetFetch?: FetchFunction,
 ): Promise<string | null> {
   // @todo remove retry logic when client has reintroduced it
   try {
@@ -271,7 +281,7 @@ async function getAssetDocumentIdForHash(
 
     // By adding `fm=json` to image requests, we do a slightly cheaper operation
     const assetUrl = isSanityImageUrl(assetDoc.url) ? `${assetDoc.url}?fm=json` : assetDoc.url
-    const exists = await urlExists(assetUrl)
+    const exists = await urlExists(assetUrl, assetFetch)
     if (!exists) {
       logger(`Asset document ${assetDoc._id} exists, but file does not. Overwriting.`)
       return null
@@ -280,7 +290,7 @@ async function getAssetDocumentIdForHash(
     return assetDoc._id
   } catch (err) {
     if (attemptNum < 3) {
-      return getAssetDocumentIdForHash(client, type, sha1hash, attemptNum + 1, tag)
+      return getAssetDocumentIdForHash(client, type, sha1hash, attemptNum + 1, tag, assetFetch)
     }
 
     const errorWithAttempts = err as AssetUploadError
