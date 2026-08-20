@@ -3,8 +3,8 @@ import {readFileSync} from 'node:fs'
 import path from 'node:path'
 import {pathToFileURL} from 'node:url'
 
-import nock from 'nock'
-import {afterEach, expect, test} from 'vitest'
+import {createMockFetch} from 'get-it/mock'
+import {expect, test} from 'vitest'
 
 import {type AssetDocument, type ImportOptions} from '../src/types.js'
 import {uploadAssets} from '../src/uploadAssets.js'
@@ -28,10 +28,6 @@ function createTestImportOptions(overrides: Partial<ImportOptions>): ImportOptio
     ...overrides,
   } as ImportOptions
 }
-
-afterEach(() => {
-  nock.cleanAll()
-})
 
 const noop = () => {
   /* Progress callback placeholder for testing */
@@ -72,7 +68,10 @@ test('fails if asset lookup fails', async () => {
 })
 
 test('will reuse an existing asset if it exists', () => {
-  nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId-200x200.png').reply(200)
+  const assetMock = createMockFetch()
+  assetMock
+    .on('HEAD', 'https://foo.bar.baz/images/foo/bar/someAssetId-200x200.png')
+    .respond({status: 200})
 
   const client = getSanityClient((event: MockRequestEvent) => {
     const options = event.context.options as TestRequestOptions
@@ -110,6 +109,7 @@ test('will reuse an existing asset if it exists', () => {
         onProgress: noop,
         tag: 'my.import',
       }),
+      assetMock.fetch,
     ),
   ).resolves.toMatchObject({
     batches: 1,
@@ -118,7 +118,10 @@ test('will reuse an existing asset if it exists', () => {
 })
 
 test('will upload an asset if asset doc exists but file does not', () => {
-  nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId-200x200.png').reply(404)
+  const assetMock = createMockFetch()
+  assetMock
+    .on('HEAD', 'https://foo.bar.baz/images/foo/bar/someAssetId-200x200.png')
+    .respond({status: 404})
 
   const client = getSanityClient((event: MockRequestEvent) => {
     const options = event.context.options as TestRequestOptions
@@ -160,6 +163,7 @@ test('will upload an asset if asset doc exists but file does not', () => {
         onProgress: noop,
         tag: 'my.import',
       }),
+      assetMock.fetch,
     ),
   ).resolves.toMatchObject({
     batches: 1,
@@ -208,7 +212,10 @@ test('will upload asset that do not already exist', () => {
 })
 
 test('will upload once but batch patches', () => {
-  nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId-200x200.png').reply(200)
+  const assetMock = createMockFetch()
+  assetMock
+    .on('HEAD', 'https://foo.bar.baz/images/foo/bar/someAssetId-200x200.png')
+    .respond({status: 200})
 
   let batch = 0
   const client = getSanityClient((event: MockRequestEvent) => {
@@ -246,6 +253,7 @@ test('will upload once but batch patches', () => {
       onProgress: noop,
       tag: 'my.import',
     }),
+    assetMock.fetch,
   )
   return expect(upload).resolves.toMatchObject({
     batches: 60,
@@ -254,8 +262,13 @@ test('will upload once but batch patches', () => {
 })
 
 test('groups patches per document', () => {
-  nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId1-200x200.gif').reply(200)
-  nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId2-200x200.png').reply(200)
+  const assetMock = createMockFetch()
+  assetMock
+    .on('HEAD', 'https://foo.bar.baz/images/foo/bar/someAssetId1-200x200.gif')
+    .respond({status: 200})
+  assetMock
+    .on('HEAD', 'https://foo.bar.baz/images/foo/bar/someAssetId2-200x200.png')
+    .respond({status: 200})
 
   let batch = 0
   const client = getSanityClient((event: MockRequestEvent) => {
@@ -313,6 +326,7 @@ test('groups patches per document', () => {
       onProgress: noop,
       tag: 'my.import',
     }),
+    assetMock.fetch,
   )
   return expect(upload).resolves.toMatchObject({
     batches: 120,

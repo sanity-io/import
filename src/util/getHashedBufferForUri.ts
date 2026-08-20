@@ -4,13 +4,11 @@ import {Readable} from 'node:stream'
 import {finished} from 'node:stream/promises'
 import {fileURLToPath} from 'node:url'
 
-import {getIt} from 'get-it'
-import {promise} from 'get-it/middleware'
+import {createRequester} from 'get-it'
 
-import {type GetItResponse} from '../types.js'
 import {retryOnFailure} from './retryOnFailure.js'
 
-const request = getIt([promise()])
+const request = createRequester({as: 'stream'})
 
 interface HashedBuffer {
   buffer: Buffer
@@ -82,6 +80,6 @@ async function readDataUri(uri: string): Promise<Buffer> {
 
 async function readHttpUri(uri: string): Promise<NodeJS.ReadableStream> {
   const parsed = new URL(uri)
-  const res = (await request({stream: true, url: parsed.href})) as GetItResponse
-  return res.body
+  const res = await request(parsed.href)
+  return Readable.from(res.body)
 }
