@@ -122,8 +122,6 @@ export async function importFromStream(
   const router = new StreamRouter(outputPath, options)
 
   try {
-    // gunzipMaybe is an untyped library
-
     await pipeline(stream, gunzipMaybe(), router)
 
     if (router.isTar) {
