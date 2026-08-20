@@ -1,0 +1,5 @@
+allowBuilds:
+  esbuild: true
+minimumReleaseAgeExclude:
+  - get-it@9.5.1
+  - '@sanity/client@8.2.0'
