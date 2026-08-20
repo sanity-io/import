@@ -16,6 +16,10 @@ permissions:
   pull-requests: write
   id-token: write
 
+env:
+  # Matches minimum version for pnpm - higher than our 22.12 baseline (ok)
+  NODE_VERSION: '22.13.0'
+
 jobs:
   release-please:
     runs-on: ubuntu-latest
@@ -28,7 +32,7 @@ jobs:
           private-key: ${{ secrets.ECOSPARK_APP_PRIVATE_KEY }}
 
       - name: Run release-please
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@v5
         id: release
         with:
           token: ${{ steps.app-token.outputs.token }}
@@ -36,35 +40,14 @@ jobs:
 
       - name: Checkout
         if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
-      - name: Setup Node.js
+      - name: Setup pnpm and Node.js
         if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
-        uses: actions/setup-node@v6
+        uses: pnpm/setup@v2
         with:
-          node-version: lts/*
-
-      - name: Install pnpm
-        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
-        uses: pnpm/action-setup@v5
-
-      - name: Get pnpm store directory
-        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Cache pnpm store
-        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
-        uses: actions/cache@v5
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
-        run: pnpm install --frozen-lockfile
+          cache: true
+          runtime: node@${{ env.NODE_VERSION }}
 
       - name: Build
         if: ${{ steps.release.outputs.release_created == 'true' || github.event.inputs.publish == 'true' }}
