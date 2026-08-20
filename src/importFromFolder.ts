@@ -3,7 +3,7 @@ import {rm} from 'node:fs/promises'
 import path from 'node:path'
 import {pathToFileURL} from 'node:url'
 
-import createDebug from 'debug'
+import {createDebug} from 'obug'
 import {glob} from 'tinyglobby'
 
 import {

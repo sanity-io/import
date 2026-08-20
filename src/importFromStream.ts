@@ -3,8 +3,8 @@ import path from 'node:path'
 import {Transform} from 'node:stream'
 import {pipeline} from 'node:stream/promises'
 
-import createDebug from 'debug'
 import gunzipMaybe from 'gunzip-maybe'
+import {createDebug} from 'obug'
 import tar from 'tar-fs'
 import {glob} from 'tinyglobby'
 

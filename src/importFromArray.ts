@@ -1,4 +1,4 @@
-import createDebug from 'debug'
+import {createDebug} from 'obug'
 
 import {absolutifyPaths, getAssetRefs, unsetAssetRefs} from './assetRefs.js'
 import {assignArrayKeys} from './assignArrayKeys.js'

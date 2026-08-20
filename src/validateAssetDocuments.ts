@@ -1,5 +1,5 @@
 import {generateHelpUrl} from '@sanity/generate-help-url'
-import debug from 'debug'
+import {createDebug} from 'obug'
 import pMap from 'p-map'
 
 import {
@@ -10,7 +10,7 @@ import {
 } from './types.js'
 import {getAssetUrlStatus} from './util/urlExists.js'
 
-const logger = debug('sanity:import:asset-validation')
+const logger = createDebug('sanity:import:asset-validation')
 
 const DEFAULT_VERIFY_CONCURRENCY = 12
 const REQUIRED_PROPERTIES = {

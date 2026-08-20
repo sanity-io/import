@@ -2,7 +2,7 @@ import {basename} from 'node:path'
 
 import {isSanityImageUrl} from '@sanity/asset-utils'
 import {type SanityClient, type Transaction} from '@sanity/client'
-import debug from 'debug'
+import {createDebug} from 'obug'
 import pMap from 'p-map'
 
 import {
@@ -18,7 +18,7 @@ import {retryOnFailure} from './util/retryOnFailure.js'
 import {suffixTag} from './util/suffixTag.js'
 import {urlExists} from './util/urlExists.js'
 
-const logger = debug('sanity:import')
+const logger = createDebug('sanity:import')
 
 // Fields that describe the stored binary or the document identity rather than user-authored
 // metadata. During import the binary is re-uploaded and the asset service derives these from

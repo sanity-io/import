@@ -1,6 +1,6 @@
-import debug from 'debug'
+import {createDebug} from 'obug'
 
-const log = debug('sanity:import')
+const log = createDebug('sanity:import')
 
 interface RetryOptions {
   delay?: number
