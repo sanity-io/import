@@ -5,6 +5,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.4](https://github.com/sanity-io/import/compare/v6.0.3...v6.0.4) (2026-08-20)
+
+
+### Bug Fixes
+
+* **deps:** allow client v8 ([#94](https://github.com/sanity-io/import/issues/94)) ([f73ad96](https://github.com/sanity-io/import/commit/f73ad965103fc636a3b61dc4d2151907ca57b1fd))
+* exclude server side set metadata from being overridden by local metadata ([#91](https://github.com/sanity-io/import/issues/91)) ([713994c](https://github.com/sanity-io/import/commit/713994cc626d5ffcb605c9f92a4e3d2e5685d68c))
+
 ## [6.0.3](https://github.com/sanity-io/import/compare/v6.0.2...v6.0.3) (2026-06-11)
 
 
