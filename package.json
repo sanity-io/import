@@ -22,19 +22,14 @@
     "url": "git+https://github.com/sanity-io/import.git"
   },
   "files": [
-    "dist",
-    "oclif.manifest.json",
-    "src"
+    "dist"
   ],
   "type": "module",
   "sideEffects": false,
   "main": "./dist/_exports/index.js",
   "types": "./dist/_exports/index.d.ts",
   "exports": {
-    ".": {
-      "source": "./src/_exports/index.ts",
-      "default": "./dist/_exports/index.js"
-    },
+    ".": "./dist/_exports/index.js",
     "./package.json": "./package.json"
   },
   "publishConfig": {
