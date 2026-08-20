@@ -22,7 +22,8 @@
     "url": "git+https://github.com/sanity-io/import.git"
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "type": "module",
   "sideEffects": false,
