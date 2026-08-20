@@ -82,7 +82,7 @@
     "vitest": "^4.1.1"
   },
   "peerDependencies": {
-    "@sanity/client": "^5.0.0 || ^6.0.0 || ^7.0.0"
+    "@sanity/client": "^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0"
   },
   "packageManager": "pnpm@10.29.2",
   "engines": {
