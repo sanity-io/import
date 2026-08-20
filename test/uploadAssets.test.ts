@@ -37,7 +37,7 @@ const noop = () => {
   /* Progress callback placeholder for testing */
 }
 
-const fixturesDir = path.join(__dirname, 'fixtures')
+const fixturesDir = path.join(import.meta.dirname, 'fixtures')
 const imgFileUrl = pathToFileURL(path.join(fixturesDir, 'img.gif')).href
 const fileAsset = {
   documentId: 'movie_1',
@@ -240,8 +240,7 @@ test('will upload once but batch patches', () => {
   })
 
   const upload = uploadAssets(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mockAssets([imgFileUrl]) as any,
+    mockAssets([imgFileUrl]),
     createTestImportOptions({
       client,
       onProgress: noop,
@@ -308,8 +307,7 @@ test('groups patches per document', () => {
   const imgFileUrl2 = pathToFileURL(path.join(fixturesDir, 'img1.png')).href
 
   const upload = uploadAssets(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mockAssets([imgFileUrl1, imgFileUrl2]) as any,
+    mockAssets([imgFileUrl1, imgFileUrl2]),
     createTestImportOptions({
       client,
       onProgress: noop,

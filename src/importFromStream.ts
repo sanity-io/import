@@ -4,8 +4,8 @@ import path from 'node:path'
 import {Transform} from 'node:stream'
 import {pipeline} from 'node:stream/promises'
 
-import createDebug from 'debug'
 import gunzipMaybe from 'gunzip-maybe'
+import {createDebug} from 'obug'
 import {x as extractTar} from 'tar'
 import {glob} from 'tinyglobby'
 

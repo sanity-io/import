@@ -3,26 +3,33 @@
   "version": "6.0.4",
   "description": "Import documents to a Sanity dataset",
   "keywords": [
-    "sanity",
     "cms",
-    "headless",
-    "realtime",
     "content",
+    "headless",
     "import",
-    "ndjson"
+    "ndjson",
+    "realtime",
+    "sanity"
   ],
   "homepage": "https://www.sanity.io/",
   "bugs": {
     "url": "https://github.com/sanity-io/import/issues"
   },
+  "license": "MIT",
+  "author": "Sanity.io <hello@sanity.io>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sanity-io/import.git"
   },
-  "license": "MIT",
-  "author": "Sanity.io <hello@sanity.io>",
-  "sideEffects": false,
+  "files": [
+    "dist",
+    "oclif.manifest.json",
+    "src"
+  ],
   "type": "module",
+  "sideEffects": false,
+  "main": "./dist/_exports/index.js",
+  "types": "./dist/_exports/index.d.ts",
   "exports": {
     ".": {
       "source": "./src/_exports/index.ts",
@@ -30,64 +37,51 @@
     },
     "./package.json": "./package.json"
   },
-  "main": "./dist/_exports/index.js",
-  "types": "./dist/_exports/index.d.ts",
-  "files": [
-    "dist",
-    "oclif.manifest.json",
-    "src"
-  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "swc src -d dist --strip-leading-paths && pnpm run build:types",
-    "build:types": "pkg-utils build --emitDeclarationOnly",
+    "build": "tsc -p tsconfig.build.json",
     "coverage": "vitest run --coverage",
     "depcheck": "knip",
     "dev": "tsc --watch",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "prepublishOnly": "pnpm run build",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "watch": "swc src -d dist --strip-leading-paths --watch"
+    "watch": "tsc -p tsconfig.build.json --watch"
   },
   "dependencies": {
     "@sanity/asset-utils": "^2.3.0",
     "@sanity/generate-help-url": "^4.0.0",
-    "@sanity/mutator": "^6.0.0",
-    "debug": "^4.4.3",
+    "@sanity/mutator": "^6.10.1",
     "get-it": "^8.7.0",
     "gunzip-maybe": "^1.4.2",
-    "p-map": "^7.0.3",
+    "obug": "^2.1.4",
+    "p-map": "^7.0.6",
     "tar": "^7.5.18",
-    "tinyglobby": "^0.2.15"
+    "tinyglobby": "^0.2.17"
   },
   "devDependencies": {
-    "@eslint/compat": "^2.0.3",
     "@sanity/client": "^7.22.1",
-    "@sanity/eslint-config-cli": "^1.1.2",
-    "@sanity/pkg-utils": "^10.5.3",
-    "@swc/cli": "^0.8.0",
-    "@swc/core": "^1.15.21",
-    "@types/debug": "^4.1.13",
     "@types/gunzip-maybe": "1.4.3",
     "@types/node": "^24.12.0",
-    "@vitest/coverage-v8": "4.1.1",
-    "eslint": "^9.39.4",
-    "knip": "^5.88.1",
+    "@vitest/coverage-v8": "4.1.11",
+    "knip": "^6.32.2",
     "nock": "^14.0.11",
-    "prettier": "^3.8.1",
-    "prettier-plugin-packagejson": "^2.5.22",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.1"
+    "oxfmt": "^0.64.0",
+    "oxlint": "^1.79.0",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11"
   },
   "peerDependencies": {
     "@sanity/client": "^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0"
   },
-  "packageManager": "pnpm@10.29.2",
   "engines": {
     "node": ">=20.19.1 <22 || >=22.12"
   },
-  "publishConfig": {
-    "access": "public"
-  }
+  "packageManager": "pnpm@10.29.2"
 }
