@@ -73,7 +73,7 @@
     "@types/node": "^24.12.0",
     "@types/tar-fs": "2.0.4",
     "@vitest/coverage-v8": "4.1.1",
-    "eslint": "^9.39.4",
+    "eslint": "^10.9.1",
     "knip": "^5.88.1",
     "nock": "^14.0.11",
     "prettier": "^3.8.1",
