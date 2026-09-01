@@ -1,5 +1,9 @@
 lockfileVersion: '9.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -28,9 +32,6 @@ importers:
       tar:
         specifier: ^7.5.18
         version: 7.5.22
-      tinyglobby:
-        specifier: ^0.2.17
-        version: 0.2.17
     devDependencies:
       '@sanity/client':
         specifier: ^8.2.0
