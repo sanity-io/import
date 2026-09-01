@@ -2,7 +2,8 @@ import {basename} from 'node:path'
 
 import {isSanityImageUrl} from '@sanity/asset-utils'
 import {type SanityClient, type Transaction} from '@sanity/client'
-import debug from 'debug'
+import {type FetchFunction} from 'get-it'
+import {createDebug} from 'obug'
 import pMap from 'p-map'
 
 import {
@@ -12,13 +13,14 @@ import {
   type ImportOptions,
   type SanityFetchResponse,
 } from './types.js'
+import {describeError} from './util/describeError.js'
 import {getHashedBufferForUri} from './util/getHashedBufferForUri.js'
 import {progressStepper} from './util/progressStepper.js'
 import {retryOnFailure} from './util/retryOnFailure.js'
 import {suffixTag} from './util/suffixTag.js'
 import {urlExists} from './util/urlExists.js'
 
-const logger = debug('sanity:import')
+const logger = createDebug('sanity:import')
 
 // Fields that describe the stored binary or the document identity rather than user-authored
 // metadata. During import the binary is re-uploaded and the asset service derives these from
@@ -154,19 +156,20 @@ async function ensureAssetWithRetries(
 ): Promise<string> {
   const [type, url] = assetKey.split('#', 2)
 
-  const {buffer, sha1hash} = await retryOnFailure(() => downloadAsset(url!, i)).catch(
-    (err: Error) => {
-      progress()
-      const assetError = err as AssetUploadError
-      assetError.type = type!
-      assetError.url = url!
-      assetError.message = assetError.message.includes(url!)
-        ? assetError.message
-        : `Failed to download ${type} @ ${url}:\n${assetError.message}`
+  const {buffer, sha1hash} = await retryOnFailure(() =>
+    downloadAsset(url!, i, options.assetFetch),
+  ).catch((err: Error) => {
+    progress()
+    const assetError = err as AssetUploadError
+    const description = describeError(assetError)
+    assetError.type = type!
+    assetError.url = url!
+    assetError.message = description.includes(url!)
+      ? description
+      : `Failed to download ${type} @ ${url}:\n${description}`
 
-      throw assetError
-    },
-  )
+    throw assetError
+  })
 
   const asset = {buffer, sha1hash, type: type!, url: url!}
   return retryOnFailure(() => ensureAsset(asset, options, i))
@@ -177,20 +180,25 @@ async function ensureAssetWithRetries(
     .catch((err: Error) => {
       progress()
       const assetError = err as AssetUploadError
+      const description = describeError(assetError)
       assetError.type = type!
       assetError.url = url!
-      assetError.message = assetError.message.includes(url!)
-        ? assetError.message
-        : `Failed to upload ${type} @ ${url}:\n${assetError.message}`
+      assetError.message = description.includes(url!)
+        ? description
+        : `Failed to upload ${type} @ ${url}:\n${description}`
 
       throw assetError
     })
 }
 
-function downloadAsset(url: string, i: number): Promise<{buffer: Buffer; sha1hash: string}> {
+function downloadAsset(
+  url: string,
+  i: number,
+  assetFetch?: FetchFunction,
+): Promise<{buffer: Buffer; sha1hash: string}> {
   // Download the asset in order for us to create a hash
   logger('[Asset #%d] Downloading %s', i, url)
-  return getHashedBufferForUri(url)
+  return getHashedBufferForUri(url, assetFetch)
 }
 
 async function ensureAsset(asset: AssetData, options: ImportOptions, i: number): Promise<string> {
@@ -206,6 +214,7 @@ async function ensureAsset(asset: AssetData, options: ImportOptions, i: number):
       sha1hash,
       0,
       suffixTag(tag, 'asset.get-id'),
+      options.assetFetch,
     )
 
     if (assetDocId) {
@@ -255,6 +264,7 @@ async function getAssetDocumentIdForHash(
   sha1hash: string,
   attemptNum: number,
   tag: string,
+  assetFetch?: FetchFunction,
 ): Promise<string | null> {
   // @todo remove retry logic when client has reintroduced it
   try {
@@ -271,7 +281,7 @@ async function getAssetDocumentIdForHash(
 
     // By adding `fm=json` to image requests, we do a slightly cheaper operation
     const assetUrl = isSanityImageUrl(assetDoc.url) ? `${assetDoc.url}?fm=json` : assetDoc.url
-    const exists = await urlExists(assetUrl)
+    const exists = await urlExists(assetUrl, assetFetch)
     if (!exists) {
       logger(`Asset document ${assetDoc._id} exists, but file does not. Overwriting.`)
       return null
@@ -280,7 +290,7 @@ async function getAssetDocumentIdForHash(
     return assetDoc._id
   } catch (err) {
     if (attemptNum < 3) {
-      return getAssetDocumentIdForHash(client, type, sha1hash, attemptNum + 1, tag)
+      return getAssetDocumentIdForHash(client, type, sha1hash, attemptNum + 1, tag, assetFetch)
     }
 
     const errorWithAttempts = err as AssetUploadError

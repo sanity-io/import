@@ -4,13 +4,13 @@ import path from 'node:path'
 import {Transform} from 'node:stream'
 import {pipeline} from 'node:stream/promises'
 
-import createDebug from 'debug'
 import gunzipMaybe from 'gunzip-maybe'
+import {createDebug} from 'obug'
 import {x as extractTar} from 'tar'
-import {glob} from 'tinyglobby'
 
 import {type ImportOptions, type ImportResult, type SanityDocument} from './types.js'
 import {getJsonStreamer} from './util/getJsonStreamer.js'
+import {globFiles} from './util/globFiles.js'
 import {isTar} from './util/isTar.js'
 
 const debug = createDebug('sanity:import:stream')
@@ -123,8 +123,6 @@ export async function importFromStream(
   const router = new StreamRouter(outputPath, options)
 
   try {
-    // gunzipMaybe is an untyped library
-
     await pipeline(stream, gunzipMaybe(), router)
 
     if (router.isTar) {
@@ -143,7 +141,8 @@ async function findAndImportFromTar(
 ): Promise<ImportResult> {
   debug('Tarball extracted, looking for ndjson')
 
-  const files = await glob(['**/*.ndjson'], {absolute: true, cwd: outputPath, deep: 2})
+  // Exports are typically `<export-name>/data.ndjson`, so only look a couple of levels deep
+  const files = await globFiles(['*.ndjson', '*/*.ndjson', '*/*/*.ndjson'], outputPath)
   if (files.length === 0) {
     throw new Error('ndjson-file not found in tarball')
   }

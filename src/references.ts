@@ -1,6 +1,6 @@
 import {type MultipleMutationResult, type SanityClient, type Transaction} from '@sanity/client'
 import {extractWithPath} from '@sanity/mutator'
-import debug from 'debug'
+import {createDebug} from 'obug'
 import pMap from 'p-map'
 
 import {serializePath} from './serializePath.js'
@@ -16,7 +16,7 @@ import {progressStepper} from './util/progressStepper.js'
 import {retryOnFailure} from './util/retryOnFailure.js'
 import {suffixTag} from './util/suffixTag.js'
 
-const logger = debug('sanity:import')
+const logger = createDebug('sanity:import')
 
 const STRENGTHEN_CONCURRENCY = 30
 const STRENGTHEN_BATCH_SIZE = 30

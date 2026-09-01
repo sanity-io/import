@@ -112,8 +112,7 @@ function importBatch(
             ).catch((err: AggregateError | SanityApiError) => {
               if (err instanceof AggregateError) {
                 const permissionError = err.errors.find(
-                  (e: SanityApiError) =>
-                    e.response?.statusCode === 403 || e.statusCode === 403,
+                  (e: SanityApiError) => e.response?.statusCode === 403 || e.statusCode === 403,
                 )
                 throw permissionError || err.errors[0]
               }

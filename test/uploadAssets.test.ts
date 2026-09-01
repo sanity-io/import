@@ -3,8 +3,8 @@ import {readFileSync} from 'node:fs'
 import path from 'node:path'
 import {pathToFileURL} from 'node:url'
 
-import nock from 'nock'
-import {afterEach, expect, test} from 'vitest'
+import {createMockFetch, streamBody} from 'get-it/mock'
+import {expect, test} from 'vitest'
 
 import {type AssetDocument, type ImportOptions} from '../src/types.js'
 import {uploadAssets} from '../src/uploadAssets.js'
@@ -29,15 +29,11 @@ function createTestImportOptions(overrides: Partial<ImportOptions>): ImportOptio
   } as ImportOptions
 }
 
-afterEach(() => {
-  nock.cleanAll()
-})
-
 const noop = () => {
   /* Progress callback placeholder for testing */
 }
 
-const fixturesDir = path.join(__dirname, 'fixtures')
+const fixturesDir = path.join(import.meta.dirname, 'fixtures')
 const imgFileUrl = pathToFileURL(path.join(fixturesDir, 'img.gif')).href
 const fileAsset = {
   documentId: 'movie_1',
@@ -72,7 +68,10 @@ test('fails if asset lookup fails', async () => {
 })
 
 test('will reuse an existing asset if it exists', () => {
-  nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId-200x200.png').reply(200)
+  const assetMock = createMockFetch()
+  assetMock
+    .on('HEAD', 'https://foo.bar.baz/images/foo/bar/someAssetId-200x200.png')
+    .respond({status: 200})
 
   const client = getSanityClient((event: MockRequestEvent) => {
     const options = event.context.options as TestRequestOptions
@@ -107,6 +106,7 @@ test('will reuse an existing asset if it exists', () => {
       [fileAsset],
       createTestImportOptions({
         client,
+        assetFetch: assetMock.fetch,
         onProgress: noop,
         tag: 'my.import',
       }),
@@ -118,7 +118,10 @@ test('will reuse an existing asset if it exists', () => {
 })
 
 test('will upload an asset if asset doc exists but file does not', () => {
-  nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId-200x200.png').reply(404)
+  const assetMock = createMockFetch()
+  assetMock
+    .on('HEAD', 'https://foo.bar.baz/images/foo/bar/someAssetId-200x200.png')
+    .respond({status: 404})
 
   const client = getSanityClient((event: MockRequestEvent) => {
     const options = event.context.options as TestRequestOptions
@@ -157,6 +160,7 @@ test('will upload an asset if asset doc exists but file does not', () => {
       [fileAsset],
       createTestImportOptions({
         client,
+        assetFetch: assetMock.fetch,
         onProgress: noop,
         tag: 'my.import',
       }),
@@ -207,8 +211,61 @@ test('will upload asset that do not already exist', () => {
   })
 })
 
+test('downloads assets over http and hashes the streamed body', async () => {
+  const imgBytes = readFileSync(path.join(fixturesDir, 'img.gif'))
+  const assetMock = createMockFetch()
+  // Delivered as two chunks so the hash is only correct if the whole stream is consumed
+  const midpoint = Math.floor(imgBytes.byteLength / 2)
+  assetMock.on('GET', 'http://foo.bar.baz/img.gif').respond({
+    body: streamBody(imgBytes.subarray(0, midpoint), imgBytes.subarray(midpoint)),
+  })
+
+  // The sha1 the importer looked the asset up by tells us what it actually read off the wire
+  let queriedSha1: string | undefined
+  const client = getSanityClient((event: MockRequestEvent) => {
+    const options = event.context.options as TestRequestOptions
+    const uri = options.uri || options.url
+
+    if (uri?.includes('/data/query')) {
+      // GROQ params are JSON-encoded into the query string
+      const param = new URL(uri, 'http://localhost').searchParams.get('$sha1hash')
+      queriedSha1 = param === null ? undefined : JSON.parse(param)
+      return {body: {result: null}}
+    }
+
+    if (uri?.includes('assets/images')) {
+      return {body: {document: {_id: 'image-newAssetId'}}}
+    }
+
+    if (uri?.includes('/data/mutate')) {
+      const body = JSON.parse(options.body as string) as MockMutationsBody
+      const results = body.mutations.map((mut) => ({id: mut.patch?.id, operation: 'update'}))
+      return {body: {results}}
+    }
+
+    return {body: {error: `"${uri}" should not be called`}, statusCode: 400}
+  })
+
+  await expect(
+    uploadAssets(
+      [{...fileAsset, url: 'http://foo.bar.baz/img.gif'}],
+      createTestImportOptions({
+        assetFetch: assetMock.fetch,
+        client,
+        onProgress: noop,
+        tag: 'my.import',
+      }),
+    ),
+  ).resolves.toMatchObject({batches: 1, failures: []})
+
+  expect(queriedSha1).toBe(imgGifSha1)
+})
+
 test('will upload once but batch patches', () => {
-  nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId-200x200.png').reply(200)
+  const assetMock = createMockFetch()
+  assetMock
+    .on('HEAD', 'https://foo.bar.baz/images/foo/bar/someAssetId-200x200.png')
+    .respond({status: 200})
 
   let batch = 0
   const client = getSanityClient((event: MockRequestEvent) => {
@@ -240,10 +297,10 @@ test('will upload once but batch patches', () => {
   })
 
   const upload = uploadAssets(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mockAssets([imgFileUrl]) as any,
+    mockAssets([imgFileUrl]),
     createTestImportOptions({
       client,
+      assetFetch: assetMock.fetch,
       onProgress: noop,
       tag: 'my.import',
     }),
@@ -255,8 +312,13 @@ test('will upload once but batch patches', () => {
 })
 
 test('groups patches per document', () => {
-  nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId1-200x200.gif').reply(200)
-  nock('https://foo.bar.baz').head('/images/foo/bar/someAssetId2-200x200.png').reply(200)
+  const assetMock = createMockFetch()
+  assetMock
+    .on('HEAD', 'https://foo.bar.baz/images/foo/bar/someAssetId1-200x200.gif')
+    .respond({status: 200})
+  assetMock
+    .on('HEAD', 'https://foo.bar.baz/images/foo/bar/someAssetId2-200x200.png')
+    .respond({status: 200})
 
   let batch = 0
   const client = getSanityClient((event: MockRequestEvent) => {
@@ -308,10 +370,10 @@ test('groups patches per document', () => {
   const imgFileUrl2 = pathToFileURL(path.join(fixturesDir, 'img1.png')).href
 
   const upload = uploadAssets(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mockAssets([imgFileUrl1, imgFileUrl2]) as any,
+    mockAssets([imgFileUrl1, imgFileUrl2]),
     createTestImportOptions({
       client,
+      assetFetch: assetMock.fetch,
       onProgress: noop,
       tag: 'my.import',
     }),

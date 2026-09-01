@@ -26,7 +26,7 @@ const defaultClient = createClient({
 
 const uuidMatcher = /^[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+-[a-z0-9]+$/
 const importOptions = {client: defaultClient}
-const fixturesDir = path.join(__dirname, 'fixtures')
+const fixturesDir = path.join(import.meta.dirname, 'fixtures')
 const getFixturePath = (fix: string) => path.join(fixturesDir, fix)
 
 const getExportFixtureStream = (fix: string) => fs.createReadStream(getFixturePath(`${fix}.tar.gz`))
@@ -414,12 +414,14 @@ test('does not retry on permission errors (403)', async () => {
     return {body: {}}
   })
 
-  const releaseDocs: SanityDocument[] = [{
-    _id: '_.releases.test-1',
-    _type: 'system.release',
-    name: 'test-1',
-    state: 'active',
-  }]
+  const releaseDocs: SanityDocument[] = [
+    {
+      _id: '_.releases.test-1',
+      _type: 'system.release',
+      name: 'test-1',
+      state: 'active',
+    },
+  ]
 
   await expect(
     sanityImport(releaseDocs, {
@@ -468,9 +470,9 @@ test('surfaces permission errors (403) over rate limit errors (429)', async () =
     state: 'active',
   }))
 
-  await expect(
-    sanityImport(releaseDocs, {allowSystemDocuments: true, client}),
-  ).rejects.toThrow(/Insufficient permissions/)
+  await expect(sanityImport(releaseDocs, {allowSystemDocuments: true, client})).rejects.toThrow(
+    /Insufficient permissions/,
+  )
 })
 
 function getMockMutationHandler(

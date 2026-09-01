@@ -3,44 +3,34 @@ on:
   - pull_request
 
 jobs:
-  release:
-    name: Test
+  test:
+    name: node ${{ matrix.node }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 22.13 is the lowest pnpm will run on, so our declared 22.12 floor is not exercised here
+        node: ['22.13.0', 'lts']
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Setup pnpm and Node.js
+        uses: pnpm/setup@v2
         with:
-          node-version: lts/*
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v5
-
-      - name: Get pnpm store directory
-        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Cache pnpm store
-        uses: actions/cache@v5
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-node-${{ inputs.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-node-${{ inputs.node-version }}-
-            ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          cache: true
+          runtime: node@${{ matrix.node }}
 
       - name: Build
         run: pnpm build
 
       - name: Lint
         run: pnpm lint
+
+      - name: Check formatting
+        run: pnpm format:check
 
       - name: Depcheck
         run: pnpm depcheck
@@ -50,3 +40,14 @@ jobs:
 
       - name: Run tests
         run: pnpm test
+
+  # A matrix job reports one check per entry, so none of them is named `Test`. The `main` ruleset
+  # requires a check by that exact name, so keep one here that gates on the whole matrix.
+  test-result:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: test
+    if: always()
+    steps:
+      - name: Check matrix result
+        run: '[ "${{ needs.test.result }}" = "success" ]'

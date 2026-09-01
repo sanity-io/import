@@ -1,4 +1,5 @@
 import {type SanityClient} from '@sanity/client'
+import {type FetchFunction} from 'get-it'
 
 export interface SanityDocument {
   [key: string]: unknown
@@ -49,6 +50,14 @@ export interface ImportOptions {
   allowFailingAssets?: boolean
   allowReplacementCharacters?: boolean
   assetConcurrency?: number
+  /**
+   * Custom fetch implementation used when downloading assets over HTTP and when checking
+   * whether an existing asset file is still available. Defaults to the runtime `fetch`.
+   *
+   * Note that this does not affect requests made to the Sanity API - those go through the
+   * client passed as `client`, which has its own `resolveFetch` option.
+   */
+  assetFetch?: FetchFunction
   assetMap?: AssetMap
   assetsBase?: string
   assetVerificationConcurrency?: number
@@ -110,14 +119,6 @@ export interface AssetFailure {
   }>
   type: 'asset'
   url: string
-}
-
-// HTTP response from get-it library
-export interface GetItResponse {
-  body: NodeJS.ReadableStream
-
-  headers?: Record<string, string>
-  status?: number
 }
 
 // Circular dependency context for importers
