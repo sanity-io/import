@@ -1,2 +1,20 @@
 allowBuilds:
   esbuild: true
+
+# Renovate is configured (through `github>sanity-io/renovate-config`) to open dependency updates
+# for these packages without waiting out a minimum release age, so pnpm has to agree - otherwise
+# the install in those PRs fails on `ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION`.
+minimumReleaseAgeExclude:
+  - '@oxfmt/*'
+  - '@oxlint-tsgolint/*'
+  - '@oxlint/*'
+  - '@portabletext/*'
+  - '@sanity/*'
+  - '@types/*'
+  - get-it
+  - groq
+  - groq-js
+  - oxfmt
+  - oxlint
+  - oxlint-tsgolint
+  - pnpm
