@@ -1,3 +1,4 @@
+import {mkdirSync} from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import {Transform} from 'node:stream'
@@ -5,7 +6,7 @@ import {pipeline} from 'node:stream/promises'
 
 import createDebug from 'debug'
 import gunzipMaybe from 'gunzip-maybe'
-import tar from 'tar-fs'
+import {x as extractTar} from 'tar'
 import {glob} from 'tinyglobby'
 
 import {type ImportOptions, type ImportResult, type SanityDocument} from './types.js'
@@ -69,8 +70,8 @@ class StreamRouter extends Transform {
       if (isTar(chunk)) {
         debug('Stream is a tarball, extracting to %s', this.outputPath)
         this.isTarFile = true
-        // tar.extract returns a writable stream for extracting files
-        this.targetStream = tar.extract(this.outputPath)
+        mkdirSync(this.outputPath, {recursive: true})
+        this.targetStream = extractTar({cwd: this.outputPath})
       } else {
         debug('Stream is an ndjson file, streaming JSON')
         this.isTarFile = false
