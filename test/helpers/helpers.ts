@@ -4,7 +4,6 @@ import {createMockFetch, type MockResponseDef, type RecordedRequest} from 'get-i
 import {type InjectFunction, type MockResponse, type TestRequestOptions} from './types.js'
 
 process.on('unhandledRejection', (reason) => {
-  // oxlint-disable-next-line no-console
   console.error('UNHANDLED REJECTION', reason)
 })
 

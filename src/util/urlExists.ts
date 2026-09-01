@@ -4,8 +4,7 @@ const MAX_RETRIES = 5
 const request = createRequester({httpErrors: false})
 
 async function getStatusCodeForUrl(url: string, fetch?: FetchFunction): Promise<number> {
-  const requester = fetch ? createRequester({fetch, httpErrors: false}) : request
-  const response = await requester({method: 'HEAD', url})
+  const response = await request({method: 'HEAD', url, ...(fetch ? {fetch} : {})})
   return response.status
 }
 

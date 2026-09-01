@@ -1,4 +1,5 @@
 import {generateHelpUrl} from '@sanity/generate-help-url'
+import {type FetchFunction} from 'get-it'
 import {createDebug} from 'obug'
 import pMap from 'p-map'
 
@@ -65,7 +66,7 @@ export async function validateAssetDocuments(
   }
 
   if (!options.allowFailingAssets) {
-    await pMap(assetDocs, ensureAssetUrlExists, {concurrency})
+    await pMap(assetDocs, (doc) => ensureAssetUrlExists(doc, options.assetFetch), {concurrency})
   }
 }
 
@@ -76,10 +77,13 @@ function getLocationFromDocument(doc: AssetDocument): {dataset: string; projectI
   return {dataset: dataset || '', projectId: projectId || ''}
 }
 
-async function ensureAssetUrlExists(assetDoc: AssetDocument): Promise<boolean> {
+async function ensureAssetUrlExists(
+  assetDoc: AssetDocument,
+  assetFetch?: FetchFunction,
+): Promise<boolean> {
   const url = assetDoc.url!
   const start = Date.now()
-  const status = await getAssetUrlStatus(url)
+  const status = await getAssetUrlStatus(url, assetFetch)
   logger(`${url}: %d (%d ms)`, status, Date.now() - start)
 
   if (status === 200) {

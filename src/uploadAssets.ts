@@ -13,6 +13,7 @@ import {
   type ImportOptions,
   type SanityFetchResponse,
 } from './types.js'
+import {describeError} from './util/describeError.js'
 import {getHashedBufferForUri} from './util/getHashedBufferForUri.js'
 import {progressStepper} from './util/progressStepper.js'
 import {retryOnFailure} from './util/retryOnFailure.js'
@@ -74,7 +75,6 @@ interface DocumentTasks {
 export async function uploadAssets(
   assets: AssetRef[],
   options: ImportOptions,
-  assetFetch?: FetchFunction,
 ): Promise<UploadAssetsResult> {
   const concurrency = options.assetConcurrency || ASSET_UPLOAD_CONCURRENCY
   logger('Uploading assets with a concurrency of %d', concurrency)
@@ -108,7 +108,7 @@ export async function uploadAssets(
 
   // If we should allow failures, we need to use a custom catch handler in order
   // to not set the asset references for the broken assets
-  const ensureAssetExists = ensureAssetWithRetries.bind(null, options, progress, assetFetch)
+  const ensureAssetExists = ensureAssetWithRetries.bind(null, options, progress)
   const ensureMethod = options.allowFailingAssets
     ? (assetKey: string, i: number) => ensureAssetExists(assetKey, i).catch((err: Error) => err)
     : ensureAssetExists
@@ -151,28 +151,28 @@ function getAssetRefMap(assets: AssetRef[]): Map<string, AssetRefMapItem[]> {
 async function ensureAssetWithRetries(
   options: ImportOptions,
   progress: () => void,
-  assetFetch: FetchFunction | undefined,
   assetKey: string,
   i: number,
 ): Promise<string> {
   const [type, url] = assetKey.split('#', 2)
 
-  const {buffer, sha1hash} = await retryOnFailure(() => downloadAsset(url!, i)).catch(
-    (err: Error) => {
-      progress()
-      const assetError = err as AssetUploadError
-      assetError.type = type!
-      assetError.url = url!
-      assetError.message = assetError.message.includes(url!)
-        ? assetError.message
-        : `Failed to download ${type} @ ${url}:\n${assetError.message}`
+  const {buffer, sha1hash} = await retryOnFailure(() =>
+    downloadAsset(url!, i, options.assetFetch),
+  ).catch((err: Error) => {
+    progress()
+    const assetError = err as AssetUploadError
+    const description = describeError(assetError)
+    assetError.type = type!
+    assetError.url = url!
+    assetError.message = description.includes(url!)
+      ? description
+      : `Failed to download ${type} @ ${url}:\n${description}`
 
-      throw assetError
-    },
-  )
+    throw assetError
+  })
 
   const asset = {buffer, sha1hash, type: type!, url: url!}
-  return retryOnFailure(() => ensureAsset(asset, options, i, assetFetch))
+  return retryOnFailure(() => ensureAsset(asset, options, i))
     .then((result: string) => {
       progress()
       return result
@@ -180,28 +180,28 @@ async function ensureAssetWithRetries(
     .catch((err: Error) => {
       progress()
       const assetError = err as AssetUploadError
+      const description = describeError(assetError)
       assetError.type = type!
       assetError.url = url!
-      assetError.message = assetError.message.includes(url!)
-        ? assetError.message
-        : `Failed to upload ${type} @ ${url}:\n${assetError.message}`
+      assetError.message = description.includes(url!)
+        ? description
+        : `Failed to upload ${type} @ ${url}:\n${description}`
 
       throw assetError
     })
 }
 
-function downloadAsset(url: string, i: number): Promise<{buffer: Buffer; sha1hash: string}> {
-  // Download the asset in order for us to create a hash
-  logger('[Asset #%d] Downloading %s', i, url)
-  return getHashedBufferForUri(url)
-}
-
-async function ensureAsset(
-  asset: AssetData,
-  options: ImportOptions,
+function downloadAsset(
+  url: string,
   i: number,
   assetFetch?: FetchFunction,
-): Promise<string> {
+): Promise<{buffer: Buffer; sha1hash: string}> {
+  // Download the asset in order for us to create a hash
+  logger('[Asset #%d] Downloading %s', i, url)
+  return getHashedBufferForUri(url, assetFetch)
+}
+
+async function ensureAsset(asset: AssetData, options: ImportOptions, i: number): Promise<string> {
   const {buffer, sha1hash, type, url} = asset
   const {assetMap = {}, client, replaceAssets, tag} = options
 
@@ -214,7 +214,7 @@ async function ensureAsset(
       sha1hash,
       0,
       suffixTag(tag, 'asset.get-id'),
-      assetFetch,
+      options.assetFetch,
     )
 
     if (assetDocId) {

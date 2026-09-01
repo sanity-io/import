@@ -43,8 +43,8 @@
     "dev": "tsc --watch",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "oxlint --type-aware --fix",
     "prepublishOnly": "pnpm run build",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
@@ -69,6 +69,7 @@
     "knip": "^6.32.2",
     "oxfmt": "^0.64.0",
     "oxlint": "^1.79.0",
+    "oxlint-tsgolint": "^7.0.2001",
     "typescript": "^7.0.2",
     "vitest": "^4.1.11"
   },

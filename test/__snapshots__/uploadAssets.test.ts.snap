@@ -2,7 +2,7 @@
 
 exports[`fails if asset download fails 1`] = `
 [TypeError: Failed to download image @ http://127.0.0.1:49999/img.gif:
-fetch failed]
+fetch failed: connect ECONNREFUSED 127.0.0.1:49999]
 `;
 
 exports[`groups patches per document > batch patching (batch #1) 1`] = `

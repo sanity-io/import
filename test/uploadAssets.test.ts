@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs'
 import path from 'node:path'
 import {pathToFileURL} from 'node:url'
 
-import {createMockFetch} from 'get-it/mock'
+import {createMockFetch, streamBody} from 'get-it/mock'
 import {expect, test} from 'vitest'
 
 import {type AssetDocument, type ImportOptions} from '../src/types.js'
@@ -106,10 +106,10 @@ test('will reuse an existing asset if it exists', () => {
       [fileAsset],
       createTestImportOptions({
         client,
+        assetFetch: assetMock.fetch,
         onProgress: noop,
         tag: 'my.import',
       }),
-      assetMock.fetch,
     ),
   ).resolves.toMatchObject({
     batches: 1,
@@ -160,10 +160,10 @@ test('will upload an asset if asset doc exists but file does not', () => {
       [fileAsset],
       createTestImportOptions({
         client,
+        assetFetch: assetMock.fetch,
         onProgress: noop,
         tag: 'my.import',
       }),
-      assetMock.fetch,
     ),
   ).resolves.toMatchObject({
     batches: 1,
@@ -211,6 +211,56 @@ test('will upload asset that do not already exist', () => {
   })
 })
 
+test('downloads assets over http and hashes the streamed body', async () => {
+  const imgBytes = readFileSync(path.join(fixturesDir, 'img.gif'))
+  const assetMock = createMockFetch()
+  // Delivered as two chunks so the hash is only correct if the whole stream is consumed
+  const midpoint = Math.floor(imgBytes.byteLength / 2)
+  assetMock.on('GET', 'http://foo.bar.baz/img.gif').respond({
+    body: streamBody(imgBytes.subarray(0, midpoint), imgBytes.subarray(midpoint)),
+  })
+
+  // The sha1 the importer looked the asset up by tells us what it actually read off the wire
+  let queriedSha1: string | undefined
+  const client = getSanityClient((event: MockRequestEvent) => {
+    const options = event.context.options as TestRequestOptions
+    const uri = options.uri || options.url
+
+    if (uri?.includes('/data/query')) {
+      // GROQ params are JSON-encoded into the query string
+      const param = new URL(uri, 'http://localhost').searchParams.get('$sha1hash')
+      queriedSha1 = param === null ? undefined : JSON.parse(param)
+      return {body: {result: null}}
+    }
+
+    if (uri?.includes('assets/images')) {
+      return {body: {document: {_id: 'image-newAssetId'}}}
+    }
+
+    if (uri?.includes('/data/mutate')) {
+      const body = JSON.parse(options.body as string) as MockMutationsBody
+      const results = body.mutations.map((mut) => ({id: mut.patch?.id, operation: 'update'}))
+      return {body: {results}}
+    }
+
+    return {body: {error: `"${uri}" should not be called`}, statusCode: 400}
+  })
+
+  await expect(
+    uploadAssets(
+      [{...fileAsset, url: 'http://foo.bar.baz/img.gif'}],
+      createTestImportOptions({
+        assetFetch: assetMock.fetch,
+        client,
+        onProgress: noop,
+        tag: 'my.import',
+      }),
+    ),
+  ).resolves.toMatchObject({batches: 1, failures: []})
+
+  expect(queriedSha1).toBe(imgGifSha1)
+})
+
 test('will upload once but batch patches', () => {
   const assetMock = createMockFetch()
   assetMock
@@ -250,10 +300,10 @@ test('will upload once but batch patches', () => {
     mockAssets([imgFileUrl]),
     createTestImportOptions({
       client,
+      assetFetch: assetMock.fetch,
       onProgress: noop,
       tag: 'my.import',
     }),
-    assetMock.fetch,
   )
   return expect(upload).resolves.toMatchObject({
     batches: 60,
@@ -323,10 +373,10 @@ test('groups patches per document', () => {
     mockAssets([imgFileUrl1, imgFileUrl2]),
     createTestImportOptions({
       client,
+      assetFetch: assetMock.fetch,
       onProgress: noop,
       tag: 'my.import',
     }),
-    assetMock.fetch,
   )
   return expect(upload).resolves.toMatchObject({
     batches: 120,

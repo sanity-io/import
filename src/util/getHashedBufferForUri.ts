@@ -4,21 +4,27 @@ import {Readable} from 'node:stream'
 import {finished} from 'node:stream/promises'
 import {fileURLToPath} from 'node:url'
 
-import {createRequester} from 'get-it'
+import {createRequester, type FetchFunction} from 'get-it'
 
 import {retryOnFailure} from './retryOnFailure.js'
 
-const request = createRequester({as: 'stream'})
+// Assets can be arbitrarily large (video, in particular), so there is no ceiling on how long the
+// body may take to download - get-it would otherwise abort it after two minutes. A connection
+// that never sends us response headers is still an error, though.
+const request = createRequester({as: 'stream', timeout: {headers: 30_000, total: false}})
 
 interface HashedBuffer {
   buffer: Buffer
   sha1hash: string
 }
 
-export const getHashedBufferForUri = (uri: string): Promise<HashedBuffer> =>
-  retryOnFailure(() => getHashedBufferForUriInternal(uri))
+export const getHashedBufferForUri = (uri: string, fetch?: FetchFunction): Promise<HashedBuffer> =>
+  retryOnFailure(() => getHashedBufferForUriInternal(uri, fetch))
 
-async function getHashedBufferForUriInternal(uri: string): Promise<HashedBuffer> {
+async function getHashedBufferForUriInternal(
+  uri: string,
+  fetch?: FetchFunction,
+): Promise<HashedBuffer> {
   if (/^file:\/\//i.test(uri)) {
     return getHashedBufferFromBytes(await readFileUri(uri))
   }
@@ -28,7 +34,7 @@ async function getHashedBufferForUriInternal(uri: string): Promise<HashedBuffer>
   }
 
   if (/^https?:\/\//i.test(uri)) {
-    return getHashedBufferFromStream(await readHttpUri(uri))
+    return getHashedBufferFromStream(await readHttpUri(uri, fetch))
   }
 
   throw new Error(`Unsupported URI scheme: ${uri}`)
@@ -78,8 +84,8 @@ async function readDataUri(uri: string): Promise<Buffer> {
   return Buffer.from(await res.arrayBuffer())
 }
 
-async function readHttpUri(uri: string): Promise<NodeJS.ReadableStream> {
+async function readHttpUri(uri: string, fetch?: FetchFunction): Promise<NodeJS.ReadableStream> {
   const parsed = new URL(uri)
-  const res = await request(parsed.href)
-  return Readable.from(res.body)
+  const res = await request({url: parsed.href, ...(fetch ? {fetch} : {})})
+  return Readable.fromWeb(res.body)
 }
