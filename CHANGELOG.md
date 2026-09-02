@@ -5,6 +5,23 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.0](https://github.com/sanity-io/import/compare/v6.0.4...v7.0.0) (2026-09-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* Require node.js v22.12 or higher
+
+### Features
+
+* require node 22.12 or higher, upgrade dependencies ([#97](https://github.com/sanity-io/import/issues/97)) ([9ca85fa](https://github.com/sanity-io/import/commit/9ca85fa71772bc132e5e313fe3b3b0c544853288))
+
+
+### Bug Fixes
+
+* **deps:** update non-major ([#79](https://github.com/sanity-io/import/issues/79)) ([9a6593b](https://github.com/sanity-io/import/commit/9a6593b01f44bbd167873dfd79fe4f3bb77582fb))
+* replace `tar-fs` with `tar` ([#95](https://github.com/sanity-io/import/issues/95)) ([54c23c6](https://github.com/sanity-io/import/commit/54c23c6fd354e74c01e47c71d52a64dbe9dfbd02))
+
 ## [6.0.4](https://github.com/sanity-io/import/compare/v6.0.3...v6.0.4) (2026-08-20)
 
 
