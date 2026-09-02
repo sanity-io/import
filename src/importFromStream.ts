@@ -54,39 +54,39 @@ class StreamRouter extends Transform {
   }
 
   _flush(callback: (error?: Error | null) => void) {
-    if (!this.targetStream) {
-      const buffered = this.consumeBufferedChunks()
-      const targetStream = this.initializeTarget(buffered)
-      this.writeToTarget(targetStream, buffered, (error) => {
-        if (error) {
-          callback(error)
-          return
-        }
-        this.finishTarget(targetStream, callback)
-      })
+    if (this.targetStream) {
+      this.finishTarget(this.targetStream, callback)
       return
     }
 
-    this.finishTarget(this.targetStream, callback)
+    const buffered = this.consumeBufferedChunks()
+    const targetStream = this.initializeTarget(buffered)
+    this.writeToTarget(targetStream, buffered, (error) => {
+      if (error) {
+        callback(error)
+        return
+      }
+      this.finishTarget(targetStream, callback)
+    })
   }
 
   _transform(chunk: Buffer, _encoding: BufferEncoding, callback: (error?: Error | null) => void) {
-    if (!this.targetStream) {
-      this.bufferedChunks.push(chunk)
-      this.bufferedBytes += chunk.length
-
-      if (this.bufferedBytes < tarHeaderLength) {
-        callback()
-        return
-      }
-
-      const buffered = this.consumeBufferedChunks()
-      const targetStream = this.initializeTarget(buffered)
-      this.writeToTarget(targetStream, buffered, callback)
+    if (this.targetStream) {
+      this.writeToTarget(this.targetStream, chunk, callback)
       return
     }
 
-    this.writeToTarget(this.targetStream, chunk, callback)
+    this.bufferedChunks.push(chunk)
+    this.bufferedBytes += chunk.length
+
+    if (this.bufferedBytes < tarHeaderLength) {
+      callback()
+      return
+    }
+
+    const buffered = this.consumeBufferedChunks()
+    const targetStream = this.initializeTarget(buffered)
+    this.writeToTarget(targetStream, buffered, callback)
   }
 
   private consumeBufferedChunks(): Buffer {
