@@ -15,6 +15,12 @@ const defaultClientOptions = {
   useCdn: false,
 }
 
+export function fragmentBuffer(buffer: Buffer, chunkSize = 64): Buffer[] {
+  return Array.from({length: Math.ceil(buffer.length / chunkSize)}, (_, index) =>
+    buffer.subarray(index * chunkSize, (index + 1) * chunkSize),
+  )
+}
+
 export const getSanityClient = (
   inject: InjectFunction = () => {
     /* Default no-op inject function for testing */

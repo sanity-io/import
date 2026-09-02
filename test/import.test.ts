@@ -1,13 +1,15 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import {Readable} from 'node:stream'
 import {pathToFileURL} from 'node:url'
+import {gunzipSync, gzipSync} from 'node:zlib'
 
 import {createClient} from '@sanity/client'
 import {expect, test} from 'vitest'
 
 import {sanityImport} from '../src/import.js'
 import {type SanityDocument} from '../src/types.js'
-import {getSanityClient} from './helpers/helpers.js'
+import {fragmentBuffer, getSanityClient} from './helpers/helpers.js'
 import {
   type InjectFunction,
   type MockMutationsBody,
@@ -61,7 +63,21 @@ test('rejects on invalid JSON', async () => {
   await expect(
     sanityImport(getNDJSONFixtureStream('invalid-json'), importOptions),
   ).rejects.toMatchObject({
-    message: /Failed to parse line #3:.+/,
+    message: expect.stringMatching(/Failed to parse line #3:.+/),
+  })
+})
+
+test('rejects invalid JSON after stream routing begins', async () => {
+  expect.assertions(1)
+  const validDocument = JSON.stringify({
+    _id: 'long-document',
+    _type: 'employee',
+    value: 'x'.repeat(300),
+  })
+  const stream = Readable.from([`${validDocument}\n{"_id":\n`])
+
+  await expect(sanityImport(stream, importOptions)).rejects.toMatchObject({
+    message: expect.stringMatching(/Failed to parse line #2:/),
   })
 })
 
@@ -137,6 +153,22 @@ test('accepts a tar.gz stream as source', async () => {
   expect.assertions(2)
   const client = getSanityClient(getMockMutationHandler())
   const res = await sanityImport(getExportFixtureStream('export'), {client})
+  expect(res).toMatchObject({numDocs: 2, warnings: []})
+})
+
+test('accepts a gzipped ndjson stream as source', async () => {
+  expect.assertions(1)
+  const client = getSanityClient(getMockMutationHandler(() => undefined))
+  const ndjson = fs.readFileSync(getNDJSONFixturePath('employees'))
+  const res = await sanityImport(Readable.from(fragmentBuffer(gzipSync(ndjson))), {client})
+  expect(res).toMatchObject({numDocs: 2, warnings: []})
+})
+
+test('accepts a plain tar stream split across small chunks', async () => {
+  expect.assertions(1)
+  const client = getSanityClient(getMockMutationHandler(() => undefined))
+  const tar = gunzipSync(fs.readFileSync(getFixturePath('export.tar.gz')))
+  const res = await sanityImport(Readable.from(fragmentBuffer(tar)), {client})
   expect(res).toMatchObject({numDocs: 2, warnings: []})
 })
 

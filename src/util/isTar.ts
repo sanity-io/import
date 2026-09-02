@@ -6,8 +6,10 @@
  *
  * Credit to https://github.com/kevva/is-tar
  */
+export const tarHeaderLength = 262
+
 export function isTar(buf: Buffer): boolean {
-  if (!buf || buf.length < 262) {
+  if (!buf || buf.length < tarHeaderLength) {
     return false
   }
 
