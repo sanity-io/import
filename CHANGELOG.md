@@ -5,6 +5,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.1](https://github.com/sanity-io/import/compare/v7.0.0...v7.0.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* **deps:** replace gunzip-maybe with native approach ([#99](https://github.com/sanity-io/import/issues/99)) ([fc123fe](https://github.com/sanity-io/import/commit/fc123fe00ac366769b725e718dfa7dc5bd4c9564))
+
 ## [7.0.0](https://github.com/sanity-io/import/compare/v6.0.4...v7.0.0) (2026-09-02)
 
 
