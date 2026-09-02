@@ -4,14 +4,14 @@ import path from 'node:path'
 import {Transform} from 'node:stream'
 import {pipeline} from 'node:stream/promises'
 
-import gunzipMaybe from 'gunzip-maybe'
 import {createDebug} from 'obug'
 import {x as extractTar} from 'tar'
 
 import {type ImportOptions, type ImportResult, type SanityDocument} from './types.js'
 import {getJsonStreamer} from './util/getJsonStreamer.js'
 import {globFiles} from './util/globFiles.js'
-import {isTar} from './util/isTar.js'
+import {isTar, tarHeaderLength} from './util/isTar.js'
+import {maybeUnzip} from './util/maybeUnzip.js'
 
 const debug = createDebug('sanity:import:stream')
 
@@ -31,7 +31,8 @@ interface ImportersContext {
 
 // StreamRouter handles the peek functionality and routes to appropriate handler
 class StreamRouter extends Transform {
-  private firstChunk: Buffer | null = null
+  private bufferedChunks: Buffer[] = []
+  private bufferedBytes = 0
   private isTarFile = false
   private jsonDocuments: SanityDocument[] = []
   private options: ImportOptions
@@ -54,56 +55,92 @@ class StreamRouter extends Transform {
 
   _flush(callback: (error?: Error | null) => void) {
     if (this.targetStream) {
-      this.targetStream.end()
-      this.targetStream.on('finish', callback)
-      this.targetStream.on('error', callback)
-    } else {
-      callback()
+      this.finishTarget(this.targetStream, callback)
+      return
     }
+
+    const buffered = this.consumeBufferedChunks()
+    const targetStream = this.initializeTarget(buffered)
+    this.writeToTarget(targetStream, buffered, (error) => {
+      if (error) {
+        callback(error)
+        return
+      }
+      this.finishTarget(targetStream, callback)
+    })
   }
 
   _transform(chunk: Buffer, _encoding: BufferEncoding, callback: (error?: Error | null) => void) {
-    if (!this.firstChunk) {
-      this.firstChunk = chunk
-
-      // Determine file type from first chunk
-      if (isTar(chunk)) {
-        debug('Stream is a tarball, extracting to %s', this.outputPath)
-        this.isTarFile = true
-        mkdirSync(this.outputPath, {recursive: true})
-        this.targetStream = extractTar({cwd: this.outputPath})
-      } else {
-        debug('Stream is an ndjson file, streaming JSON')
-        this.isTarFile = false
-        const jsonStreamer = getJsonStreamer({
-          allowReplacementCharacters: this.options.allowReplacementCharacters,
-        })
-        this.targetStream = jsonStreamer
-
-        // Collect documents as they're parsed
-        jsonStreamer.on('data', (doc: SanityDocument) => {
-          this.jsonDocuments.push(doc)
-        })
-      }
-
-      // Set up error handling
-      if (this.targetStream) {
-        this.targetStream.on('error', (err: Error) => {
-          this.emit('error', err)
-        })
-      }
-    }
-
     if (this.targetStream) {
-      const written = this.targetStream.write(chunk)
-      if (written) {
-        callback()
-      } else {
-        this.targetStream.once('drain', callback)
-      }
-    } else {
-      callback(new Error('Target stream not initialized'))
+      this.writeToTarget(this.targetStream, chunk, callback)
+      return
     }
+
+    this.bufferedChunks.push(chunk)
+    this.bufferedBytes += chunk.length
+
+    if (this.bufferedBytes < tarHeaderLength) {
+      callback()
+      return
+    }
+
+    const buffered = this.consumeBufferedChunks()
+    const targetStream = this.initializeTarget(buffered)
+    this.writeToTarget(targetStream, buffered, callback)
+  }
+
+  private consumeBufferedChunks(): Buffer {
+    const buffered = Buffer.concat(this.bufferedChunks, this.bufferedBytes)
+    this.bufferedChunks = []
+    this.bufferedBytes = 0
+    return buffered
+  }
+
+  private initializeTarget(firstBytes: Buffer): NodeJS.WritableStream {
+    let targetStream: NodeJS.WritableStream
+
+    if (isTar(firstBytes)) {
+      debug('Stream is a tarball, extracting to %s', this.outputPath)
+      this.isTarFile = true
+      mkdirSync(this.outputPath, {recursive: true})
+      targetStream = extractTar({cwd: this.outputPath})
+    } else {
+      debug('Stream is an ndjson file, streaming JSON')
+      const jsonStreamer = getJsonStreamer({
+        allowReplacementCharacters: this.options.allowReplacementCharacters,
+      })
+      targetStream = jsonStreamer
+
+      jsonStreamer.on('data', (doc: SanityDocument) => {
+        this.jsonDocuments.push(doc)
+      })
+    }
+
+    targetStream.on('error', (err: Error) => {
+      this.destroy(err)
+    })
+    this.targetStream = targetStream
+    return targetStream
+  }
+
+  private writeToTarget(
+    targetStream: NodeJS.WritableStream,
+    chunk: Buffer,
+    callback: (error?: Error | null) => void,
+  ): void {
+    if (targetStream.write(chunk)) {
+      callback()
+    } else {
+      targetStream.once('drain', callback)
+    }
+  }
+
+  private finishTarget(
+    targetStream: NodeJS.WritableStream,
+    callback: (error?: Error | null) => void,
+  ): void {
+    targetStream.once('finish', callback)
+    targetStream.end()
   }
 }
 
@@ -123,7 +160,7 @@ export async function importFromStream(
   const router = new StreamRouter(outputPath, options)
 
   try {
-    await pipeline(stream, gunzipMaybe(), router)
+    await pipeline(stream, maybeUnzip, router)
 
     if (router.isTar) {
       return await findAndImportFromTar(outputPath, options, importers)
