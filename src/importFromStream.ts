@@ -4,8 +4,8 @@ import path from 'node:path'
 import {Transform} from 'node:stream'
 import {pipeline} from 'node:stream/promises'
 
+import {unpackTar} from 'modern-tar/fs'
 import {createDebug} from 'obug'
-import {x as extractTar} from 'tar'
 
 import {type ImportOptions, type ImportResult, type SanityDocument} from './types.js'
 import {getJsonStreamer} from './util/getJsonStreamer.js'
@@ -103,7 +103,7 @@ class StreamRouter extends Transform {
       debug('Stream is a tarball, extracting to %s', this.outputPath)
       this.isTarFile = true
       mkdirSync(this.outputPath, {recursive: true})
-      targetStream = extractTar({cwd: this.outputPath})
+      targetStream = unpackTar(this.outputPath)
     } else {
       debug('Stream is an ndjson file, streaming JSON')
       const jsonStreamer = getJsonStreamer({
