@@ -5,6 +5,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.2](https://github.com/sanity-io/import/compare/v7.0.1...v7.0.2) (2026-09-05)
+
+
+### Bug Fixes
+
+* **deps:** replace `tar` with `modern-tar` ([#101](https://github.com/sanity-io/import/issues/101)) ([681a0f3](https://github.com/sanity-io/import/commit/681a0f3baa20a2f17552bca67afe8371a1722a06))
+
 ## [7.0.1](https://github.com/sanity-io/import/compare/v7.0.0...v7.0.1) (2026-09-02)
 
 
