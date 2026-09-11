@@ -53,19 +53,19 @@
   "dependencies": {
     "@sanity/asset-utils": "^2.3.0",
     "@sanity/generate-help-url": "^4.0.0",
-    "@sanity/mutator": "^6.12.0",
-    "get-it": "^9.5.2",
-    "modern-tar": "^0.8.4",
-    "obug": "^2.1.4",
+    "@sanity/mutator": "^6.13.2",
+    "get-it": "^9.5.4",
+    "modern-tar": "^0.8.5",
+    "obug": "^2.2.1",
     "p-map": "^7.0.6"
   },
   "devDependencies": {
-    "@sanity/client": "^8.4.0",
-    "@types/node": "^22.20.1",
+    "@sanity/client": "^8.6.1",
+    "@types/node": "^22.20.2",
     "@vitest/coverage-v8": "4.1.11",
-    "knip": "^6.34.0",
-    "oxfmt": "^0.66.0",
-    "oxlint": "^1.81.0",
+    "knip": "^6.35.1",
+    "oxfmt": "^0.67.0",
+    "oxlint": "^1.82.0",
     "oxlint-tsgolint": "^7.0.2001",
     "typescript": "^7.0.2",
     "vitest": "^4.1.11"
