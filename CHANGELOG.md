@@ -5,6 +5,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.3](https://github.com/sanity-io/import/compare/v7.0.2...v7.0.3) (2026-09-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency obug to v3 ([#106](https://github.com/sanity-io/import/issues/106)) ([ec6f5b4](https://github.com/sanity-io/import/commit/ec6f5b496045cf97ddaaed93fcf99d7663f03461))
+* **deps:** update non-major ([#104](https://github.com/sanity-io/import/issues/104)) ([1ee9650](https://github.com/sanity-io/import/commit/1ee9650745fe14a01f8f341f8d1f2365efc91403))
+
 ## [7.0.2](https://github.com/sanity-io/import/compare/v7.0.1...v7.0.2) (2026-09-15)
 
 
