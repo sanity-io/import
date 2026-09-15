@@ -56,7 +56,7 @@
     "@sanity/mutator": "^6.13.2",
     "get-it": "^9.5.4",
     "modern-tar": "^0.8.5",
-    "obug": "^2.2.1",
+    "obug": "^3.0.0",
     "p-map": "^7.0.6"
   },
   "devDependencies": {

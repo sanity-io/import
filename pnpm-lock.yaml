@@ -24,8 +24,8 @@ importers:
         specifier: ^0.8.5
         version: 0.8.5
       obug:
-        specifier: ^2.2.1
-        version: 2.2.1
+        specifier: ^3.0.0
+        version: 3.0.0
       p-map:
         specifier: ^7.0.6
         version: 7.0.6
@@ -1613,12 +1613,12 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  obug@2.1.4:
-    resolution: {integrity: sha512-4a+OsYv9UktOJKE+l1A4OufDgdRF9PifWj+tJnHURo/P+WOxpG4GzUFL9qCalmWauao6ogiG+QvnCovwPoyAWA==}
-    engines: {node: '>=12.20.0'}
-
   obug@2.2.1:
     resolution: {integrity: sha512-XrsrhT5sybtKI6wakr2SPOlGZWWYbUXZ7a0jT8/QOeAPau+1X/bSegNe5YR75oJmEZQbKningirmGOEJCIk61Q==}
+    engines: {node: '>=12.20.0'}
+
+  obug@3.0.0:
+    resolution: {integrity: sha512-5vvB5+W7ePv+p3uqxi+RcW1XAzLW0/hxt3/4X4Lc4qHudzOhmBiBwOY6DRob4WnanAEGvNcLjF+KNOufrUoEQw==}
     engines: {node: '>=12.20.0'}
 
   oxc-parser@0.148.0:
@@ -2182,7 +2182,7 @@ snapshots:
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.5
+      '@jridgewell/sourcemap-codec': 1.6.0
       '@jridgewell/trace-mapping': 0.3.31
     optional: true
 
@@ -2546,7 +2546,7 @@ snapshots:
     dependencies:
       eventsource: 5.1.1
       get-it: 9.5.4(vitest@5.0.0)
-      obug: 2.1.4
+      obug: 2.2.1
       rxjs: 7.8.2
     transitivePeerDependencies:
       - vitest
@@ -2564,7 +2564,7 @@ snapshots:
       '@sanity/uuid': 3.0.3
       dequal: 2.0.3
       lodash-es: 4.18.1
-      obug: 2.1.4
+      obug: 2.2.1
     transitivePeerDependencies:
       - '@types/react'
       - vitest
@@ -3012,9 +3012,9 @@ snapshots:
 
   nanoid@3.3.18: {}
 
-  obug@2.1.4: {}
-
   obug@2.2.1: {}
+
+  obug@3.0.0: {}
 
   oxc-parser@0.148.0:
     dependencies:
