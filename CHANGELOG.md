@@ -5,6 +5,13 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.4](https://github.com/sanity-io/import/compare/v7.0.3...v7.0.4) (2026-09-18)
+
+
+### Bug Fixes
+
+* pnpm 11 requires --provenance, does not read from env ([#109](https://github.com/sanity-io/import/issues/109)) ([231c57f](https://github.com/sanity-io/import/commit/231c57f0e4a701276fa9fb46a439a823447dcb3d))
+
 ## [7.0.3](https://github.com/sanity-io/import/compare/v7.0.2...v7.0.3) (2026-09-15)
 
 
