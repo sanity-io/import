@@ -61,6 +61,12 @@ export function cleanupReferences(doc: SanityDocument, options: ImportOptions): 
     .map((match) => match.path.slice(0, -1))
     .map((path) => ({path, ref: deepGet(doc, path) as StreamReference}))
   for (const item of refPathItems) {
+    // `_system` is a closed schema owned by the server: its identity refs carry
+    // no `_type`, and adding one makes the server reject the whole document
+    if (item.path[0] === '_system') {
+      continue
+    }
+
     // We may want to skip cross-dataset references, eg when importing to other projects
     if (skipCrossDatasetReferences && '_dataset' in item.ref) {
       const leaf = item.path.at(-1)

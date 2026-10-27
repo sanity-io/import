@@ -1,4 +1,4 @@
-import {type ImportReleaseAction, type MultipleMutationResult} from '@sanity/client'
+import {type Action, type ImportReleaseAction, type MultipleMutationResult} from '@sanity/client'
 import pMap from 'p-map'
 
 import {type ImportOptions, type SanityApiError, type SanityDocument} from './types.js'
@@ -7,11 +7,34 @@ import {retryOnFailure} from './util/retryOnFailure.js'
 import {suffixTag} from './util/suffixTag.js'
 
 const DOCUMENT_IMPORT_CONCURRENCY = 6
-const RELEASE_IMPORT_CONCURRENCY = 3
+const SYSTEM_DOCUMENT_IMPORT_CONCURRENCY = 3
+
+const RELEASE_ID_PREFIX = '_.releases.'
+const VARIANT_ID_PREFIX = '_.variants.'
+
+/**
+ * Import action for `_.variants.*` definitions. Not yet part of `@sanity/client`'s
+ * `Action` union; shaped after `ImportReleaseAction`.
+ */
+interface ImportVariantAction {
+  actionType: 'sanity.action.variant.definition.import'
+  document: SanityDocument
+  ifExists: 'fail' | 'ignore' | 'replace'
+  variantId: string
+}
 
 interface BatchImportResult {
   count: number
   importedIds: string[]
+}
+
+/**
+ * Release and variant definitions are "public" system documents: the server
+ * only allows creating them through dedicated import actions, never through
+ * plain mutations.
+ */
+export function isPublicSystemDocument(doc: SanityDocument): boolean {
+  return doc._id?.startsWith(RELEASE_ID_PREFIX) || doc._id?.startsWith(VARIANT_ID_PREFIX)
 }
 
 export async function importBatches(
@@ -39,16 +62,16 @@ function importBatch(
   progress: () => void,
   batch: SanityDocument[],
 ): Promise<BatchImportResult> {
-  const {client, operation, releasesOperation, tag} = options
+  const {client, operation, tag} = options
   const maxRetries = operation === 'create' ? 1 : 3
 
   return retryOnFailure(
     async () => {
-      const releaseDocs: SanityDocument[] = []
+      const systemDocs: SanityDocument[] = []
       const docs: SanityDocument[] = []
       for (const doc of batch) {
-        if (doc._id.startsWith('_.releases.')) {
-          releaseDocs.push(doc)
+        if (isPublicSystemDocument(doc)) {
+          systemDocs.push(doc)
         } else {
           docs.push(doc)
         }
@@ -89,26 +112,19 @@ function importBatch(
               })
           : Promise.resolve({count: 0, importedIds: [] as string[]})
 
-      const releaseResults =
-        releaseDocs.length > 0
+      const systemResults =
+        systemDocs.length > 0
           ? await pMap(
-              releaseDocs,
-              (doc: SanityDocument) => {
-                const actionParams: ImportReleaseAction = {
-                  actionType: 'sanity.action.release.import',
-                  attributes: doc,
-                  ifExists: releasesOperation,
-                  releaseId: doc.name as string,
-                }
-                return client
-                  .action(actionParams)
+              systemDocs,
+              (doc: SanityDocument) =>
+                client
+                  .action(getImportAction(doc, options))
                   .then((): BatchImportResult => ({count: 1, importedIds: [doc._id]}))
                   .catch((err: SanityApiError) => {
-                    err.message = `Release import failed for ${doc._id}: ${err.message}`
+                    err.message = `${describeSystemDocument(doc)} import failed for ${doc._id}: ${err.message}`
                     throw err
-                  })
-              },
-              {concurrency: RELEASE_IMPORT_CONCURRENCY, stopOnError: false},
+                  }),
+              {concurrency: SYSTEM_DOCUMENT_IMPORT_CONCURRENCY, stopOnError: false},
             ).catch((err: AggregateError | SanityApiError) => {
               if (err instanceof AggregateError) {
                 const permissionError = err.errors.find(
@@ -122,7 +138,7 @@ function importBatch(
 
       const docsResult = await docsTransaction
       const combined: BatchImportResult = {count: 0, importedIds: []}
-      for (const r of [docsResult, ...releaseResults]) {
+      for (const r of [docsResult, ...systemResults]) {
         combined.count += r.count
         combined.importedIds = [...combined.importedIds, ...r.importedIds]
       }
@@ -130,6 +146,30 @@ function importBatch(
     },
     {isRetriable, maxTries: maxRetries},
   )
+}
+
+function getImportAction(doc: SanityDocument, options: ImportOptions): Action {
+  if (doc._id.startsWith(RELEASE_ID_PREFIX)) {
+    const action: ImportReleaseAction = {
+      actionType: 'sanity.action.release.import',
+      attributes: doc,
+      ifExists: options.releasesOperation,
+      releaseId: doc.name as string,
+    }
+    return action
+  }
+
+  const action: ImportVariantAction = {
+    actionType: 'sanity.action.variant.definition.import',
+    document: doc,
+    ifExists: options.variantsOperation,
+    variantId: doc._id.slice(VARIANT_ID_PREFIX.length),
+  }
+  return action as unknown as Action
+}
+
+function describeSystemDocument(doc: SanityDocument): string {
+  return doc._id.startsWith(RELEASE_ID_PREFIX) ? 'Release' : 'Variant'
 }
 
 function isRetriable(err: SanityApiError): boolean {

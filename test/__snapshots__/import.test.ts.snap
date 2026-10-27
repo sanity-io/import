@@ -205,6 +205,25 @@ exports[`allows system documents if asked > employee creation 3`] = `
 
 exports[`allows system documents if asked > employee creation 4`] = `
 {
+  "actions": [
+    {
+      "actionType": "sanity.action.variant.definition.import",
+      "document": {
+        "_id": "_.variants.de",
+        "_type": "system.variant",
+        "conditions": [],
+        "name": "de",
+        "priority": 0,
+      },
+      "ifExists": "fail",
+      "variantId": "de",
+    },
+  ],
+}
+`;
+
+exports[`allows system documents if asked > employee creation 5`] = `
+{
   "mutations": [
     {
       "create": {
@@ -231,7 +250,7 @@ exports[`allows system documents if asked > employee creation 4`] = `
 }
 `;
 
-exports[`allows system documents if asked > employee creation 5`] = `
+exports[`allows system documents if asked > employee creation 6`] = `
 {
   "actions": [
     {
@@ -249,7 +268,7 @@ exports[`allows system documents if asked > employee creation 5`] = `
 }
 `;
 
-exports[`allows system documents if asked > employee creation 6`] = `
+exports[`allows system documents if asked > employee creation 7`] = `
 {
   "actions": [
     {
@@ -263,6 +282,25 @@ exports[`allows system documents if asked > employee creation 6`] = `
       },
       "ifExists": "fail",
       "releaseId": "winter",
+    },
+  ],
+}
+`;
+
+exports[`allows system documents if asked > employee creation 8`] = `
+{
+  "actions": [
+    {
+      "actionType": "sanity.action.variant.definition.import",
+      "document": {
+        "_id": "_.variants.de",
+        "_type": "system.variant",
+        "conditions": [],
+        "name": "de",
+        "priority": 0,
+      },
+      "ifExists": "fail",
+      "variantId": "de",
     },
   ],
 }

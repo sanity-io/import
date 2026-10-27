@@ -229,13 +229,164 @@ test('allows system documents if asked', async () => {
     allowSystemDocuments: true,
     client,
   })
-  // Release system documents are an exception to this flag
-  expect(res).toMatchObject({numDocs: 8, warnings: []})
+  // Release and variant definitions are an exception to this flag
+  expect(res).toMatchObject({numDocs: 9, warnings: []})
 
   res = await sanityImport(getNDJSONFixtureStream('system-documents'), {
     client,
   })
-  expect(res).toMatchObject({numDocs: 5, warnings: []})
+  expect(res).toMatchObject({numDocs: 6, warnings: []})
+})
+
+test('rejects unknown variants operation', () => {
+  expect(() =>
+    // @ts-expect-error - test invalid option value
+    sanityImport([], {...importOptions, variantsOperation: 'merge'}),
+  ).toThrow('Variants operation "merge" is not supported')
+})
+
+test('imports variant definitions through the import action and keeps variant refs strong', async () => {
+  const {actions, client, mutations} = getRecordingClient()
+
+  // The variant document comes first so the import cannot rely on stream order
+  const docs: SanityDocument[] = [
+    {
+      _id: 'versions.a1b2c3.article',
+      _type: 'article',
+      _system: {
+        groupId: 'article',
+        scopeId: 'a1b2c3',
+        variant: {_ref: '_.variants.de'},
+        variants: [{_key: 'de', _ref: '_.variants.de'}],
+      },
+      title: 'Hallo',
+    },
+    {_id: '_.variants.de', _type: 'system.variant', conditions: [], name: 'de', priority: 0},
+  ]
+
+  const res = await sanityImport(docs, {client, variantsOperation: 'replace'})
+  expect(res).toMatchObject({numDocs: 2, warnings: []})
+
+  expect(actions).toEqual([
+    {
+      actionType: 'sanity.action.variant.definition.import',
+      document: docs[1],
+      ifExists: 'replace',
+      variantId: 'de',
+    },
+  ])
+
+  // The variant document is created with its identity refs weakened, so it can
+  // land before the definition exists. `_system` is a closed schema, so the
+  // refs must not gain a `_type` like content references do...
+  const create = mutations.find((mut) => mut.create)?.create
+  expect(create?._system).toEqual({
+    groupId: 'article',
+    scopeId: 'a1b2c3',
+    variant: {_ref: '_.variants.de', _weak: true},
+    variants: [{_key: 'de', _ref: '_.variants.de', _weak: true}],
+  })
+
+  // ...and strengthened again once everything is in place
+  const patch = mutations.find((mut) => mut.patch)?.patch
+  expect(patch).toEqual({
+    id: 'versions.a1b2c3.article',
+    unset: ['_system.variant._weak', '_system.variants[0]._weak'],
+  })
+})
+
+test('applies releasesOperation and variantsOperation independently', async () => {
+  const {actions, client} = getRecordingClient()
+
+  const release = {_id: '_.releases.summer', _type: 'system.release', name: 'summer'}
+  const variant = {_id: '_.variants.de', _type: 'system.variant', name: 'de'}
+
+  const res = await sanityImport([release, variant], {
+    client,
+    releasesOperation: 'ignore',
+    variantsOperation: 'replace',
+  })
+  expect(res).toMatchObject({numDocs: 2, warnings: []})
+
+  // Actions run concurrently, so their order is not deterministic
+  expect(actions).toHaveLength(2)
+  expect(actions).toEqual(
+    expect.arrayContaining([
+      {
+        actionType: 'sanity.action.release.import',
+        attributes: release,
+        ifExists: 'ignore',
+        releaseId: 'summer',
+      },
+      {
+        actionType: 'sanity.action.variant.definition.import',
+        document: variant,
+        ifExists: 'replace',
+        variantId: 'de',
+      },
+    ]),
+  )
+})
+
+test('defaults releasesOperation and variantsOperation to fail', async () => {
+  const {actions, client} = getRecordingClient()
+
+  await sanityImport(
+    [
+      {_id: '_.releases.summer', _type: 'system.release', name: 'summer'},
+      {_id: '_.variants.de', _type: 'system.variant', name: 'de'},
+    ],
+    {client},
+  )
+
+  expect(actions).toEqual([
+    expect.objectContaining({ifExists: 'fail'}),
+    expect.objectContaining({ifExists: 'fail'}),
+  ])
+})
+
+test('cleans up content references next to `_system` refs', async () => {
+  const {client, mutations} = getRecordingClient()
+
+  await sanityImport(
+    [
+      {
+        _id: 'versions.a1b2c3.article',
+        _type: 'article',
+        _system: {variant: {_ref: '_.variants.de'}},
+        author: {_ref: 'espen'},
+      },
+    ],
+    {client},
+  )
+
+  const create = mutations.find((mut) => mut.create)?.create
+  expect(create?._system).toEqual({variant: {_ref: '_.variants.de', _weak: true}})
+  expect(create?.author).toEqual({_ref: 'espen', _type: 'reference', _weak: true})
+})
+
+test.each([
+  {_id: '_.releases.summer', _type: 'system.release', label: 'Release', name: 'summer'},
+  {_id: '_.variants.de', _type: 'system.variant', label: 'Variant', name: 'de'},
+])('names the document kind when a $label import fails', async ({label, ...doc}) => {
+  const client = getSanityClient((event: MockRequestEvent) => {
+    const options = event.context.options as TestRequestOptions
+    const uri = options.uri || options.url
+
+    if (uri?.includes('/actions')) {
+      return {body: {error: 'Conflict', message: 'Document already exists'}, statusCode: 409}
+    }
+
+    if (uri?.includes('/datasets')) {
+      return {body: [{name: 'foo'}, {name: 'bar'}]}
+    }
+
+    return {body: {error: `"${uri}" should not be called`}, statusCode: 400}
+  })
+
+  await expect(sanityImport([doc], {client})).rejects.toThrow(
+    `${label} import failed for ${doc._id}: `,
+  )
 })
 
 test('rejects on Unicode replacement character in stream', async () => {
@@ -506,6 +657,37 @@ test('surfaces permission errors (403) over rate limit errors (429)', async () =
     /Insufficient permissions/,
   )
 })
+
+function getRecordingClient() {
+  const actions: unknown[] = []
+  const mutations: TestMutation[] = []
+
+  const client = getSanityClient((event: MockRequestEvent) => {
+    const options = event.context.options as TestRequestOptions
+    const uri = options.uri || options.url
+
+    if (uri?.includes('/actions')) {
+      const body = JSON.parse(options.body as string) as {actions: unknown[]}
+      actions.push(...body.actions)
+      return {body: [{TransactionID: 'foo'}]}
+    }
+
+    if (uri?.includes('/data/mutate')) {
+      const body = JSON.parse(options.body as string) as MockMutationsBody
+      mutations.push(...body.mutations)
+      const results = body.mutations.map((mut) => extractDetailsFromMutation(mut))
+      return {body: {results}}
+    }
+
+    if (uri?.includes('/datasets')) {
+      return {body: [{name: 'foo'}, {name: 'bar'}]}
+    }
+
+    return {body: {error: `"${uri}" should not be called`}, statusCode: 400}
+  })
+
+  return {actions, client, mutations}
+}
 
 function getMockMutationHandler(
   match: ((body: MockMutationsBody) => void) | string = 'employee creation',

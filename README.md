@@ -99,14 +99,32 @@ const options = {
   skipCrossDatasetReferences: false,
 
   /**
-   * Whether or not to import system documents (like permissions, custom retention, and content releases).
+   * Whether or not to import system documents (like permissions and custom retention).
    * This is usually not necessary, and may cause conflicts if the target dataset
    * already contains these documents. On a new dataset, it is recommended that roles are re-created
    * manually, and that any custom retention policies are re-created manually.
    *
+   * Content release and content variant definitions are always imported, regardless of this flag.
+   *
    * Optional, defaults to `false`.
    */
   allowSystemDocuments: false,
+
+  /**
+   * What to do when a content release in the import already exists in the target dataset:
+   * `fail` the import, `ignore` the imported release, or `replace` the existing one.
+   *
+   * Optional, defaults to `fail`.
+   */
+  releasesOperation: 'fail',
+
+  /**
+   * What to do when a content variant definition in the import already exists in the target
+   * dataset: `fail` the import, `ignore` the imported definition, or `replace` the existing one.
+   *
+   * Optional, defaults to `fail`.
+   */
+  variantsOperation: 'fail',
 }
 
 sanityImport(input, options)

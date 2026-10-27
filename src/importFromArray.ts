@@ -5,7 +5,7 @@ import {assignArrayKeys} from './assignArrayKeys.js'
 import {assignDocumentId} from './assignDocumentId.js'
 import {batchDocuments} from './batchDocuments.js'
 import {documentHasError} from './documentHasErrors.js'
-import {importBatches} from './importBatches.js'
+import {importBatches, isPublicSystemDocument} from './importBatches.js'
 import {
   cleanupReferences,
   getStrongRefs,
@@ -46,10 +46,11 @@ async function importDocuments(
 
   let filteredDocuments = documents
   // Always filter out system documents unless explicitly allowed.
-  // Release system documents are an exception to this flag.
+  // Release and variant definitions are an exception to this flag: content
+  // documents reference them, so an export cannot round-trip without them.
   if (options.allowSystemDocuments !== true) {
     filteredDocuments = documents.filter(
-      (doc) => doc._id?.startsWith('_.releases.') || !doc._id?.startsWith('_.'),
+      (doc) => isPublicSystemDocument(doc) || !doc._id?.startsWith('_.'),
     )
   }
 
