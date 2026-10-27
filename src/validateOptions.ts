@@ -4,9 +4,9 @@ import {type ImportOptions, type ImportSource} from './types.js'
 
 const clientMethods = ['fetch', 'transaction', 'config'] as const
 const allowedOperations = ['create', 'createIfNotExists', 'createOrReplace'] as const
-const allowedReleasesOperations = ['fail', 'ignore', 'replace'] as const
+const allowedSystemDocumentOperations = ['fail', 'ignore', 'replace'] as const
 const defaultOperation = allowedOperations[0]
-const defaultReleasesOperation = allowedReleasesOperations[0]
+const defaultSystemDocumentOperation = allowedSystemDocumentOperations[0]
 
 export function validateOptions(input: ImportSource, opts: Partial<ImportOptions>): ImportOptions {
   const options = {
@@ -14,7 +14,8 @@ export function validateOptions(input: ImportSource, opts: Partial<ImportOptions
     allowSystemDocuments: false,
     onProgress: () => {},
     operation: defaultOperation,
-    releasesOperation: defaultReleasesOperation,
+    releasesOperation: defaultSystemDocumentOperation,
+    variantsOperation: defaultSystemDocumentOperation,
     replaceAssets: false,
     skipCrossDatasetReferences: false,
     tag: 'sanity.import',
@@ -55,8 +56,12 @@ export function validateOptions(input: ImportSource, opts: Partial<ImportOptions
     throw new Error(`Operation "${options.operation}" is not supported`)
   }
 
-  if (!allowedReleasesOperations.includes(options.releasesOperation)) {
+  if (!allowedSystemDocumentOperations.includes(options.releasesOperation)) {
     throw new Error(`Releases operation "${options.releasesOperation}" is not supported`)
+  }
+
+  if (!allowedSystemDocumentOperations.includes(options.variantsOperation)) {
+    throw new Error(`Variants operation "${options.variantsOperation}" is not supported`)
   }
 
   if (options.assetConcurrency && options.assetConcurrency > 12) {

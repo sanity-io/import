@@ -39,6 +39,7 @@ export interface TestMutation {
     id: string
     set?: Record<string, unknown>
     setIfMissing?: Record<string, unknown>
+    unset?: string[]
   }
 }
 

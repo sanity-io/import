@@ -43,6 +43,7 @@ export interface ImportOptions {
   onProgress: (event: ProgressEvent) => void
   operation: 'create' | 'createIfNotExists' | 'createOrReplace'
   releasesOperation: 'fail' | 'ignore' | 'replace'
+  variantsOperation: 'fail' | 'ignore' | 'replace'
   replaceAssets: boolean
   skipCrossDatasetReferences: boolean
   tag: string
