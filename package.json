@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "@sanity/client": "^8.6.1",
-    "@types/node": "^22.20.3",
+    "@types/node": "^24.19.2",
     "@vitest/coverage-v8": "5.0.0",
     "knip": "^6.35.1",
     "oxfmt": "^0.68.0",
