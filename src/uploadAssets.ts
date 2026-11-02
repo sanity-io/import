@@ -39,7 +39,7 @@ const NON_RESTORABLE_ASSET_FIELDS = new Set([
 ])
 
 const ASSET_UPLOAD_CONCURRENCY = 8
-const ASSET_PATCH_CONCURRENCY = 30
+const ASSET_PATCH_CONCURRENCY = 1
 const ASSET_PATCH_BATCH_SIZE = 50
 const ASSET_PATCH_BATCH_TASK_SIZE = 1000
 
@@ -412,22 +412,27 @@ function setAssetReferenceBatch(
   batch: DocumentTasks[],
 ): Promise<number> {
   logger('Setting asset references on %d documents', batch.length)
-  return retryOnFailure(() => {
-    let trx = client.transaction()
-    for (const documentTasks of batch) {
-      trx = reducePatch(trx, documentTasks)
-    }
-    return trx
-      .commit({tag: suffixTag(tag, 'asset.set-refs'), visibility: 'async'})
-      .then(progress)
-      .then(() => {
-        let total = 0
-        for (const add of batch) {
-          total += add.tasks.length
-        }
-        return total
-      })
-  })
+  return retryOnFailure(
+    async () => {
+      // With one batch in flight, space attempts below Sanity's 25 mutations/s limit.
+      await new Promise((resolve) => setTimeout(resolve, 50))
+      let trx = client.transaction()
+      for (const documentTasks of batch) {
+        trx = reducePatch(trx, documentTasks)
+      }
+      return trx
+        .commit({tag: suffixTag(tag, 'asset.set-refs'), visibility: 'async'})
+        .then(progress)
+        .then(() => {
+          let total = 0
+          for (const add of batch) {
+            total += add.tasks.length
+          }
+          return total
+        })
+    },
+    {delay: 1000, maxTries: 5},
+  )
 }
 
 function pickRestorableAssetMeta(assetMeta: AssetDocument): Record<string, unknown> {
