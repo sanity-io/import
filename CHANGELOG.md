@@ -5,6 +5,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.1.1](https://github.com/sanity-io/import/compare/v7.1.0...v7.1.1) (2026-11-10)
+
+
+### Bug Fixes
+
+* **deps:** update non-major ([#115](https://github.com/sanity-io/import/issues/115)) ([f246b28](https://github.com/sanity-io/import/commit/f246b288147dff78e24fbbd66078da1e2f717880))
+* rate-limit reference updates (resolve [#114](https://github.com/sanity-io/import/issues/114)) ([#117](https://github.com/sanity-io/import/issues/117)) ([b188784](https://github.com/sanity-io/import/commit/b18878457d359765220842f7e27982394e1bfef2))
+
 ## [7.1.0](https://github.com/sanity-io/import/compare/v7.0.4...v7.1.0) (2026-10-27)
 
 

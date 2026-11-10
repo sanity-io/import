@@ -1,6 +1,6 @@
 {
   "name": "@sanity/import",
-  "version": "7.1.0",
+  "version": "7.1.1",
   "description": "Import documents to a Sanity dataset",
   "keywords": [
     "cms",
