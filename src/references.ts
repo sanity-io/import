@@ -18,7 +18,7 @@ import {suffixTag} from './util/suffixTag.js'
 
 const logger = createDebug('sanity:import')
 
-const STRENGTHEN_CONCURRENCY = 30
+const STRENGTHEN_CONCURRENCY = 1
 const STRENGTHEN_BATCH_SIZE = 30
 
 export interface StrongRefsTask {
@@ -134,7 +134,9 @@ function unsetWeakBatch(
 ): Promise<number> {
   logger('Strengthening batch of %d documents', batch.length)
   return retryOnFailure(
-    () => {
+    async () => {
+      // With one batch in flight, space attempts below Sanity's 25 mutations/s limit.
+      await new Promise((resolve) => setTimeout(resolve, 50))
       let trx = client.transaction()
       for (const task of batch) {
         trx = reducePatch(trx, task)
@@ -151,7 +153,11 @@ function unsetWeakBatch(
           throw apiError
         })
     },
-    {isRetriable: (err: SanityApiError) => !err.statusCode || err.statusCode !== 409},
+    {
+      delay: 1000,
+      maxTries: 5,
+      isRetriable: (err: SanityApiError) => !err.statusCode || err.statusCode !== 409,
+    },
   )
 }
 
